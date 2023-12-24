@@ -1,0 +1,303 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spotify Random Song Playlist</title>
+    <style>
+      #console {
+        height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="app"
+      style="
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        text-align: center;
+      "
+    >
+      <h1>Spotify Random Song Playlist</h1>
+      <div>
+        <label for="numberOfSongs"
+          >Number of Songs to Attempt to Add (fewer likely to work, may add
+          duplicates):</label
+        >
+        <input type="number" id="numberOfSongs" min="1" value="50" />
+      </div>
+      <button id="createPlaylistAndAddTracksButton">
+        Create Playlist (if one named "Random Songs from All of Spotify" not
+        found in first 50) and/or Add Tracks
+      </button>
+      <div id="added-songs" style="margin-top: 20px"></div>
+      <div id="console"></div>
+    </div>
+    <script>
+      const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
+      const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
+
+            const SCOPES =
+              "playlist-modify-public playlist-modify-private playlist-read-private";
+
+            const addedSongsDiv = document.getElementById("added-songs");
+            const consoleDiv = document.getElementById("console");
+
+            // Function to check if the user is authenticated
+            const isAuthenticated = () => {
+              const params = new URLSearchParams(window.location.hash.substring(1));
+              return params.has("access_token");
+            };
+
+            // Function to redirect to Spotify authorization
+            const redirectToAuthorization = () => {
+              window.location.href = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
+                REDIRECT_URI
+              )}&scope=${encodeURIComponent(SCOPES)}&response_type=token`;
+            };
+
+            // Function to generate a random year
+            const getRandomYear = () => {
+              const currentYear = new Date().getFullYear();
+              return Math.floor(Math.random() * (currentYear - 1900 + 1)) + 1900;
+            };
+
+            // Function to generate a random offset for the search
+            const getRandomOffset = () => {
+              return Math.floor(Math.random() * 1001); // Adjust the range as needed
+            };
+
+            // Function to search for a track from a specific year and add it to a playlist
+            const searchTrackAndAddToPlaylist = (
+              accessToken,
+              playlistUrl,
+              year,
+              addedSongs
+            ) => {
+              // Add a random offset to the search query
+              const randomOffset = getRandomOffset();
+              const searchUrl = `https://api.spotify.com/v1/search?type=track&q=year:${year}&offset=${randomOffset}&limit=50`; // Adjust the limit as needed
+
+              // Return a promise that resolves when the track is added or an error occurs
+              return new Promise(async (resolve, reject) => {
+                let attempts = 0;
+                while (attempts < 3) {
+                  try {
+                    const response = await fetch(searchUrl, {
+                      headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                      },
+                    });
+                    const data = await response.json();
+                    const tracks = data.tracks.items;
+
+                    if (tracks.length > 0) {
+                      // Add the first track from the search results to the playlist
+                      const track = tracks[0];
+                      const trackUri = track.uri;
+
+                      // Now, make a request to add the track to the playlist
+                      const addResponse = await fetch(playlistUrl, {
+                        method: "POST",
+                        headers: {
+                          Authorization: `Bearer ${accessToken}`,
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          uris: [trackUri],
+                        }),
+                      });
+
+                      if (addResponse.ok) {
+                        const trackInfo = {
+                          year,
+                          name: track.name,
+                          artist: track.artists
+                            .map((artist) => artist.name)
+                            .join(", "),
+                          uri: trackUri,
+                        };
+                        addedSongs.push(trackInfo);
+                        console.log(`Track from ${year} added to playlist successfully`);
+                        logToConsole(`Track from ${year} added to playlist successfully`);
+                        resolve(); // Resolve the promise when the track is added
+                        return;
+                      } else {
+                        const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
+                        console.error(errorMessage);
+                        logToConsole(errorMessage);
+                      }
+                    } else {
+                      const errorMessage = `No track found for year ${year}`;
+                      console.error(errorMessage);
+                      logToConsole(errorMessage);
+                    }
+                  } catch (error) {
+                    const errorMessage = `Error searching for track: ${error.message}`;
+                    console.error(errorMessage);
+                    logToConsole(errorMessage);
+                  }
+
+                  // If there was an error or no track was found, retry
+                  attempts++;
+                }
+
+                // If all attempts fail, reject the promise
+                reject();
+              });
+            };
+
+            // Function to add multiple tracks to a playlist
+            const addTracksToPlaylist = async (
+              accessToken,
+              playlistId,
+              numberOfSongs
+            ) => {
+              const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
+
+              // Keep track of added songs
+              const addedSongs = [];
+
+              // Create an array to store promises for each search request
+              const searchPromises = [];
+
+              // Add each track to the playlist
+              for (let i = 0; i < numberOfSongs; i++) {
+                const randomYear = getRandomYear();
+                // Store the promise in the array
+                searchPromises.push(
+                  searchTrackAndAddToPlaylist(
+                    accessToken,
+                    playlistUrl,
+                    randomYear,
+                    addedSongs
+                  )
+                );
+              }
+
+              // Wait for all search requests to complete
+              await Promise.all(searchPromises);
+
+              // Remove duplicates from the added songs list
+              const uniqueAddedSongs = [];
+              const uniqueUris = new Set();
+              addedSongs.forEach((song) => {
+                if (!uniqueUris.has(song.uri)) {
+                  uniqueUris.add(song.uri);
+                  uniqueAddedSongs.push(song);
+                }
+              });
+
+              // Display the list of added songs
+              addedSongsDiv.innerHTML = "<p>Added Songs:</p>";
+              uniqueAddedSongs.forEach((song) => {
+                addedSongsDiv.innerHTML += `<p>${song.year}: ${song.artist} - ${song.name} (${song.uri})</p>`;
+              });
+            };
+
+            // Function to search for a playlist by name
+            const searchPlaylist = async (accessToken, playlistName) => {
+              const searchUrl = `https://api.spotify.com/v1/me/playlists?limit=50`;
+
+              const response = await fetch(searchUrl, {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              });
+
+              const data = await response.json();
+
+              const playlist = data.items.find((item) => item.name === playlistName);
+              return playlist;
+            };
+
+            // Function to create a new playlist
+            const createPlaylist = async (accessToken) => {
+              const createPlaylistUrl = "https://api.spotify.com/v1/me/playlists";
+
+              const response = await fetch(createPlaylistUrl, {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  name: "Random Songs from All of Spotify",
+                  public: true,
+                }),
+              });
+
+              const data = await response.json();
+              return data;
+            };
+
+            // Function to create a playlist and add multiple tracks
+            const createPlaylistAndAddTracks = async () => {
+              if (!isAuthenticated()) {
+                // Redirect to Spotify authorization page if not authenticated
+                redirectToAuthorization();
+                return;
+              }
+
+              // Extract the access token from the URL parameters
+              const params = new URLSearchParams(window.location.hash.substring(1));
+              const accessToken = params.get("access_token");
+
+              // Check if the playlist already exists
+              const playlist = await searchPlaylist(
+                accessToken,
+                "Random Songs from All of Spotify"
+              );
+
+              // Use existing playlist or create a new one
+              const playlistId = playlist
+                ? playlist.id
+                : (await createPlaylist(accessToken)).id;
+
+              // Add tracks to the playlist
+              await addTracksToPlaylist(
+                accessToken,
+                playlistId,
+                parseInt(document.getElementById("numberOfSongs").value)
+              );
+            };
+
+            // Check for authorization on page load
+            document.addEventListener("DOMContentLoaded", () => {
+              if (!isAuthenticated()) {
+                // Redirect to Spotify authorization page if not authenticated
+                redirectToAuthorization();
+              }
+            });
+
+            // Attach event listener to the button
+            const button = document.getElementById(
+              "createPlaylistAndAddTracksButton"
+            );
+            if (button) {
+              button.addEventListener("click", createPlaylistAndAddTracks);
+            } else {
+              console.error(
+                'Button with id "createPlaylistAndAddTracksButton" not found.'
+              );
+            }
+
+            // Function to log messages to the console box
+            const logToConsole = (message) => {
+              consoleDiv.innerHTML += `<p>${message}</p>`;
+              consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            };
+    </script>
+  </body>
+</html>
