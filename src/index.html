@@ -111,33 +111,29 @@
         return Math.floor(Math.random() * 1001);
       };
 
-      const searchTrackAndAddToPlaylist = async (
-        accessToken,
-        playlistUrl,
-        year,
-        addedSongs
-      ) => {
+      const logToConsole = (message) => {
+        consoleDiv.innerHTML += `<p>${message}</p>`;
+        consoleDiv.scrollTop = consoleDiv.scrollHeight;
+      };
+
+      const searchTrackAndAddToPlaylist = async (trackInfo) => {
         const randomOffset = getRandomOffset();
-        const searchUrl = `https://api.spotify.com/v1/search?type=track&q=year:${year}&offset=${randomOffset}&limit=50`;
+        const searchUrl = `https://api.spotify.com/v1/search?type=track&q=year:${trackInfo.year}&offset=${randomOffset}&limit=50`;
 
         try {
+          logToConsole(`Searching for track from year ${trackInfo.year}`);
           const response = await fetch(searchUrl, {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${trackInfo.accessToken}`,
             },
           });
 
           if (response.status === 429) {
             const retryAfter =
               parseInt(response.headers.get("Retry-After")) || 1;
-            console.log(`Rate limited. Retrying after ${retryAfter} seconds.`);
+            logToConsole(`Rate limited. Retrying after ${retryAfter} seconds.`);
             await wait(retryAfter * 2); // Exponential backoff
-            return searchTrackAndAddToPlaylist(
-              accessToken,
-              playlistUrl,
-              year,
-              addedSongs
-            );
+            return searchTrackAndAddToPlaylist(trackInfo);
           }
 
           const data = await response.json();
@@ -147,10 +143,10 @@
             const track = tracks[0];
             const trackUri = track.uri;
 
-            const addResponse = await fetch(playlistUrl, {
+            const addResponse = await fetch(trackInfo.playlistUrl, {
               method: "POST",
               headers: {
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${trackInfo.accessToken}`,
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
@@ -160,14 +156,15 @@
 
             if (addResponse.ok) {
               const trackInfo = {
-                year,
+                year: trackInfo.year,
                 name: track.name,
                 artist: track.artists.map((artist) => artist.name).join(", "),
                 uri: trackUri,
               };
-              addedSongs.push(trackInfo);
-              console.log(`Track from ${year} added to playlist successfully`);
-              logToConsole(`Track from ${year} added to playlist successfully`);
+              trackInfo.addedSongs.push(trackInfo);
+              logToConsole(
+                `Track from ${trackInfo.year} added to playlist successfully`
+              );
               return;
             } else {
               const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
@@ -175,7 +172,7 @@
               logToConsole(errorMessage);
             }
           } else {
-            const errorMessage = `No track found for year ${year}`;
+            const errorMessage = `No track found for year ${trackInfo.year}`;
             console.error(errorMessage);
             logToConsole(errorMessage);
           }
@@ -195,6 +192,7 @@
         const addedSongs = [];
         const tracksToAdd = [];
 
+        // Generate an array of track information objects with random years
         for (let i = 0; i < numberOfSongs; i++) {
           const randomYear = getRandomYear();
           tracksToAdd.push({
@@ -205,24 +203,25 @@
           });
         }
 
+        // Process tracks in batches to avoid API limitations
         for (let i = 0; i < tracksToAdd.length; i += 100) {
+          // Get a batch of tracks
           const batchPromises = [];
           const batch = tracksToAdd.slice(i, i + 100);
 
-          for (const trackInfo of batch) {
+          // Process each track in the batch
+          batch.forEach((trackInfo) => {
             batchPromises.push(
-              searchTrackAndAddToPlaylist(
-                trackInfo.accessToken,
-                trackInfo.playlistUrl,
-                trackInfo.year,
-                trackInfo.addedSongs
-              )
+              // Call the function to search and add the track to the playlist
+              searchTrackAndAddToPlaylist(trackInfo)
             );
-          }
+          });
 
+          // Wait for all promises in the batch to complete
           await Promise.all(batchPromises);
         }
 
+        // Remove duplicate tracks and display added songs
         const uniqueAddedSongs = [];
         const uniqueUris = new Set();
         addedSongs.forEach((song) => {
@@ -232,6 +231,7 @@
           }
         });
 
+        // Display added songs in the addedSongsDiv
         addedSongsDiv.innerHTML = "<p>Added Songs:</p>";
         uniqueAddedSongs.forEach((song) => {
           addedSongsDiv.innerHTML += `<p>${song.year}: ${song.artist} - ${song.name} (${song.uri})</p>`;
@@ -313,10 +313,8 @@
         );
       }
 
-      const logToConsole = (message) => {
-        consoleDiv.innerHTML += `<p>${message}</p>`;
-        consoleDiv.scrollTop = consoleDiv.scrollHeight;
-      };
+      const wait = (seconds) =>
+        new Promise((resolve) => setTimeout(resolve, seconds * 1000));
     </script>
   </body>
 </html>
