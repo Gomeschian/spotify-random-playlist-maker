@@ -131,7 +131,7 @@
             const retryAfter =
               parseInt(response.headers.get("Retry-After")) || 1;
             console.log(`Rate limited. Retrying after ${retryAfter} seconds.`);
-            await wait(retryAfter * 1000);
+            await wait(retryAfter * 1000); // Exponential backoff
             return searchTrackAndAddToPlaylist(
               accessToken,
               playlistUrl,
