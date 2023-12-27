@@ -35,16 +35,16 @@
         random offset of the results (0 offset = first page of results, up to
         offset 1000 per Spotify's search limitation. Each page of results will
         randomly contain 1 to Spotify's maximum of 50 results).
-        <p>
-          *If it doesn't produce a valid result or if the API is overloaded
-          (Code 429) there won't be a song added, so the total number will be
-          fewer than the attempts chosen. This search will find anything Spotify
-          considers a track, so not necessarily just songs, but it won't find
-          audiobooks as defined as such by Spotify, or podcast episodes. None of
-          the tracks added per run will be duplicates of each other, but they
-          CAN be tracks that are already on the playlist if it exists.
-        </p>
       </h4>
+      <h5>
+        *If it doesn't produce a valid result or if the API is overloaded (Code
+        429) there won't be a song added, so the total number will be fewer than
+        the attempts chosen. This search will find anything Spotify considers a
+        track, so not necessarily just songs, but it won't find audiobooks as
+        defined as such by Spotify, or podcast episodes. None of the tracks
+        added per run will be duplicates of each other, but they CAN be tracks
+        that are already on the playlist if it exists.
+      </h5>
       <div class="mb-4">
         <label for="numberOfSongs" class="block mt-2 text-sm"
           >Number of Tracks:</label
