@@ -188,12 +188,7 @@
           }
         });
 
-        // Print "Added Songs" header only on the first run
-        if (isFirstRun) {
-          addedSongsDiv.innerHTML += "<p>Added Songs:</p>";
-          isFirstRun = false;
-        }
-
+        addedSongsDiv.innerHTML += "<p>Added Songs:</p>";
         uniqueAddedSongs.forEach((song) => {
           addedSongsDiv.innerHTML += `<p>${song.year}: ${song.artist} - ${song.name} (${song.uri})</p>`;
         });
