@@ -188,7 +188,12 @@
           }
         });
 
-        addedSongsDiv.innerHTML += "<p>Added Songs:</p>";
+        // Print "Added Songs" header only on the first run
+        if (isFirstRun) {
+          addedSongsDiv.innerHTML += "<p>Added Songs:</p>";
+          isFirstRun = false;
+        }
+
         uniqueAddedSongs.forEach((song) => {
           addedSongsDiv.innerHTML += `<p>${song.year}: ${song.artist} - ${song.name} (${song.uri})</p>`;
         });
