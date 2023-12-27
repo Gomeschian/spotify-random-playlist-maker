@@ -85,6 +85,13 @@
         the API is overloaded there won't be a song added, so the total number
         will be fewer than the attempts chosen.
       </h3>
+      <h4>
+        A third-party estimated limit of ~180 API requests per minute are
+        allowed by Spotify (1 song search = 1 request, + one or more requests
+        for searching the user's playlists for the playlist to be added to or
+        created). So if it doesn't work try waiting a minute and also consider
+        reducing the number of songs to be added.
+      </h4>
       <div>
         <label for="numberOfSongs">Number of Songs:</label>
         <input type="number" id="numberOfSongs" min="1" value="60" />
@@ -248,7 +255,9 @@
             console.log("Received response:", response);
 
             if (!response.ok) {
-              throw new Error("Error fetching playlists : " + response.statusText);
+              throw new Error(
+                "Error fetching playlists : " + response.statusText
+              );
             }
 
             const data = await response.json();
