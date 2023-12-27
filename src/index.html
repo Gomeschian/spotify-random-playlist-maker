@@ -17,8 +17,9 @@
     <div id="app" class="flex flex-col items-center justify-center text-center">
       <h1 class="mb-4 text-3xl font-bold">Spotify Random Track Playlist</h1>
       <p class="mb-8 text-lg">
-        Add a selection of random tracks to a playlist called "Random Songs from
-        All of Spotify" (will be created if it doesn't exist).
+        Adds a selection of random tracks to a playlist called "Random Songs
+        from All of Spotify" (will be created if it doesn't exist), up to but
+        probably significantly fewer than the number chosen below.*
       </p>
       <p class="mb-6 text-sm">
         Spotify allows ~180 API requests per minute. If it doesn't work, try
@@ -26,14 +27,17 @@
       </p>
       <p class="mb-6 text-sm">
         Methodology: Searches for a random year between 1860 and the current
-        year and chooses a track released that year, per Spotify, based on a
-        random offset of the results.
+        year and chooses a track dated that year, per Spotify, based on a
+        random section of the results (up to the one thousand and first result,
+        from pages randomly containing 1 to 50 results, varying per search). The limits are
+        Spotify's, the randomization chosen to mitigate them.
       </p>
       <p class="mb-6 text-sm">
-        *If it doesn't produce a valid result or if the API is overloaded (Code
-        429), there won't be a song added, so the total number will be fewer
-        than the attempts chosen. This search will find anything Spotify
-        considers a track.
+        *If searching doesn't produce a valid result or if the API is overloaded
+        (Code 429), there won't be a song added, so the total number will be
+        fewer than the attempts chosen. This search will find anything Spotify
+        considers a track, so not necessarily all songs, but no audiobooks as
+        such or podcasts.
       </p>
       <div class="mb-4">
         <label for="numberOfSongs" class="block mb-2 text-sm"
