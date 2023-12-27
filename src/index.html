@@ -78,7 +78,7 @@
       <div
         id="console"
         class="h-20 overflow-y-auto border-1 border-gray-300 p-4 mt-4 text-lg hidden"
-        ></div>
+      ></div>
     </div>
 
     <script>
@@ -209,7 +209,7 @@
           }
         });
 
-        addedSongsDiv.innerHTML += "<p>Added Songs:</p>";
+        addedSongsDiv.innerHTML += `<p>Added Songs: ${uniqueAddedSongs.length}</p>`;
         uniqueAddedSongs.forEach((song) => {
           addedSongsDiv.innerHTML += `<p>${song.year}: ${song.artist} - ${song.name} (${song.uri})</p>`;
         });
