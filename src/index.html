@@ -73,24 +73,24 @@
     <div id="app">
       <h1>Spotify Random Song Playlist</h1>
       <h2>
-        A number of songs up to the but almost certainly not including the
-        number chosen will be added to a playlist called "Random Songs from All
-        of Spotify" (will be created it if it doesn't exist).
+        A number of songs up to but almost certainly not including the number
+        chosen will be added to a playlist called "Random Songs from All of
+        Spotify" (will be created if it doesn't exist).
       </h2>
       <h3>
+        A third-party estimated limit of ~180 API requests per minute are
+        allowed by Spotify (1 song search = 1 request, + one or more requests
+        for searching the user's playlists for the playlist to be added to or
+        created). So if it doesn't work try waiting a minute and also consider
+        reducing the number of songs to be added.
+      </h3>
+      <h4>
         Methodology: Searches for a random year between 1860 and the current
         year and chooses a song released that year, per Spotify, based on a
         random offset of the results (0 offset=first result, up to 1000 per
         Spotify's search limitation). If it doesn't produce a valid result or if
         the API is overloaded there won't be a song added, so the total number
         will be fewer than the attempts chosen.
-      </h3>
-      <h4>
-        A third-party estimated limit of ~180 API requests per minute are
-        allowed by Spotify (1 song search = 1 request, + one or more requests
-        for searching the user's playlists for the playlist to be added to or
-        created). So if it doesn't work try waiting a minute and also consider
-        reducing the number of songs to be added.
       </h4>
       <div>
         <label for="numberOfSongs">Number of Songs:</label>
