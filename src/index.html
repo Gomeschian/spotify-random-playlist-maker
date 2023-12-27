@@ -99,12 +99,14 @@
           so the total number will be fewer than the attempts chosen. This will
           find anything Spotify considers a track, so not necessarily just
           songs, but it won't find audiobooks as defined as such by Spotify, or
-          podcast episodes.
+          podcast episodes. None of the tracks added per run will be duplicates
+          of each other, but they CAN be tracks that are already on the playlist
+          if it exists.
         </p>
       </h4>
       <div>
         <label for="numberOfSongs">Number of Tracks:</label>
-        <input type="number" id="numberOfSongs" min="1" value="25" />
+        <input type="number" id="numberOfSongs" min="1" value="24" />
       </div>
       <button id="createPlaylistAndAddTracksButton">
         Create Playlist and/or Add Tracks
