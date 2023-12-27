@@ -73,30 +73,36 @@
     <div id="app">
       <h1>Spotify Random Track Playlist</h1>
       <h2>
-        A number of random tracks up to, but almost certainly fewer than*, the number
-        chosen will be added to a playlist called "Random Songs from All of
-        Spotify" (will be created if it doesn't exist).
+        A number of random tracks up to, but almost certainly fewer
+        than<strong>*</strong>, the number chosen will be added to a playlist
+        called "Random Songs from All of Spotify" (will be created if it doesn't
+        exist).
       </h2>
       <h3>
-        A third-party estimated limit of ~180 API requests per minute are
-        allowed by Spotify (1 track search = 1 request, + one or more requests
-        for searching the user's playlists for the playlist to be added to or
-        created). So if it doesn't work try waiting a minute and also consider
-        reducing the number of songs to be added.
+        A third-party estimated limit of
+        <strong>~180 API requests per minute</strong> are allowed by Spotify (1
+        track search = 1 request, + one or more requests for searching the
+        user's playlists for the playlist to be added to or created). So if it
+        doesn't work try waiting a minute and also consider reducing the number
+        of songs to be added.
       </h3>
       <h4>
         Methodology: Searches for a random year between 1860 and the current
         year and chooses a track released that year, per Spotify, based on a
-        random offset of the results (0 offset = first result, up to offset 1000
-        per Spotify's search limitation). <p>If it doesn't produce a valid result
-          or if the API is overloaded there won't be a song added, so the total
-          number will be fewer than the attempts chosen. This will find anything
-          Spotify considers a track, so not necessarily just songs, but it won't
-          find audiobooks as defined as such by Spotify, or podcast episodes.</p>*
+        random offset of the results (0 offset = first page of results, up to
+        offset 1000 per Spotify's search limitation. Each page of results will
+        randomly contain 1 to Spotify's maximum of 50 results).
+        <p>
+          <strong>*</strong>If it doesn't produce a valid result or if the API
+          is overloaded there won't be a song added, so the total number will be
+          fewer than the attempts chosen. This will find anything Spotify
+          considers a track, so not necessarily just songs, but it won't find
+          audiobooks as defined as such by Spotify, or podcast episodes.
+        </p>
       </h4>
       <div>
-        <label for="numberOfSongs">Number of Songs:</label>
-        <input type="number" id="numberOfSongs" min="1" value="60" />
+        <label for="numberOfSongs">Number of Tracks:</label>
+        <input type="number" id="numberOfSongs" min="1" value="25" />
       </div>
       <button id="createPlaylistAndAddTracksButton">
         Create Playlist and/or Add Tracks
