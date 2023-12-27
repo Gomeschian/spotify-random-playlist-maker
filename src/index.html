@@ -248,7 +248,7 @@
             console.log("Received response:", response);
 
             if (!response.ok) {
-              throw new Error("Error fetching playlists");
+              throw new Error("Error fetching playlists : " + response.statusText);
             }
 
             const data = await response.json();
