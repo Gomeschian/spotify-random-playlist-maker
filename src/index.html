@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Meta tags for character set and viewport -->
     <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
+    <!-- Title of the webpage -->
     <title>Spotify Random Song Playlist</title>
+    <!-- Internal CSS styles for styling the page -->
     <style>
+      /* Styling for the entire body */
       body {
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 10px;
       }
 
+      /* Styling for the main app container */
       #app {
         display: flex;
         flex-direction: column;
@@ -22,23 +27,27 @@
         text-align: center;
       }
 
+      /* Styling for the main title */
       h1 {
         margin-bottom: 0;
         font-size: 1.5em;
       }
 
+      /* Styling for labels */
       label {
         display: block;
         margin-top: 10px;
         font-size: 0.9em;
       }
 
+      /* Styling for input fields */
       input {
         width: 80px;
         padding: 5px;
         font-size: 0.9em;
       }
 
+      /* Styling for the main button */
       button {
         margin-top: 15px;
         padding: 15px;
@@ -49,15 +58,18 @@
         font-size: 1em;
       }
 
+      /* Styling for button hover effect */
       button:hover {
         background-color: #1ed760;
       }
 
+      /* Styling for the added songs section */
       #added-songs {
         margin-top: 10px;
         font-size: 0.9em;
       }
 
+      /* Styling for the console log section */
       #console {
         height: 120px;
         overflow-y: auto;
@@ -70,63 +82,81 @@
   </head>
 
   <body>
+    <!-- Main container for the application -->
     <div id="app">
+      <!-- Main title of the application -->
       <h1>Spotify Random Song Playlist</h1>
+      <!-- Form for user input: Number of Songs -->
       <div>
         <label for="numberOfSongs">Number of Songs:</label>
         <input type="number" id="numberOfSongs" min="1" value="60" />
       </div>
+      <!-- Button to trigger playlist creation and track addition -->
       <button id="createPlaylistAndAddTracksButton">
         Create Playlist and/or Add Tracks
       </button>
+      <!-- Display section for added songs -->
       <div id="added-songs"></div>
+      <!-- Console log section for tracking events and errors -->
       <div id="console"></div>
     </div>
+    <!-- JavaScript script for dynamic behavior -->
     <script>
+      // Spotify API credentials and required scopes
       const CLIENT_ID = "a34e83c02f6e439a891f4c2f6ba197fe";
       const REDIRECT_URI = "https://spotify-topaz-nine.vercel.app/";
       const SCOPES =
         "playlist-modify-public playlist-modify-private playlist-read-private";
 
+      // References to HTML elements for manipulation
       const addedSongsDiv = document.getElementById("added-songs");
       const consoleDiv = document.getElementById("console");
 
+      // Function to check if the user is authenticated
       const isAuthenticated = () => {
         const params = new URLSearchParams(window.location.hash.substring(1));
         return params.has("access_token");
       };
 
+      // Function to redirect to Spotify authorization
       const redirectToAuthorization = () => {
         window.location.href = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
           REDIRECT_URI
         )}&scope=${encodeURIComponent(SCOPES)}&response_type=token`;
       };
 
+      // Function to generate a random year between 1900 and the current year
       const getRandomYear = () => {
         const currentYear = new Date().getFullYear();
         return Math.floor(Math.random() * (currentYear - 1900 + 1)) + 1900;
       };
 
+      // Function to generate a random offset for Spotify API requests
       const getRandomOffset = () => {
         return Math.floor(Math.random() * 1001);
       };
 
+      // Function to search for a track based on a random year and add it to the playlist
       const searchTrackAndAddToPlaylist = async (
         accessToken,
         playlistUrl,
         year,
         addedSongs
       ) => {
+        // Generate a random offset for the API request
         const randomOffset = getRandomOffset();
+        // Spotify API endpoint for searching tracks
         const searchUrl = `https://api.spotify.com/v1/search?type=track&q=year:${year}&offset=${randomOffset}&limit=50`;
 
         try {
+          // Make a fetch request to the Spotify API for track search
           const response = await fetch(searchUrl, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
           });
 
+          // Handle rate limiting by retrying after a specified time
           if (response.status === 429) {
             const retryAfter =
               parseInt(response.headers.get("Retry-After")) || 1;
@@ -140,13 +170,19 @@
             );
           }
 
+          // Parse the response as JSON
           const data = await response.json();
+          // Extract the array of tracks from the response
           const tracks = data.tracks.items;
 
+          // Check if tracks were found
           if (tracks.length > 0) {
+            // Get the first track from the search results
             const track = tracks[0];
+            // Get the URI (identifier) of the track
             const trackUri = track.uri;
 
+            // Make a fetch request to add the track to the playlist
             const addResponse = await fetch(playlistUrl, {
               method: "POST",
               headers: {
@@ -158,43 +194,59 @@
               }),
             });
 
+            // Check if the track was added successfully
             if (addResponse.ok) {
+              // Create an object with track information
               const trackInfo = {
                 year,
                 name: track.name,
                 artist: track.artists.map((artist) => artist.name).join(", "),
                 uri: trackUri,
               };
+              // Add the track information to the array of added songs
               addedSongs.push(trackInfo);
+              // Log success to the console
               console.log(`Track from ${year} added to playlist successfully`);
+              // Log success to the consoleDiv
               logToConsole(`Track from ${year} added to playlist successfully`);
               return;
             } else {
+              // Log an error if the track could not be added
               const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
               console.error(errorMessage);
+              // Log the error to the consoleDiv
               logToConsole(errorMessage);
             }
           } else {
+            // Log an error if no tracks were found for the year
             const errorMessage = `No track found for year ${year}`;
             console.error(errorMessage);
+            // Log the error to the consoleDiv
             logToConsole(errorMessage);
           }
         } catch (error) {
+          // Log an error if an exception occurred during the process
           const errorMessage = `Error searching for track: ${error.message}`;
           console.error(errorMessage);
+          // Log the error to the consoleDiv
           logToConsole(errorMessage);
         }
       };
 
+      // Function to add a specified number of tracks to the playlist
       const addTracksToPlaylist = async (
         accessToken,
         playlistId,
         numberOfSongs
       ) => {
+        // Spotify API endpoint for adding tracks to a playlist
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
+        // Array to store information about added songs
         const addedSongs = [];
+        // Array to store information about tracks to be added
         const tracksToAdd = [];
 
+        // Generate an array of track information objects with random years
         for (let i = 0; i < numberOfSongs; i++) {
           const randomYear = getRandomYear();
           tracksToAdd.push({
@@ -205,12 +257,16 @@
           });
         }
 
+        // Process tracks in batches to avoid API limitations
         for (let i = 0; i < tracksToAdd.length; i += 100) {
+          // Get a batch of tracks
           const batchPromises = [];
           const batch = tracksToAdd.slice(i, i + 100);
 
+          // Process each track in the batch
           for (const trackInfo of batch) {
             batchPromises.push(
+              // Call the function to search and add the track to the playlist
               searchTrackAndAddToPlaylist(
                 trackInfo.accessToken,
                 trackInfo.playlistUrl,
@@ -220,9 +276,11 @@
             );
           }
 
+          // Wait for all promises in the batch to complete
           await Promise.all(batchPromises);
         }
 
+        // Remove duplicate tracks and display added songs
         const uniqueAddedSongs = [];
         const uniqueUris = new Set();
         addedSongs.forEach((song) => {
@@ -232,30 +290,39 @@
           }
         });
 
+        // Display added songs in the addedSongsDiv
         addedSongsDiv.innerHTML = "<p>Added Songs:</p>";
         uniqueAddedSongs.forEach((song) => {
           addedSongsDiv.innerHTML += `<p>${song.year}: ${song.artist} - ${song.name} (${song.uri})</p>`;
         });
       };
 
+      // Function to search for a playlist with a given name
       const searchPlaylist = async (accessToken, playlistName) => {
+        // Spotify API endpoint for searching playlists
         const searchUrl = `https://api.spotify.com/v1/me/playlists?limit=50`;
 
+        // Make a fetch request to the Spotify API for playlist search
         const response = await fetch(searchUrl, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
 
+        // Parse the response as JSON
         const data = await response.json();
 
+        // Find the playlist with the specified name in the search results
         const playlist = data.items.find((item) => item.name === playlistName);
         return playlist;
       };
 
+      // Function to create a new public playlist
       const createPlaylist = async (accessToken) => {
+        // Spotify API endpoint for creating playlists
         const createPlaylistUrl = "https://api.spotify.com/v1/me/playlists";
 
+        // Make a fetch request to the Spotify API to create a playlist
         const response = await fetch(createPlaylistUrl, {
           method: "POST",
           headers: {
@@ -268,27 +335,36 @@
           }),
         });
 
+        // Parse the response as JSON
         const data = await response.json();
         return data;
       };
 
+      // Function to create a playlist and add tracks to it
       const createPlaylistAndAddTracks = async () => {
+        // Check if the user is authenticated
         if (!isAuthenticated()) {
+          // Redirect to Spotify authorization if not authenticated
           redirectToAuthorization();
           return;
         }
 
+        // Extract access token from URL parameters
         const params = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = params.get("access_token");
 
+        // Search for the playlist with the specified name
         const playlist = await searchPlaylist(
           accessToken,
           "Random Songs from All of Spotify"
         );
+
+        // Get the playlist ID if found, otherwise create a new playlist
         const playlistId = playlist
           ? playlist.id
           : (await createPlaylist(accessToken)).id;
 
+        // Add the specified number of tracks to the playlist
         await addTracksToPlaylist(
           accessToken,
           playlistId,
@@ -296,25 +372,32 @@
         );
       };
 
+      // Event listener to check authentication on page load
       document.addEventListener("DOMContentLoaded", () => {
         if (!isAuthenticated()) {
+          // Redirect to Spotify authorization if not authenticated
           redirectToAuthorization();
         }
       });
 
+      // Event listener for the "Create Playlist and/or Add Tracks" button
       const button = document.getElementById(
         "createPlaylistAndAddTracksButton"
       );
       if (button) {
         button.addEventListener("click", createPlaylistAndAddTracks);
       } else {
+        // Log an error if the button is not found
         console.error(
           'Button with id "createPlaylistAndAddTracksButton" not found.'
         );
       }
 
+      // Function to log messages to the consoleDiv
       const logToConsole = (message) => {
+        // Append the message as a paragraph to the consoleDiv
         consoleDiv.innerHTML += `<p>${message}</p>`;
+        // Scroll to the bottom of the consoleDiv to show the latest messages
         consoleDiv.scrollTop = consoleDiv.scrollHeight;
       };
     </script>
