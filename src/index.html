@@ -127,6 +127,19 @@
             },
           });
 
+          if (response.status === 429) {
+            const retryAfter =
+              parseInt(response.headers.get("Retry-After")) || 1;
+            console.log(`Rate limited. Retrying after ${retryAfter} seconds.`);
+            await wait(retryAfter * 1000);
+            return searchTrackAndAddToPlaylist(
+              accessToken,
+              playlistUrl,
+              year,
+              addedSongs
+            );
+          }
+
           const data = await response.json();
           const tracks = data.tracks.items;
 
