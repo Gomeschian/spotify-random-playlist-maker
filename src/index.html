@@ -17,14 +17,13 @@
     <div id="app" class="flex flex-col items-center justify-center text-center">
       <h1 class="mb-0 text-2xl">Spotify Random Track Playlist</h1>
       <h2 class="mb-4 text-lg">
-        A number of random tracks up to, but almost certainly fewer than
-        <em class="bg-tomato">*</em>, the number chosen will be added to a
-        playlist called "Random Songs from All of Spotify" (will be created if
-        it doesn't exist).
+        A number of random tracks up to, but almost certainly fewer than*, the
+        number chosen will be added to a playlist called "Random Songs from All
+        of Spotify" (will be created if it doesn't exist).
       </h2>
       <h3 class="mb-4 text-sm">
         A third-party estimated limit of
-        <em class="bg-tomato">~180 API requests per minute</em> are allowed by
+        <em class="bg-lime-400">~180 API requests per minute</em> are allowed by
         Spotify (1 track search = 1 request, + one or more requests for
         searching the user's playlists for the playlist to be added to or
         created). So if it doesn't work try waiting a little and also consider
@@ -37,13 +36,13 @@
         offset 1000 per Spotify's search limitation. Each page of results will
         randomly contain 1 to Spotify's maximum of 50 results).
         <p>
-          <em class="bg-tomato">*</em>If it doesn't produce a valid result or if
-          the API is overloaded there won't be a song added, so the total number
-          will be fewer than the attempts chosen. This will find anything
-          Spotify considers a track, so not necessarily just songs, but it won't
-          find audiobooks as defined as such by Spotify, or podcast episodes.
-          None of the tracks added per run will be duplicates of each other, but
-          they CAN be tracks that are already on the playlist if it exists.
+          *If it doesn't produce a valid result or if the API is overloaded
+          (Code 429) there won't be a song added, so the total number will be
+          fewer than the attempts chosen. This search will find anything Spotify
+          considers a track, so not necessarily just songs, but it won't find
+          audiobooks as defined as such by Spotify, or podcast episodes. None of
+          the tracks added per run will be duplicates of each other, but they
+          CAN be tracks that are already on the playlist if it exists.
         </p>
       </h4>
       <div class="mb-4">
@@ -224,7 +223,10 @@
 
             if (!response.ok) {
               throw new Error(
-                "Error fetching playlists : " + response.statusText
+                "Error fetching playlists : " +
+                  response.status +
+                  " " +
+                  response.statusText
               );
             }
 
