@@ -245,7 +245,7 @@
           return playlist;
         } catch (error) {
           console.error("Error searching playlist:", error);
-          alert("An error occurred while searching for the playlist");
+          alert("An error occurred while searching for the playlist: " + error);
           throw error;
         }
       };
