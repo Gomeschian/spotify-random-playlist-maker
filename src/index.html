@@ -141,16 +141,19 @@
           }
 
           if (!response.ok) {
-            throw new Error(`Failed to fetch data: ${response.statusText}`);
+            console.warn(`Failed to fetch data: ${response.statusText}`);
+            // Continue execution even though there was an error
+          } else {
+            const data = await response.json();
+            const tracks = data.tracks.items;
+
+            // ... (rest of the code for handling the response)
           }
-
-          const data = await response.json();
-          const tracks = data.tracks.items;
-
         } catch (error) {
-          const errorMessage = `An error occurred while searching for a track: ${error.message}`;
-          console.error(errorMessage);
-          logToConsole(errorMessage);
+          console.error(
+            `An error occurred while searching for a track: ${error.message}`
+          );
+          // Continue execution even though there was an error
         }
       };
 
