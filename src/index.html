@@ -273,34 +273,27 @@
       };
 
       const createPlaylistAndAddTracks = async () => {
-        try {
-          if (!isAuthenticated()) {
-            redirectToAuthorization();
-            return;
-          }
-
-          const params = new URLSearchParams(window.location.hash.substring(1));
-          const accessToken = params.get("access_token");
-
-          const playlist = await searchPlaylist(
-            accessToken,
-            "Random Songs from All of Spotify"
-          );
-          const playlistId = playlist
-            ? playlist.id
-            : (await createPlaylist(accessToken)).id;
-
-          await addTracksToPlaylist(
-            accessToken,
-            playlistId,
-            parseInt(document.getElementById("numberOfSongs").value)
-          );
-        } catch (error) {
-          const errorMessage = `An error occurred: ${error.message}`;
-          console.error(errorMessage);
-          logToConsole(errorMessage);
-          // Optionally, display a user-friendly error message on the page.
+        if (!isAuthenticated()) {
+          redirectToAuthorization();
+          return;
         }
+
+        const params = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = params.get("access_token");
+
+        const playlist = await searchPlaylist(
+          accessToken,
+          "Random Songs from All of Spotify"
+        );
+        const playlistId = playlist
+          ? playlist.id
+          : (await createPlaylist(accessToken)).id;
+
+        await addTracksToPlaylist(
+          accessToken,
+          playlistId,
+          parseInt(document.getElementById("numberOfSongs").value)
+        );
       };
 
       document.addEventListener("DOMContentLoaded", () => {
