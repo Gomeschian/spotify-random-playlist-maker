@@ -15,38 +15,28 @@
 
   <body class="font-sans bg-gray-100 p-10">
     <div id="app" class="flex flex-col items-center justify-center text-center">
-      <h1 class="mb-0 text-2xl">Spotify Random Track Playlist</h1>
-      <h2 class="mb-4 text-lg">
-        A number of random tracks up to, but almost certainly fewer than*, the
-        number chosen will be added to a playlist called "Random Songs from All
-        of Spotify" (will be created if it doesn't exist).
-      </h2>
-      <h3 class="mb-4 text-sm">
-        A third-party estimated limit of
-        <em class="bg-lime-400">~180 API requests per minute</em> are allowed by
-        Spotify (1 track search = 1 request, + one or more requests for
-        searching the user's playlists for the playlist to be added to or
-        created). So if it doesn't work try waiting a little and also consider
-        reducing the number of songs to be added.
-      </h3>
-      <h4 class="mb-4 text-sm">
+      <h1 class="mb-4 text-3xl font-bold">Spotify Random Track Playlist</h1>
+      <p class="mb-8 text-lg">
+        Add a selection of random tracks to a playlist called "Random Songs from
+        All of Spotify" (will be created if it doesn't exist).
+      </p>
+      <p class="mb-6 text-sm">
+        Spotify allows ~180 API requests per minute. If it doesn't work, try
+        waiting a bit and consider reducing the number of songs to be added.
+      </p>
+      <p class="mb-6 text-sm">
         Methodology: Searches for a random year between 1860 and the current
         year and chooses a track released that year, per Spotify, based on a
-        random offset of the results (0 offset = first page of results, up to
-        offset 1000 per Spotify's search limitation. Each page of results will
-        randomly contain 1 to Spotify's maximum of 50 results).
-      </h4>
-      <h5>
+        random offset of the results.
+      </p>
+      <p class="mb-6 text-sm">
         *If it doesn't produce a valid result or if the API is overloaded (Code
-        429) there won't be a song added, so the total number will be fewer than
-        the attempts chosen. This search will find anything Spotify considers a
-        track, so not necessarily just songs, but it won't find audiobooks as
-        defined as such by Spotify, or podcast episodes. None of the tracks
-        added per run will be duplicates of each other, but they CAN be tracks
-        that are already on the playlist if it exists.
-      </h5>
+        429), there won't be a song added, so the total number will be fewer
+        than the attempts chosen. This search will find anything Spotify
+        considers a track.
+      </p>
       <div class="mb-4">
-        <label for="numberOfSongs" class="block mt-2 text-sm"
+        <label for="numberOfSongs" class="block mb-2 text-sm"
           >Number of Tracks:</label
         >
         <input
@@ -54,21 +44,22 @@
           id="numberOfSongs"
           min="1"
           value="24"
-          class="w-16 p-2 text-sm"
+          class="w-16 p-2 text-sm border border-gray-300 rounded"
         />
       </div>
       <button
         id="createPlaylistAndAddTracksButton"
-        class="mt-6 px-4 py-2 bg-green-500 text-white border-none cursor-pointer text-md"
+        class="px-6 py-3 bg-green-500 text-white rounded cursor-pointer text-md"
       >
         Create Playlist and/or Add Tracks
       </button>
-      <div id="added-songs" class="mt-4 text-sm"></div>
+      <div id="added-songs" class="mt-8 text-sm"></div>
       <div
         id="console"
         class="h-32 overflow-y-auto border-1 border-gray-300 p-4 mt-4 text-sm"
       ></div>
     </div>
+
     <script>
       const CLIENT_ID = "a34e83c02f6e439a891f4c2f6ba197fe";
       const REDIRECT_URI = "https://spotify-topaz-nine.vercel.app/";
@@ -197,10 +188,13 @@
           }
         });
 
-        addedSongsDiv.innerHTML = "<p>Added Songs:</p>";
+        addedSongsDiv.innerHTML += "<p>Added Songs:</p>";
         uniqueAddedSongs.forEach((song) => {
           addedSongsDiv.innerHTML += `<p>${song.year}: ${song.artist} - ${song.name} (${song.uri})</p>`;
         });
+
+        // Scroll to the bottom to show the latest added songs
+        addedSongsDiv.scrollTop = addedSongsDiv.scrollHeight;
       };
 
       const searchPlaylist = async (accessToken, playlistName) => {
