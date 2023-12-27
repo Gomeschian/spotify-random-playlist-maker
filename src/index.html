@@ -131,7 +131,7 @@
             const retryAfter =
               parseInt(response.headers.get("Retry-After")) || 1;
             console.log(`Rate limited. Retrying after ${retryAfter} seconds.`);
-            await wait(retryAfter * 2); // Exponential backoff
+            await wait(retryAfter * 1000); // Retry after the specified time (in milliseconds)
             return searchTrackAndAddToPlaylist(
               accessToken,
               playlistUrl,
@@ -140,47 +140,15 @@
             );
           }
 
+          if (!response.ok) {
+            throw new Error(`Failed to fetch data: ${response.statusText}`);
+          }
+
           const data = await response.json();
           const tracks = data.tracks.items;
 
-          if (tracks.length > 0) {
-            const track = tracks[0];
-            const trackUri = track.uri;
-
-            const addResponse = await fetch(playlistUrl, {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                uris: [trackUri],
-              }),
-            });
-
-            if (addResponse.ok) {
-              const trackInfo = {
-                year,
-                name: track.name,
-                artist: track.artists.map((artist) => artist.name).join(", "),
-                uri: trackUri,
-              };
-              addedSongs.push(trackInfo);
-              console.log(`Track from ${year} added to playlist successfully`);
-              logToConsole(`Track from ${year} added to playlist successfully`);
-              return;
-            } else {
-              const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
-              console.error(errorMessage);
-              logToConsole(errorMessage);
-            }
-          } else {
-            const errorMessage = `No track found for year ${year}`;
-            console.error(errorMessage);
-            logToConsole(errorMessage);
-          }
         } catch (error) {
-          const errorMessage = `Error searching for track: ${error.message}`;
+          const errorMessage = `An error occurred while searching for a track: ${error.message}`;
           console.error(errorMessage);
           logToConsole(errorMessage);
         }
