@@ -135,7 +135,7 @@
         addedSongs
       ) => {
         const randomOffset = getRandomOffset();
-        const randomLimit =  getRandomLimit();
+        const randomLimit = getRandomLimit();
         const searchUrl = `https://api.spotify.com/v1/search?type=track&q=year:${year}&offset=${randomOffset}&limit=${randomLimit}`;
 
         try {
@@ -230,17 +230,29 @@
       };
 
       const searchPlaylist = async (accessToken, playlistName) => {
-        const searchUrl = `https://api.spotify.com/v1/me/playlists?limit=50`;
+        let offset = 0;
+        let playlist = null;
 
-        const response = await fetch(searchUrl, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        while (!playlist) {
+          const searchUrl = `https://api.spotify.com/v1/me/playlists?limit=50&offset=${offset}`;
 
-        const data = await response.json();
+          const response = await fetch(searchUrl, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
 
-        const playlist = data.items.find((item) => item.name === playlistName);
+          const data = await response.json();
+
+          playlist = data.items.find((item) => item.name === playlistName);
+
+          if (!playlist && data.next) {
+            offset += 50;
+          } else {
+            break;
+          }
+        }
+
         return playlist;
       };
 
