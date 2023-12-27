@@ -117,30 +117,13 @@
 
       const getRandomYear = () => {
         const currentYear = new Date().getFullYear();
-        const numYears = currentYear - 1860 + 1; // Calculate the number of years in the range
-
-        let randomYear = currentYear; // Initialize randomYear with the current year
-
-        for (let i = 0; i < numYears; i++) {
-          randomYear =
-            Math.floor(Math.random() * (randomYear - 1860 + 1)) + 1860; // Update randomYear with a new random year within the range
-        }
-
-        return randomYear;
+        return Math.floor(Math.random() * (currentYear - 1860 + 1)) + 1860;
       };
 
       const getRandomOffset = () => {
-        const min = 0;
-        const max = 1000;
-        const possibleOffsets = max - min + 1;
-        let offset = 0;
-
-        for (let i = 0; i < possibleOffsets; i++) {
-          offset = Math.floor(Math.random() * possibleOffsets) + min;
-        }
-
-        return offset;
+        return Math.floor(Math.random() * 1001);
       };
+
       const searchTrackAndAddToPlaylist = async (
         accessToken,
         playlistUrl,
