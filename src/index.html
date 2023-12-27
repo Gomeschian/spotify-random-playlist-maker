@@ -115,8 +115,6 @@
         )}&scope=${encodeURIComponent(SCOPES)}&response_type=token`;
       };
 
-      const crypto = require("crypto");
-
       const getRandomYear = () => {
         const currentYear = new Date().getFullYear();
         const randomBytes = crypto.randomBytes(4);
