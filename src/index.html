@@ -37,19 +37,19 @@
         anything Spotify considers a track, so not necessarily all songs, but no
         audiobooks as such or podcasts.
       </p>
-      <p class="mb-6 text-lg font-bold">
+      <p class="mb-6 text-lg">
         *If searching doesn't produce a valid result or if the API is overloaded
         (Code 429), there won't be a song added, so the total number will be
         fewer than the attempts chosen.
       </p>
 
-      <p class="mb-6 text-lg font-bold">
+      <p class="mb-6 text-lg">
         **1 track search = 1 request, plus at least one request each time your
         library is searched for the playlist to be added to or made. Spotify
         searches up to fifty at a time, so if your playlist is further down the
         API will be called multiple times to find it.
       </p>
-      <p class="mb-6 text-lg font-bold">
+      <p class="mb-6 text-lg">
         ***Unclear if anything that old is actually on Spotify under its
         original release date.
       </p>
@@ -67,7 +67,8 @@
       </div>
       <button
         id="createPlaylistAndAddTracksButton"
-        class="px-6 py-3 bg-green-500 text-white rounded cursor-pointer text-lg"
+        class="px-6 py-3 bg-green-500 text-white rounded cursor-pointer text-lg active:bg-green-700 active:transform active:shadow-md"
+        onclick="buttonClickHandler(this)"
       >
         Create Playlist and/or Add Tracks
       </button>
@@ -77,7 +78,7 @@
       >
         <div class="underline">Results</div>
       </div>
-      
+
       <div
         id="console"
         class="h-20 overflow-y-auto border-1 border-gray-300 p-4 mt-4 text-lg hidden"
