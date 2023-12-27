@@ -115,13 +115,21 @@
         )}&scope=${encodeURIComponent(SCOPES)}&response_type=token`;
       };
 
+      const crypto = require("crypto");
+
       const getRandomYear = () => {
         const currentYear = new Date().getFullYear();
-        return Math.floor(Math.random() * (currentYear - 1860 + 1)) + 1860;
+        const randomBytes = crypto.randomBytes(4);
+        const randomYear = Math.floor(
+          (randomBytes.readUInt32LE(0) % (currentYear - 1860 + 1)) + 1860
+        );
+        return randomYear;
       };
 
       const getRandomOffset = () => {
-        return Math.floor(Math.random() * 1001);
+        const array = new Uint32Array(1);
+        window.crypto.getRandomValues(array);
+        return array[0] % 1001;
       };
 
       const searchTrackAndAddToPlaylist = async (
