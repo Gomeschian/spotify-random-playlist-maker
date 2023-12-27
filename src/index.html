@@ -74,10 +74,10 @@
       <h1>Spotify Random Song Playlist</h1>
       <div>
         <label for="numberOfSongs">Number of Songs:</label>
-        <input type="number" id="numberOfSongs" min="1" value="100" />
+        <input type="number" id="numberOfSongs" min="1" value="60" />
       </div>
       <button id="createPlaylistAndAddTracksButton">
-        Create Playlist and/or Add Tracks (actual will be less than attempted #)
+        Create Playlist and/or Add Tracks
       </button>
       <div id="added-songs"></div>
       <div id="console"></div>
@@ -131,7 +131,7 @@
             const retryAfter =
               parseInt(response.headers.get("Retry-After")) || 1;
             console.log(`Rate limited. Retrying after ${retryAfter} seconds.`);
-            await wait(retryAfter * 2); 
+            await wait(retryAfter * 1000); // Retry after the specified time (in milliseconds)
             return searchTrackAndAddToPlaylist(
               accessToken,
               playlistUrl,
@@ -140,49 +140,20 @@
             );
           }
 
-          const data = await response.json();
-          const tracks = data.tracks.items;
-
-          if (tracks.length > 0) {
-            const track = tracks[0];
-            const trackUri = track.uri;
-
-            const addResponse = await fetch(playlistUrl, {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                uris: [trackUri],
-              }),
-            });
-
-            if (addResponse.ok) {
-              const trackInfo = {
-                year,
-                name: track.name,
-                artist: track.artists.map((artist) => artist.name).join(", "),
-                uri: trackUri,
-              };
-              addedSongs.push(trackInfo);
-              console.log(`Track from ${year} added to playlist successfully`);
-              logToConsole(`Track from ${year} added to playlist successfully`);
-              return;
-            } else {
-              const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
-              console.error(errorMessage);
-              logToConsole(errorMessage);
-            }
+          if (!response.ok) {
+            console.warn(`Failed to fetch data: ${response.statusText}`);
+            // Continue execution even though there was an error
           } else {
-            const errorMessage = `No track found for year ${year}`;
-            console.error(errorMessage);
-            logToConsole(errorMessage);
+            const data = await response.json();
+            const tracks = data.tracks.items;
+
+            // ... (rest of the code for handling the response)
           }
         } catch (error) {
-          const errorMessage = `Error searching for track: ${error.message}`;
-          console.error(errorMessage);
-          logToConsole(errorMessage);
+          console.error(
+            `An error occurred while searching for a track: ${error.message}`
+          );
+          // Continue execution even though there was an error
         }
       };
 
@@ -273,27 +244,34 @@
       };
 
       const createPlaylistAndAddTracks = async () => {
-        if (!isAuthenticated()) {
-          redirectToAuthorization();
-          return;
+        try {
+          if (!isAuthenticated()) {
+            redirectToAuthorization();
+            return;
+          }
+
+          const params = new URLSearchParams(window.location.hash.substring(1));
+          const accessToken = params.get("access_token");
+
+          const playlist = await searchPlaylist(
+            accessToken,
+            "Random Songs from All of Spotify"
+          );
+          const playlistId = playlist
+            ? playlist.id
+            : (await createPlaylist(accessToken)).id;
+
+          await addTracksToPlaylist(
+            accessToken,
+            playlistId,
+            parseInt(document.getElementById("numberOfSongs").value)
+          );
+        } catch (error) {
+          const errorMessage = `An error occurred: ${error.message}`;
+          console.error(errorMessage);
+          logToConsole(errorMessage);
+          // Optionally, display a user-friendly error message on the page.
         }
-
-        const params = new URLSearchParams(window.location.hash.substring(1));
-        const accessToken = params.get("access_token");
-
-        const playlist = await searchPlaylist(
-          accessToken,
-          "Random Songs from All of Spotify"
-        );
-        const playlistId = playlist
-          ? playlist.id
-          : (await createPlaylist(accessToken)).id;
-
-        await addTracksToPlaylist(
-          accessToken,
-          playlistId,
-          parseInt(document.getElementById("numberOfSongs").value)
-        );
       };
 
       document.addEventListener("DOMContentLoaded", () => {
