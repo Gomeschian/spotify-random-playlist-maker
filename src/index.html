@@ -15,32 +15,45 @@
 
   <body class="font-sans bg-gray-100 p-10">
     <div id="app" class="flex flex-col items-center justify-center text-center">
-      <h1 class="mb-4 text-3xl font-bold">Spotify Random Track Playlist</h1>
-      <p class="mb-8 text-lg">
+      <h1 class="mb-4 text-4xl font-bold">Spotify Random Track Playlist</h1>
+      <p class="mb-8 text-xl">
         Adds a selection of random tracks to a playlist called "Random Songs
         from All of Spotify" (will be created if it doesn't exist), up to but
         probably significantly fewer than the number chosen below.*
       </p>
-      <p class="mb-6 text-sm">
-        Spotify allows ~180 API requests per minute. If it doesn't work, try
-        waiting a bit and consider reducing the number of songs to be added.
+      <p class="mb-6 text-lg">
+        Spotify allows ~180 API requests per minute**. If it doesn't work, try
+        waiting a little and maybe consider reducing the number of songs to be
+        added. Unexplained errors are probably API limits.
       </p>
-      <p class="mb-6 text-sm">
-        Methodology: Searches for a random year between 1860 and the current
-        year and chooses a track dated that year, per Spotify, based on a
-        random section of the results (up to the one thousand and first result,
-        from pages randomly containing 1 to 50 results, varying per search). The limits are
-        Spotify's, the randomization chosen to mitigate them.
+      <p class="mb-6 text-lg">
+        Methodology: Searches for a random year between 1860 (year of oldest
+        sound recording***) and the current year and chooses a track dated that
+        year, per Spotify, based on a random section of the results (up to the
+        one thousand and first result, from pages randomly containing 1 to 50
+        results, varying per search). The limits are Spotify's, the
+        randomization here chosen to mitigate them. This search will find
+        anything Spotify considers a track, so not necessarily all songs, but no
+        audiobooks as such or podcasts.
       </p>
-      <p class="mb-6 text-sm">
+      <p class="mb-6 text-lg">
         *If searching doesn't produce a valid result or if the API is overloaded
         (Code 429), there won't be a song added, so the total number will be
-        fewer than the attempts chosen. This search will find anything Spotify
-        considers a track, so not necessarily all songs, but no audiobooks as
-        such or podcasts.
+        fewer than the attempts chosen.
+      </p>
+
+      <p class="mb-6 text-lg">
+        **1 track search = 1 request, plus at least one request each time your
+        library is searched for the playlist to be added to or made. Spotify
+        searches up to fifty at a time, so if your playlist is further down the
+        API will be called multiple times to find it
+      </p>
+      <p class="mb-6 text-lg">
+        ***Unclear if anything that old is actually on Spotify under its
+        original release date.
       </p>
       <div class="mb-4">
-        <label for="numberOfSongs" class="block mb-2 text-sm"
+        <label for="numberOfSongs" class="block mb-2 text-lg"
           >Number of Tracks:</label
         >
         <input
@@ -48,19 +61,19 @@
           id="numberOfSongs"
           min="1"
           value="24"
-          class="w-16 p-2 text-sm border border-gray-300 rounded"
+          class="w-16 p-2 text-lg border border-gray-300 rounded"
         />
       </div>
       <button
         id="createPlaylistAndAddTracksButton"
-        class="px-6 py-3 bg-green-500 text-white rounded cursor-pointer text-md"
+        class="px-6 py-3 bg-green-500 text-white rounded cursor-pointer text-lg"
       >
         Create Playlist and/or Add Tracks
       </button>
-      <div id="added-songs" class="mt-8 text-sm"></div>
+      <div id="added-songs" class="mt-8 text-lg"></div>
       <div
         id="console"
-        class="h-32 overflow-y-auto border-1 border-gray-300 p-4 mt-4 text-sm"
+        class="h-32 overflow-y-auto border-1 border-gray-300 p-4 mt-4 text-lg"
       ></div>
     </div>
 
