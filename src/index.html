@@ -193,20 +193,29 @@
       ) => {
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
         const addedSongs = [];
-        const batchSize = 100;
+        const tracksToAdd = [];
 
-        for (let i = 0; i < numberOfSongs; i += batchSize) {
+        for (let i = 0; i < numberOfSongs; i++) {
+          const randomYear = getRandomYear();
+          tracksToAdd.push({
+            accessToken,
+            playlistUrl,
+            year: randomYear,
+            addedSongs,
+          });
+        }
+
+        for (let i = 0; i < tracksToAdd.length; i += 100) {
           const batchPromises = [];
-          const remainingSongs = Math.min(batchSize, numberOfSongs - i);
+          const batch = tracksToAdd.slice(i, i + 100);
 
-          for (let j = 0; j < remainingSongs; j++) {
-            const randomYear = getRandomYear();
+          for (const trackInfo of batch) {
             batchPromises.push(
               searchTrackAndAddToPlaylist(
-                accessToken,
-                playlistUrl,
-                randomYear,
-                addedSongs
+                trackInfo.accessToken,
+                trackInfo.playlistUrl,
+                trackInfo.year,
+                trackInfo.addedSongs
               )
             );
           }
