@@ -96,6 +96,8 @@
       <div id="console"></div>
     </div>
     <script>
+      import { enc, Random } from "crypto-js";
+
       const CLIENT_ID = "a34e83c02f6e439a891f4c2f6ba197fe";
       const REDIRECT_URI = "https://spotify-topaz-nine.vercel.app/";
       const SCOPES =
@@ -117,17 +119,17 @@
 
       const getRandomYear = () => {
         const currentYear = new Date().getFullYear();
-        const randomBytes = crypto.randomBytes(4);
-        const randomYear = Math.floor(
-          (randomBytes.readUInt32LE(0) % (currentYear - 1860 + 1)) + 1860
-        );
+        const randomBytes = Random.randomBytes(4); // Generate 4 random bytes
+        const randomInt = enc.BigNumber.parse(randomBytes.toString(enc.Hex)); // Convert bytes to a random integer
+        const randomYear =
+          randomInt.mod(currentYear - 1860 + 1).toNumber() + 1860; // Restrict the range to 1860 to currentYear
         return randomYear;
       };
 
       const getRandomOffset = () => {
-        const array = new Uint32Array(1);
-        window.crypto.getRandomValues(array);
-        return array[0] % 1001;
+        const randomBytes = Random.randomBytes(4); // Generate 4 random bytes
+        const randomInt = enc.BigNumber.parse(randomBytes.toString(enc.Hex)); // Convert bytes to a random integer
+        return randomInt.mod(1001).toNumber(); // Restrict the range to 0 to 1000
       };
 
       const searchTrackAndAddToPlaylist = async (
