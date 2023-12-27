@@ -233,27 +233,44 @@
         let offset = 0;
         let playlist = null;
 
-        while (!playlist) {
-          const searchUrl = `https://api.spotify.com/v1/me/playlists?limit=50&offset=${offset}`;
+        try {
+          while (!playlist) {
+            const searchUrl = `https://api.spotify.com/v1/me/playlists?limit=50&offset=${offset}`;
 
-          const response = await fetch(searchUrl, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
+            console.log("Searching playlists at offset", offset);
 
-          const data = await response.json();
+            const response = await fetch(searchUrl, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
 
-          playlist = data.items.find((item) => item.name === playlistName);
+            console.log("Received response:", response);
 
-          if (!playlist && data.next) {
-            offset += 50;
-          } else {
-            break;
+            if (!response.ok) {
+              throw new Error("Error fetching playlists");
+            }
+
+            const data = await response.json();
+
+            console.log("Received JSON data:", data);
+
+            playlist = data.items.find((item) => item.name === playlistName);
+
+            if (!playlist && data.next) {
+              offset = 50;
+            } else {
+              break;
+            }
           }
-        }
 
-        return playlist;
+          console.log("Found playlist:", playlist);
+          return playlist;
+        } catch (error) {
+          console.error("Error searching playlist:", error);
+          alert("An error occurred while searching for the playlist");
+          throw error;
+        }
       };
 
       const createPlaylist = async (accessToken) => {
