@@ -233,19 +233,10 @@
             uniqueAddedSongs.push(song);
           }
         });
-        console.log(
-          "Added Songs to Add: "`Added ${uniqueAddedSongs.length} unique songs to the playlist`
-        );
+
         addedSongsDiv.innerHTML += `<p><strong>Added Songs: ${uniqueAddedSongs.length}</strong></p>`;
-        console.log(
-          "Added Songs Reported: "`Added ${uniqueAddedSongs.length} unique songs to the playlist`
-        );
         uniqueAddedSongs.forEach((song) => {
           addedSongsDiv.innerHTML += `<p>${song.year}: ${song.artist} - ${song.name} (${song.uri})</p>`;
-          console.log(
-            "Added Songs to Add: " +
-              `Added ${uniqueAddedSongs.length} unique songs to the playlist`
-          );
         });
 
         // Scroll to the bottom to show the latest added songs
@@ -253,54 +244,54 @@
       };
 
       const searchPlaylist = async (accessToken, playlistName) => {
-        let offset = 0;
-        let playlist = null;
+  let offset = 0;
+  let playlist = null;
 
-        try {
-          while (!playlist) {
-            const searchUrl = `https://api.spotify.com/v1/me/playlists?limit=50&offset=${offset}`;
+  try {
+    while (!playlist) {
+      const searchUrl = `https://api.spotify.com/v1/me/playlists?limit=50&offset=${offset}`;
 
-            console.log("Searching playlists at offset", offset);
+      console.log("Searching playlists at offset", offset);
 
-            const response = await fetch(searchUrl, {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            });
+      const response = await fetch(searchUrl, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-            console.log("Received response:", response);
+      console.log("Received response:", response);
 
-            if (!response.ok) {
-              throw new Error(
-                "Error fetching playlists : " +
-                  response.status +
-                  " " +
-                  response.statusText
-              );
-            }
+      if (!response.ok) {
+        throw new Error(
+          "Error fetching playlists : " +
+            response.status +
+            " " +
+            response.statusText
+        );
+      }
 
-            const data = await response.json();
+      const data = await response.json();
 
-            console.log("Received JSON data:", data);
+      console.log("Received JSON data:", data);
 
-            playlist = data.items.find((item) => item.name === playlistName);
+      playlist = data.items.find((item) => item.name === playlistName);
 
-            if (!playlist && data.next) {
-              offset += 50;
-              await new Promise((resolve) => setTimeout(resolve, searchDelay));
-            } else {
-              break;
-            }
-          }
+      if (!playlist && data.next) {
+        offset += 50;
+        await new Promise((resolve) => setTimeout(resolve, searchDelay));
+      } else {
+        break;
+      }
+    }
 
-          console.log("Found playlist:", playlist);
-          return playlist;
-        } catch (error) {
-          console.error("Error searching playlist:", error);
-          alert("An error occurred while searching for the playlist: " + error);
-          throw error;
-        }
-      };
+    console.log("Found playlist:", playlist);
+    return playlist;
+  } catch (error) {
+    console.error("Error searching playlist:", error);
+    alert("An error occurred while searching for the playlist: " + error);
+    throw error;
+  }
+};
 
       const createPlaylist = async (accessToken) => {
         const createPlaylistUrl = "https://api.spotify.com/v1/me/playlists";
