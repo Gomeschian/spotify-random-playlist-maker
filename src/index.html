@@ -309,8 +309,8 @@
         const params = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = params.get("access_token");
 
-        // Notify the user that the process is running
-        alert("Creating playlist and adding tracks. Please wait...");
+        // Display a loading spinner
+        showLoadingSpinner();
 
         try {
           const playlist = await searchPlaylist(
@@ -328,11 +328,20 @@
           );
         } catch (error) {
           console.error("An error occurred:", error);
-          alert("An error occurred: " + error.message);
+          // Handle error, update UI, etc.
         } finally {
-          // Remove the alert when the process is complete or an error occurs
-          alert("Playlist creation and track addition complete!");
+          // Hide the loading spinner when the process is complete or an error occurs
+          hideLoadingSpinner();
         }
+      };
+
+      const showLoadingSpinner = () => {
+        // Display or update UI to show a loading spinner
+        // For example, you can toggle a CSS class on a spinner element
+      };
+
+      const hideLoadingSpinner = () => {
+        // Hide or update UI to hide the loading spinner
       };
 
       document.addEventListener("DOMContentLoaded", () => {
