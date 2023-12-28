@@ -18,9 +18,7 @@
       <h1 class="mb-4 text-4xl font-bold">Spotify Random Track Playlist</h1>
       <p class="mb-8 text-xl">
         Adds a selection of random tracks to a playlist called "Random Songs
-        from All of Spotify" (will be created if it doesn't exist). Does not
-        check against the playlist for duplicate tracks, but this app won't add more
-        than one instance of the same track.
+        from All of Spotify" (will be created if it doesn't exist).
       </p>
       <p class="mb-6 text-lg"></p>
       <p class="mb-6 text-lg">
@@ -32,7 +30,9 @@
         randomization here chosen to mitigate them. This search will find
         anything Spotify considers a track, so not necessarily only songs, but
         no audiobooks as such or podcasts. If an API limit is hit during running
-        then fewer songs than requested may actually be added.
+        then fewer songs than requested may actually be added. Does not check
+        against the existing playlist for duplicate tracks, but this app won't
+        add more than one instance of the same track while running.
       </p>
       <p class="mb-6 text-lg">
         A third-party test suggests Spotify allows ~180 API requests per minute,
@@ -340,7 +340,6 @@
           console.error("An error occurred:", error);
           alert("An error occurred: " + error.message);
         } finally {
-          // Remove the alert when the process is complete or an error occurs
           alert("Done running.");
         }
       };
