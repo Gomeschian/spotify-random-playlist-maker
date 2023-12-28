@@ -135,6 +135,7 @@
       const searchTrackAndAddToPlaylist = async (
         accessToken,
         playlistUrl,
+        addedSongs
       ) => {
         const maxRetries = numberOfSongs * 10;
         let retryCount = 0;
