@@ -205,11 +205,7 @@
 
         // Search and add tracks until the desired number is reached
         while (addedSongs.length < numberOfSongs) {
-          await searchTrackAndAddToPlaylist(
-            accessToken,
-            playlistUrl,
-            addedSongs
-          );
+          await searchAndPopulateClientSideList(accessToken, numberOfSongs);
 
           // Introduce a delay between requests
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
