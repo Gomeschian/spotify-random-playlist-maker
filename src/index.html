@@ -88,7 +88,7 @@
 
         <div
           id="console"
-          class="hidden h-20 overflow-y-auto border-1 border-gray-300 p-4 mt-4 text-lg"
+          class="h-40 overflow-y-auto border-1 border-gray-300 p-4 mt-4 text-lg"
         ></div>
       </div>
     </div>
@@ -362,6 +362,7 @@
       }
 
       const logToConsole = (message) => {
+        console.log(message); // Log to the browser console
         consoleDiv.innerHTML += `<p>${message}</p>`;
         consoleDiv.scrollTop = consoleDiv.scrollHeight;
       };
