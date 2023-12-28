@@ -214,32 +214,92 @@
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
         const addedSongs = [];
 
-        // Function to search and add tracks with a delay
-        const searchAndAddWithDelay = async () => {
-          const randomYear = getRandomYear();
-          await searchTrackAndAddToPlaylist(
-            accessToken,
-            playlistUrl,
-            randomYear,
-            addedSongs
-          );
-
-          // Introduce a delay (e.g., 2 seconds) between requests
-          await new Promise((resolve) => setTimeout(resolve, searchDelay));
-        };
-
         // Retry until the correct number of songs is added
         while (addedSongs.length < numberOfSongs) {
           const remainingSongs = numberOfSongs - addedSongs.length;
 
-          // Retry the search with a delay to avoid hitting API limits
-          const retryPromises = Array.from(
-            { length: remainingSongs },
-            searchAndAddWithDelay
-          );
-          await Promise.all(retryPromises);
+          // Search and add tracks with a delay
+          for (let i = 0; i < remainingSongs; i++) {
+            const randomYear = getRandomYear();
+            await searchTrackAndAddToPlaylist(
+              accessToken,
+              playlistUrl,
+              randomYear,
+              addedSongs
+            );
+
+            // Introduce a delay (e.g., 2 seconds) between requests
+            await new Promise((resolve) => setTimeout(resolve, searchDelay));
+          }
+
+          // Divide added songs into batches of up to 100
+          const batches = [];
+          while (addedSongs.length > 0) {
+            batches.push(addedSongs.splice(0, 100));
+          }
+
+          // Add batches to the playlist with retry logic
+          for (const batch of batches) {
+            const uris = batch.map((song) => song.uri);
+            let retryCount = 0;
+            let success = false;
+
+            while (!success && retryCount < maxRetries) {
+              try {
+                const addResponse = await fetch(playlistUrl, {
+                  method: "POST",
+                  headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    uris: uris,
+                  }),
+                });
+
+                if (addResponse.ok) {
+                  console.log(
+                    `Batch of ${uris.length} tracks added to playlist successfully`
+                  );
+                  success = true;
+                } else {
+                  const errorMessage = `Error adding batch to the playlist: ${addResponse.statusText}`;
+                  console.error(errorMessage);
+                  logToConsole(errorMessage);
+                  retryCount++;
+                  // Introduce a delay (e.g., 2 seconds) between retries
+                  await new Promise((resolve) =>
+                    setTimeout(resolve, retryDelay)
+                  );
+                }
+              } catch (error) {
+                console.error(`Error adding batch to the playlist: ${error}`);
+                logToConsole(`Error adding batch to the playlist: ${error}`);
+                retryCount++;
+                // Introduce a delay (e.g., 2 seconds) between retries
+                await new Promise((resolve) => setTimeout(resolve, retryDelay));
+              }
+            }
+
+            if (!success) {
+              console.error(
+                `Failed to add batch to the playlist after ${maxRetries} retries`
+              );
+              logToConsole(
+                `Failed to add batch to the playlist after ${maxRetries} retries`
+              );
+              // Handle failure after max retries here if needed
+            }
+
+            // Introduce a delay (e.g., 2 seconds) between batch requests
+            await new Promise((resolve) => setTimeout(resolve, searchDelay));
+          }
         }
 
+        // Display added songs information
+        displayAddedSongsInfo(addedSongs);
+      };
+      const displayAddedSongsInfo = (addedSongs) => {
         const uniqueAddedSongs = [];
         const uniqueUris = new Set();
         addedSongs.forEach((song) => {
@@ -248,18 +308,17 @@
             uniqueAddedSongs.push(song);
           }
         });
-        console.log(uniqueAddedSongs.length);
+
         addedSongsDiv.innerHTML += `<p><strong>Added Songs: ${uniqueAddedSongs.length}</strong></p>`;
-        console.log(uniqueAddedSongs.length);
 
         uniqueAddedSongs.forEach((song) => {
           addedSongsDiv.innerHTML += `<p>${song.year}: ${song.artist} - ${song.name} (${song.uri})</p>`;
         });
-        console.log(uniqueAddedSongs.length);
 
         // Scroll to the bottom to show the latest added songs
         addedSongsDiv.scrollTop = addedSongsDiv.scrollHeight;
       };
+
       const getPlaylistTracks = async (accessToken, playlistTracksUrl) => {
         try {
           const response = await fetch(playlistTracksUrl, {
