@@ -256,7 +256,7 @@
             playlist = data.items.find((item) => item.name === playlistName);
 
             if (!playlist && data.next) {
-              offset = 50;
+              offset += 50;
             } else {
               break;
             }
