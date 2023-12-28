@@ -18,40 +18,39 @@
       <h1 class="mb-4 text-4xl font-bold">Spotify Random Track Playlist</h1>
       <p class="mb-8 text-xl">
         Adds a selection of random tracks to a playlist called "Random Songs
-        from All of Spotify" (will be created if it doesn't exist), up to but
-        probably significantly fewer than the number chosen below.*
+        from All of Spotify" (will be created if it doesn't exist).
       </p>
-      <p class="mb-6 text-lg">
-        A third-party test suggests Spotify allows ~180 API requests per
-        minute**. If it doesn't work, try waiting a little and maybe consider
-        reducing the number of songs to be added. Unexplained errors are
-        probably API limits.
-      </p>
+      <p class="mb-6 text-lg"></p>
       <p class="mb-6 text-lg">
         Methodology: Searches for a random year between 1860 (year of oldest
-        sound recording***) and the current year and chooses a track dated that
+        sound recording*) and the current year and chooses a track dated that
         year, per Spotify, based on a random section of the results (up to the
         one thousand and first result, from pages randomly containing 1 to 50
         results, varying per search). The limits are Spotify's, the
         randomization here chosen to mitigate them. This search will find
         anything Spotify considers a track, so not necessarily only songs, but
-        no audiobooks as such or podcasts.
+        no audiobooks as such or podcasts. If an API limit is hit during running
+        then fewer songs than requested may actually be added.
       </p>
-      <p class="mb-6 text-lg font-bold">
-        *If searching doesn't produce a valid result or if the API is overloaded
-        (Code 429), there won't be a song added, so the total number will be
-        fewer than the attempts chosen.
+      <p class="mb-6 text-lg ">
+        A third-party test suggests Spotify allows ~180 API requests per minute,
+        but there also seems to be a broader limit on top of that (e.g. total
+        calls within x minutes). If an error happens try waiting a little and
+        maybe consider reducing the number of songs to be added (generally runs
+        faster on smaller batches). Unexplained errors are probably due to
+        hitting API limits (Code 429).
       </p>
 
-      <p class="mb-6 text-lg font-bold">
-        **1 track search = 1 request, plus at least one request each time your
-        library is searched for the playlist to be added to or made. Spotify
-        searches up to fifty at a time, so if your playlist is further down the
-        API will be called multiple times to find it.
+      <p class="mb-6 text-lg ">
+        1 track search = 1 request, plus retries for unsuccesful searches and
+        at least one request each time your library is searched for the playlist
+        to be added to or made. Spotify searches up to fifty at a time, so if
+        your playlist is further down in your library the API will be called
+        multiple times to find it.
       </p>
-      <p class="mb-6 text-lg font-bold">
-        ***Unclear if anything that old is actually on Spotify under its
-        original release date.
+      <p class="mb-6 text-lg">
+        *Unclear if anything that old is actually on Spotify under its original
+        release date.
       </p>
       <div class="mb-4 flex flex-col items-center justify-center" id="buttons">
         <label for="numberOfSongs" class="block mb-2 text-lg"
@@ -61,6 +60,7 @@
           type="number"
           id="numberOfSongs"
           min="1"
+          max="100"
           value="23"
           class="w-16 p-2 text-lg border border-gray-300 rounded"
         />
