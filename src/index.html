@@ -34,8 +34,8 @@
         one thousand and first result, from pages randomly containing 1 to 50
         results, varying per search). The limits are Spotify's, the
         randomization here chosen to mitigate them. This search will find
-        anything Spotify considers a track, so not necessarily only songs, but no
-        audiobooks as such or podcasts.
+        anything Spotify considers a track, so not necessarily only songs, but
+        no audiobooks as such or podcasts.
       </p>
       <p class="mb-6 text-lg font-bold">
         *If searching doesn't produce a valid result or if the API is overloaded
@@ -74,7 +74,7 @@
 
       <div
         id="added-songs"
-        class="mt-8  max-w-screen-xl text-lg p-4 border border-gray-300 max-h-52 overflow-y-auto"
+        class="mt-8 max-w-screen-xl text-lg p-4 border border-gray-300 max-h-52 overflow-y-auto"
       >
         <div class="underline">Results</div>
       </div>
@@ -190,20 +190,33 @@
         const addedSongs = [];
         const searchPromises = [];
 
-        for (let i = 0; i < numberOfSongs; i++) {
-          const randomYear = getRandomYear();
-          searchPromises.push(
-            searchTrackAndAddToPlaylist(
-              accessToken,
-              playlistUrl,
-              randomYear,
-              addedSongs
-            )
-          );
+        const retrySearch = async (remainingSongs) => {
+          for (let i = 0; i < remainingSongs; i++) {
+            const randomYear = getRandomYear();
+            searchPromises.push(
+              searchTrackAndAddToPlaylist(
+                accessToken,
+                playlistUrl,
+                randomYear,
+                addedSongs
+              )
+            );
+          }
+          await Promise.all(searchPromises);
+        };
+
+        // Initial search
+        await retrySearch(numberOfSongs);
+
+        // Check if the number of added songs is equal to the desired number
+        if (addedSongs.length < numberOfSongs) {
+          const remainingSongs = numberOfSongs - addedSongs.length;
+
+          // Retry the search to make up the difference
+          await retrySearch(remainingSongs);
         }
 
-        await Promise.all(searchPromises);
-
+        // The rest of the code remains the same
         const uniqueAddedSongs = [];
         const uniqueUris = new Set();
         addedSongs.forEach((song) => {
