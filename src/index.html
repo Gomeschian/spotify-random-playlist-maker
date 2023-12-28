@@ -111,21 +111,7 @@
         )}&scope=${encodeURIComponent(SCOPES)}&response_type=token`;
       };
 
-      // Copy results to clipboard when the button is clicked
-    const copyResultsButton = document.getElementById("copyResultsButton");
-    copyResultsButton.addEventListener("click", () => {
-        const addedSongsDiv = document.getElementById("added-songs");
-        const textToCopy = addedSongsDiv.innerText;
-
-        const tempTextarea = document.createElement("textarea");
-        tempTextarea.value = textToCopy;
-        document.body.appendChild(tempTextarea);
-        tempTextarea.select();
-        document.execCommand("copy");
-        document.body.removeChild(tempTextarea);
-
-        alert("Results copied to clipboard!");
-    });
+     
 
       const getRandomYear = () => {
         const currentYear = new Date().getFullYear();
@@ -378,6 +364,23 @@
         consoleDiv.innerHTML += `<p>${message}</p>`;
         consoleDiv.scrollTop = consoleDiv.scrollHeight;
       };
+
+       // Copy results to clipboard when the button is clicked
+    const copyResultsButton = document.getElementById("copyResultsButton");
+    copyResultsButton.addEventListener("click", () => {
+        const addedSongsDiv = document.getElementById("added-songs");
+        const textToCopy = addedSongsDiv.innerText;
+
+        const tempTextarea = document.createElement("textarea");
+        tempTextarea.value = textToCopy;
+        document.body.appendChild(tempTextarea);
+        tempTextarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempTextarea);
+
+        alert("Results copied to clipboard!");
+    });
+    
     </script>
   </body>
 </html>
