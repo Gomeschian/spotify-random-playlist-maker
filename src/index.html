@@ -309,19 +309,30 @@
         const params = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = params.get("access_token");
 
-        const playlist = await searchPlaylist(
-          accessToken,
-          "Random Songs from All of Spotify"
-        );
-        const playlistId = playlist
-          ? playlist.id
-          : (await createPlaylist(accessToken)).id;
+        // Notify the user that the process is running
+        alert("Creating playlist and adding tracks. Please wait...");
 
-        await addTracksToPlaylist(
-          accessToken,
-          playlistId,
-          parseInt(document.getElementById("numberOfSongs").value)
-        );
+        try {
+          const playlist = await searchPlaylist(
+            accessToken,
+            "Random Songs from All of Spotify"
+          );
+          const playlistId = playlist
+            ? playlist.id
+            : (await createPlaylist(accessToken)).id;
+
+          await addTracksToPlaylist(
+            accessToken,
+            playlistId,
+            parseInt(document.getElementById("numberOfSongs").value)
+          );
+        } catch (error) {
+          console.error("An error occurred:", error);
+          alert("An error occurred: " + error.message);
+        } finally {
+          // Remove the alert when the process is complete or an error occurs
+          alert("Playlist creation and track addition complete!");
+        }
       };
 
       document.addEventListener("DOMContentLoaded", () => {
