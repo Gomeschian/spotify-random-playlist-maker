@@ -211,8 +211,8 @@
         numberOfSongs
       ) => {
         const addedSongs = [];
+        const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
 
-        // Search and add tracks until the desired number is reached
         while (addedSongs.length < numberOfSongs) {
           const randomYear = getRandomYear();
           await searchTrackAndAddToPlaylist(
@@ -222,14 +222,10 @@
             addedSongs
           );
 
-          // Introduce a delay between requests
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
         }
 
-        // Log the songs that are going to be batched
         console.log("Songs to be batched:", addedSongs);
-
-        // Display added songs information
         displayAddedSongsInfo(addedSongs);
       };
 
