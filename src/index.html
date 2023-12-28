@@ -307,24 +307,6 @@
         const data = await response.json();
         return data;
       };
-      const setLoadingState = (isLoading) => {
-        const createPlaylistButton = document.getElementById(
-          "createPlaylistAndAddTracksButton"
-        );
-        const copyResultsButton = document.getElementById("copyResultsButton");
-
-        if (isLoading) {
-          createPlaylistButton.disabled = true;
-          copyResultsButton.disabled = true;
-          createPlaylistButton.innerText = "Creating Playlist...";
-          copyResultsButton.innerText = "Processing...";
-        } else {
-          createPlaylistButton.disabled = false;
-          copyResultsButton.disabled = false;
-          createPlaylistButton.innerText = "Create Playlist and/or Add Tracks";
-          copyResultsButton.innerText = "Results (click to copy to clipboard)";
-        }
-      };
 
       const createPlaylistAndAddTracks = async () => {
         if (!isAuthenticated()) {
@@ -335,7 +317,10 @@
         const params = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = params.get("access_token");
 
-        setLoadingState(true); // Set loading state
+        // Notify the user that the process is running
+        alert(
+          "This may take a minute. Click OK to begin, and leave this page open."
+        );
 
         try {
           const playlist = await searchPlaylist(
@@ -355,10 +340,26 @@
           console.error("An error occurred:", error);
           alert("An error occurred: " + error.message);
         } finally {
-          setLoadingState(false); // Reset loading state
           alert("Done running.");
         }
       };
+
+      document.addEventListener("DOMContentLoaded", () => {
+        if (!isAuthenticated()) {
+          redirectToAuthorization();
+        }
+      });
+
+      const button = document.getElementById(
+        "createPlaylistAndAddTracksButton"
+      );
+      if (button) {
+        button.addEventListener("click", createPlaylistAndAddTracks);
+      } else {
+        console.error(
+          'Button with id "createPlaylistAndAddTracksButton" not found.'
+        );
+      }
 
       const logToConsole = (message) => {
         consoleDiv.innerHTML += `<p>${message}</p>`;
