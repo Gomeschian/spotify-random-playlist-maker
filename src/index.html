@@ -198,32 +198,25 @@
       const addTracksToPlaylist = async (
         accessToken,
         playlistId,
-        numberOfSongs
+        tracksToAdd
       ) => {
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
-        const addedSongs = [];
-
-        // Search and add tracks until the desired number is reached
-        while (addedSongs.length < numberOfSongs) {
-          await searchTrackAndAddToPlaylist(
-            accessToken,
-            playlistUrl,
-            addedSongs
-          );
-
-          // Introduce a delay between requests
-          await new Promise((resolve) => setTimeout(resolve, searchDelay));
-        }
 
         // Log the songs that are going to be batched
-        console.log("Songs to be batched:", addedSongs);
+        console.log("Songs to be batched:", tracksToAdd);
 
-        // Create a batch of up to 100 tracks
-        const batch = addedSongs.slice(0, 100);
+        // Split the tracks into batches of 100 (Spotify API limit)
+        const batchSize = 100;
+        const batches = [];
 
-        // Add the batch to the playlist
-        if (batch.length > 0) {
+        for (let i = 0; i < tracksToAdd.length; i += batchSize) {
+          batches.push(tracksToAdd.slice(i, i + batchSize));
+        }
+
+        // Process each batch and add it to the playlist
+        for (const batch of batches) {
           const uris = batch.map((song) => song.uri);
+
           try {
             const addResponse = await fetch(playlistUrl, {
               method: "POST",
@@ -252,10 +245,13 @@
             logToConsole(errorMessage);
             // Handle error if needed
           }
+
+          // Introduce a delay between requests (optional)
+          await new Promise((resolve) => setTimeout(resolve, searchDelay));
         }
 
         // Display added songs information
-        displayAddedSongsInfo(addedSongs);
+        displayAddedSongsInfo(tracksToAdd);
       };
       const displayAddedSongsInfo = (addedSongs) => {
         const uniqueAddedSongs = [];
