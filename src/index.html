@@ -206,42 +206,6 @@
         }
       };
 
-      const searchAndPopulateClientSideList = async (
-        accessToken,
-        numberOfSongs
-      ) => {
-        const addedSongs = [];
-        const playlistUrl = `https://api.spotify.com/v1/me/playlists`;
-
-        // Fetch the playlistId from the created playlist or the existing one
-        const playlist = await searchOrCreatePlaylist(
-          accessToken,
-          "Random Songs from All of Spotify"
-        );
-
-        if (playlist) {
-          const playlistId = playlist.id;
-
-          while (addedSongs.length < numberOfSongs) {
-            const randomYear = getRandomYear();
-            await searchTrackAndAddToPlaylist(
-              accessToken,
-              playlistId,
-              randomYear,
-              addedSongs
-            );
-
-            await new Promise((resolve) => setTimeout(resolve, searchDelay));
-          }
-
-          console.log("Songs to be batched:", addedSongs);
-          displayAddedSongsInfo(addedSongs);
-        } else {
-          console.error("Error: Playlist not found or created.");
-          alert("Error: Playlist not found or created.");
-        }
-      };
-
       const addTracksToPlaylist = async (
         accessToken,
         playlistId,
@@ -250,8 +214,8 @@
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
         const addedSongs = [];
 
-        // Search and add tracks until the desired number is reached
-        while (addedSongs.length < numberOfSongs) {
+        // Function to search and add tracks with a delay
+        const searchAndAddWithDelay = async () => {
           const randomYear = getRandomYear();
           await searchTrackAndAddToPlaylist(
             accessToken,
@@ -260,54 +224,22 @@
             addedSongs
           );
 
-          // Introduce a delay between requests
+          // Introduce a delay (e.g., 2 seconds) between requests
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
+        };
+
+        // Retry until the correct number of songs is added
+        while (addedSongs.length < numberOfSongs) {
+          const remainingSongs = numberOfSongs - addedSongs.length;
+
+          // Retry the search with a delay to avoid hitting API limits
+          const retryPromises = Array.from(
+            { length: remainingSongs },
+            searchAndAddWithDelay
+          );
+          await Promise.all(retryPromises);
         }
 
-        // Log the songs that are going to be batched
-        console.log("Songs to be batched:", addedSongs);
-
-        // Create a batch of up to 100 tracks
-        const batch = addedSongs.slice(0, 100);
-
-        // Add the batch to the playlist
-        if (batch.length > 0) {
-          const uris = batch.map((song) => song.uri);
-          try {
-            const addResponse = await fetch(playlistUrl, {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                uris: uris,
-              }),
-            });
-
-            if (addResponse.ok) {
-              console.log(
-                `Batch of ${uris.length} tracks added to playlist successfully`
-              );
-            } else {
-              const errorMessage = `Error adding batch to the playlist: ${addResponse.statusText}`;
-              console.error(errorMessage);
-              logToConsole(errorMessage);
-              // Handle error if needed
-            }
-          } catch (error) {
-            const errorMessage = `Error adding batch to the playlist: ${error.message}`;
-            console.error(errorMessage);
-            logToConsole(errorMessage);
-            // Handle error if needed
-          }
-        }
-
-        // Display added songs information
-        displayAddedSongsInfo(addedSongs);
-      };
-
-      const displayAddedSongsInfo = (addedSongs) => {
         const uniqueAddedSongs = [];
         const uniqueUris = new Set();
         addedSongs.forEach((song) => {
@@ -316,17 +248,18 @@
             uniqueAddedSongs.push(song);
           }
         });
-
+        console.log(uniqueAddedSongs.length);
         addedSongsDiv.innerHTML += `<p><strong>Added Songs: ${uniqueAddedSongs.length}</strong></p>`;
+        console.log(uniqueAddedSongs.length);
 
         uniqueAddedSongs.forEach((song) => {
           addedSongsDiv.innerHTML += `<p>${song.year}: ${song.artist} - ${song.name} (${song.uri})</p>`;
         });
+        console.log(uniqueAddedSongs.length);
 
         // Scroll to the bottom to show the latest added songs
         addedSongsDiv.scrollTop = addedSongsDiv.scrollHeight;
       };
-
       const getPlaylistTracks = async (accessToken, playlistTracksUrl) => {
         try {
           const response = await fetch(playlistTracksUrl, {
@@ -428,22 +361,6 @@
         const data = await response.json();
         return data;
       };
-      const searchOrCreatePlaylist = async (accessToken, playlistName) => {
-        // Search for the playlist
-        const existingPlaylist = await searchPlaylist(
-          accessToken,
-          playlistName
-        );
-
-        // If the playlist exists, return it
-        if (existingPlaylist) {
-          return existingPlaylist;
-        }
-
-        // If the playlist doesn't exist, create it
-        const newPlaylist = await createPlaylist(accessToken);
-        return newPlaylist;
-      };
 
       const createPlaylistAndAddTracks = async () => {
         if (!isAuthenticated()) {
@@ -460,32 +377,19 @@
         );
 
         try {
-          const numberOfSongs = parseInt(
-            document.getElementById("numberOfSongs").value
-          );
-
-          // Clear existing tracks in the client-side list
-          playlistTracks = [];
-
-          // Search and populate the client-side list
-          await searchAndPopulateClientSideList(accessToken, numberOfSongs);
-
-          // Search for or create the playlist
-          const playlistName = "Random Songs from All of Spotify";
-          const playlist = await searchOrCreatePlaylist(
+          const playlist = await searchPlaylist(
             accessToken,
-            playlistName
+            "Random Songs from All of Spotify"
           );
+          const playlistId = playlist
+            ? playlist.id
+            : (await createPlaylist(accessToken)).id;
 
-          if (playlist) {
-            // Add tracks to the playlist
-            await addTracksToPlaylist(accessToken, playlist.id, numberOfSongs);
-          } else {
-            console.error(
-              `Error: Playlist "${playlistName}" not found or created.`
-            );
-            alert(`Error: Playlist "${playlistName}" not found or created.`);
-          }
+          await addTracksToPlaylist(
+            accessToken,
+            playlistId,
+            parseInt(document.getElementById("numberOfSongs").value)
+          );
         } catch (error) {
           console.error("An error occurred:", error);
           alert("An error occurred: " + error.message);
@@ -493,6 +397,7 @@
           alert("Done running.");
         }
       };
+
       document.addEventListener("DOMContentLoaded", () => {
         if (!isAuthenticated()) {
           redirectToAuthorization();
