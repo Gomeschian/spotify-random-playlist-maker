@@ -136,6 +136,11 @@
         playlistUrl,
         addedSongs
       ) => {
+        // Ensure addedSongs is initialized as an array
+        if (!Array.isArray(addedSongs)) {
+          addedSongs = [];
+        }
+
         const maxRetries = numberOfSongs * 10;
         let retryCount = 0;
         let success = false;
