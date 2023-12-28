@@ -99,6 +99,7 @@
         "playlist-modify-public playlist-modify-private playlist-read-private";
 
       const searchDelay = 75;
+      let playlistTracks = [];
 
       const addedSongsDiv = document.getElementById("added-songs");
       const consoleDiv = document.getElementById("console");
@@ -150,6 +151,21 @@
           if (tracks.length > 0) {
             const track = tracks[0];
             const trackUri = track.uri;
+
+            // Check if the track URI is already in the playlist
+            const trackInPlaylist = playlistTracks.some(
+              (playlistTrack) => playlistTrack.uri === trackUri
+            );
+
+            if (trackInPlaylist) {
+              console.log(
+                `Track from ${year} is already in the playlist. Skipping.`
+              );
+              logToConsole(
+                `Track from ${year} is already in the playlist. Skipping.`
+              );
+              return;
+            }
 
             const addResponse = await fetch(playlistUrl, {
               method: "POST",
@@ -224,7 +240,6 @@
           await Promise.all(retryPromises);
         }
 
-        // The rest of the code remains the same
         const uniqueAddedSongs = [];
         const uniqueUris = new Set();
         addedSongs.forEach((song) => {
@@ -287,6 +302,14 @@
             }
           }
 
+          if (playlist) {
+            // Fetch and store the playlist tracks once
+            playlistTracks = await getPlaylistTracks(
+              accessToken,
+              playlist.tracks.href
+            );
+          }
+
           console.log("Found playlist:", playlist);
           return playlist;
         } catch (error) {
@@ -326,7 +349,7 @@
 
         // Notify the user that the process is running
         alert(
-          "This may take a minute. Click OK to begin, and leave this page open."
+          "This may take a minute. Close this alert to begin, and then leave this page open."
         );
 
         try {
