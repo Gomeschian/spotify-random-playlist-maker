@@ -15,12 +15,11 @@
 
   <body class="font-sans bg-gray-100 p-10">
     <div id="app" class="flex flex-col items-center justify-center text-center">
-      <h1 class="mb-4 text-4xl font-bold">Spotify Random Track Playlist</h1>
+      <h1 class="mb-6 text-4xl font-bold">Spotify Random Track Playlist</h1>
       <p class="mb-6 text-xl">
         Adds a selection of random tracks to a playlist called "Random Songs
         from All of Spotify" (will be created if it doesn't exist).
       </p>
-      <p class="mb-6 text-lg"></p>
       <p class="mb-6 text-lg">
         Methodology: Searches for a random year between 1860 (year of oldest
         sound recording*) and the current year and chooses a track dated that
@@ -197,26 +196,28 @@
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
         const addedSongs = [];
 
-        // Function to search and add tracks
-        const searchAndAdd = async () => {
+        // Function to search and add tracks with a delay
+        const searchAndAddWithDelay = async () => {
           const randomYear = getRandomYear();
-          const result = await searchTrackAndAddToPlaylist(
+          await searchTrackAndAddToPlaylist(
             accessToken,
             playlistUrl,
             randomYear,
             addedSongs
           );
-          return result;
+
+          // Introduce a delay (e.g., 2 seconds) between requests
+          await new Promise((resolve) => setTimeout(resolve, 2000));
         };
 
         // Retry until the correct number of songs is added
         while (addedSongs.length < numberOfSongs) {
           const remainingSongs = numberOfSongs - addedSongs.length;
 
-          // Retry the search to make up the difference
+          // Retry the search with a delay to avoid hitting API limits
           const retryPromises = Array.from(
             { length: remainingSongs },
-            searchAndAdd
+            searchAndAddWithDelay
           );
           await Promise.all(retryPromises);
         }
