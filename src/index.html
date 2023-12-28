@@ -18,7 +18,9 @@
       <h1 class="mb-4 text-4xl font-bold">Spotify Random Track Playlist</h1>
       <p class="mb-8 text-xl">
         Adds a selection of random tracks to a playlist called "Random Songs
-        from All of Spotify" (will be created if it doesn't exist).
+        from All of Spotify" (will be created if it doesn't exist). Does not
+        check against the playlist for duplicate tracks, but this app won't add more
+        than one instance of the same track.
       </p>
       <p class="mb-6 text-lg"></p>
       <p class="mb-6 text-lg">
@@ -32,21 +34,21 @@
         no audiobooks as such or podcasts. If an API limit is hit during running
         then fewer songs than requested may actually be added.
       </p>
-      <p class="mb-6 text-lg ">
+      <p class="mb-6 text-lg">
         A third-party test suggests Spotify allows ~180 API requests per minute,
         but there also seems to be a broader limit on top of that (e.g. total
         calls within x minutes). If an error happens try waiting a little and
         maybe consider reducing the number of songs to be added (generally runs
-        faster on smaller batches). Unexplained errors are probably due to
+        better on smaller batches). Unexplained errors are probably due to
         hitting API limits (Code 429).
       </p>
 
-      <p class="mb-6 text-lg ">
-        1 track search = 1 request, plus retries for unsuccesful searches and
-        at least one request each time your library is searched for the playlist
-        to be added to or made. Spotify searches up to fifty at a time, so if
-        your playlist is further down in your library the API will be called
-        multiple times to find it.
+      <p class="mb-6 text-lg">
+        1 track search = 1 request, plus retries for unsuccesful searches and at
+        least one request each time your library is searched for the playlist to
+        be added to or made. Spotify searches up to fifty at a time, so if your
+        playlist is further down in your library the API will be called multiple
+        times to find it.
       </p>
       <p class="mb-6 text-lg">
         *Unclear if anything that old is actually on Spotify under its original
@@ -60,7 +62,6 @@
           type="number"
           id="numberOfSongs"
           min="1"
-          max="100"
           value="23"
           class="w-16 p-2 text-lg border border-gray-300 rounded"
         />
@@ -87,7 +88,7 @@
 
         <div
           id="console"
-          class="h-20 overflow-y-auto border-1 border-gray-300 p-4 mt-4 text-lg hidden"
+          class="h-20 overflow-y-auto border-1 border-gray-300 p-4 mt-4 text-lg"
         ></div>
       </div>
     </div>
