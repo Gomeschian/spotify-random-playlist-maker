@@ -138,74 +138,94 @@
         const randomLimit = getRandomLimit();
         const searchUrl = `https://api.spotify.com/v1/search?type=track&q=year:${year}&offset=${randomOffset}&limit=${randomLimit}`;
 
-        try {
-          const response = await fetch(searchUrl, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
+        let retryCount = 0;
+        let success = false;
 
-          const data = await response.json();
-          const tracks = data.tracks.items;
-
-          if (tracks.length > 0) {
-            const track = tracks[0];
-            const trackUri = track.uri;
-
-            // Check if the track URI is already in the playlist
-            const trackInPlaylist = playlistTracks.some(
-              (playlistTrack) => playlistTrack.uri === trackUri
-            );
-
-            if (trackInPlaylist) {
-              console.log(
-                `Track from ${year} is already in the playlist. Skipping.`
-              );
-              logToConsole(
-                `Track from ${year} is already in the playlist. Skipping.`
-              );
-              return;
-            }
-
-            const addResponse = await fetch(playlistUrl, {
-              method: "POST",
+        while (!success && retryCount < maxRetries) {
+          try {
+            const response = await fetch(searchUrl, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
-                "Content-Type": "application/json",
               },
-              body: JSON.stringify({
-                uris: [trackUri],
-              }),
             });
 
-            if (addResponse.ok) {
-              const trackInfo = {
-                year,
-                name: track.name,
-                artist: track.artists.map((artist) => artist.name).join(", "),
-                uri: trackUri,
-              };
-              addedSongs.push(trackInfo);
-              console.log(`Track from ${year} added to playlist successfully`);
-              logToConsole(`Track from ${year} added to playlist successfully`);
-              return;
+            if (!response.ok) {
+              throw new Error(
+                `Invalid search for year ${year}: ${response.statusText}`
+              );
+            }
+
+            const data = await response.json();
+            const tracks = data.tracks.items;
+
+            if (tracks.length > 0) {
+              const track = tracks[0];
+              const trackUri = track.uri;
+
+              // Check if the track URI is already in the playlist
+              const trackInPlaylist = playlistTracks.some(
+                (playlistTrack) => playlistTrack.uri === trackUri
+              );
+
+              if (trackInPlaylist) {
+                console.log(
+                  `Track from ${year} is already in the playlist. Skipping.`
+                );
+                logToConsole(
+                  `Track from ${year} is already in the playlist. Skipping.`
+                );
+                return;
+              }
+
+              const addResponse = await fetch(playlistUrl, {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  uris: [trackUri],
+                }),
+              });
+
+              if (addResponse.ok) {
+                const trackInfo = {
+                  year,
+                  name: track.name,
+                  artist: track.artists.map((artist) => artist.name).join(", "),
+                  uri: trackUri,
+                };
+                addedSongs.push(trackInfo);
+                console.log(
+                  `Track from ${year} found`
+                );
+                logToConsole(
+                  `Track from ${year} found`
+                );
+                success = true;
+              } else {
+                const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
+                console.error(errorMessage);
+                logToConsole(errorMessage);
+              }
             } else {
-              const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
+              const errorMessage = `No track found for year ${year}`;
               console.error(errorMessage);
               logToConsole(errorMessage);
             }
-          } else {
-            const errorMessage = `No track found for year ${year}`;
+          } catch (error) {
+            const errorMessage = `Error searching for track: ${error.message}`;
             console.error(errorMessage);
             logToConsole(errorMessage);
           }
-        } catch (error) {
-          const errorMessage = `Error searching for track: ${error.message}`;
-          console.error(errorMessage);
-          logToConsole(errorMessage);
+
+          if (!success) {
+            retryCount++;
+            // Introduce a delay (e.g., 2 seconds) between retries
+            await new Promise((resolve) => setTimeout(resolve, retryDelay));
+          }
         }
       };
-
       const addTracksToPlaylist = async (
         accessToken,
         playlistId,
