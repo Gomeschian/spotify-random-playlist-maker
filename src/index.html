@@ -198,25 +198,32 @@
       const addTracksToPlaylist = async (
         accessToken,
         playlistId,
-        tracksToAdd
+        numberOfSongs
       ) => {
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
+        const addedSongs = [];
 
-        // Log the songs that are going to be batched
-        console.log("Songs to be batched:", tracksToAdd);
+        // Search and add tracks until the desired number is reached
+        while (addedSongs.length < numberOfSongs) {
+          await searchTrackAndAddToPlaylist(
+            accessToken,
+            playlistUrl,
+            addedSongs
+          );
 
-        // Split the tracks into batches of 100 (Spotify API limit)
-        const batchSize = 100;
-        const batches = [];
-
-        for (let i = 0; i < tracksToAdd.length; i += batchSize) {
-          batches.push(tracksToAdd.slice(i, i + batchSize));
+          // Introduce a delay between requests
+          await new Promise((resolve) => setTimeout(resolve, searchDelay));
         }
 
-        // Process each batch and add it to the playlist
-        for (const batch of batches) {
-          const uris = batch.map((song) => song.uri);
+        // Log the songs that are going to be batched
+        console.log("Songs to be batched:", addedSongs);
 
+        // Create a batch of up to 100 tracks
+        const batch = addedSongs.slice(0, 100);
+
+        // Add the batch to the playlist
+        if (batch.length > 0) {
+          const uris = batch.map((song) => song.uri);
           try {
             const addResponse = await fetch(playlistUrl, {
               method: "POST",
@@ -230,28 +237,27 @@
             });
 
             if (addResponse.ok) {
+              const responseData = await addResponse.json();
               console.log(
-                `Batch of ${uris.length} tracks added to playlist successfully`
+                `Tracks added to playlist successfully:`,
+                responseData
               );
             } else {
-              const errorMessage = `Error adding batch to the playlist: ${addResponse.statusText}`;
+              const errorMessage = `Error adding tracks to the playlist: ${addResponse.statusText}`;
               console.error(errorMessage);
               logToConsole(errorMessage);
               // Handle error if needed
             }
           } catch (error) {
-            const errorMessage = `Error adding batch to the playlist: ${error.message}`;
+            const errorMessage = `Error adding tracks to the playlist: ${error.message}`;
             console.error(errorMessage);
             logToConsole(errorMessage);
             // Handle error if needed
           }
-
-          // Introduce a delay between requests (optional)
-          await new Promise((resolve) => setTimeout(resolve, searchDelay));
         }
 
         // Display added songs information
-        displayAddedSongsInfo(tracksToAdd);
+        displayAddedSongsInfo(addedSongs);
       };
       const displayAddedSongsInfo = (addedSongs) => {
         const uniqueAddedSongs = [];
@@ -401,8 +407,6 @@
 
           // Log the songs that are going to be batched
           console.log("Songs to be batched:", playlistTracks);
-
-          // Batching and adding to the Spotify playlist remain unchanged
         } catch (error) {
           console.error("An error occurred:", error);
           alert("An error occurred: " + error.message);
