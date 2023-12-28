@@ -134,17 +134,19 @@
       const searchTrackAndAddToPlaylist = async (
         accessToken,
         playlistUrl,
-        year,
         addedSongs
       ) => {
-        const randomOffset = getRandomOffset();
-        const randomLimit = getRandomLimit();
-        const searchUrl = `https://api.spotify.com/v1/search?type=track&q=year:${year}&offset=${randomOffset}&limit=${randomLimit}`;
         const maxRetries = numberOfSongs * 10;
         let retryCount = 0;
         let success = false;
 
         while (!success && retryCount < maxRetries) {
+          const randomYear = getRandomYear();
+          const randomOffset = getRandomOffset();
+          const randomLimit = getRandomLimit();
+
+          const searchUrl = `https://api.spotify.com/v1/search?type=track&q=year:${randomYear}&offset=${randomOffset}&limit=${randomLimit}`;
+
           try {
             const response = await fetch(searchUrl, {
               headers: {
@@ -154,7 +156,7 @@
 
             if (!response.ok) {
               throw new Error(
-                `Invalid search for year ${year}: ${response.statusText}`
+                `Invalid search for year ${randomYear}: ${response.statusText}`
               );
             }
 
@@ -172,10 +174,10 @@
 
               if (trackInPlaylist) {
                 console.log(
-                  `Track from ${year} is already in the playlist. Skipping.`
+                  `Track from ${randomYear} is already in the playlist. Skipping.`
                 );
                 logToConsole(
-                  `Track from ${year} is already in the playlist. Skipping.`
+                  `Track from ${randomYear} is already in the playlist. Skipping.`
                 );
                 return;
               }
@@ -193,14 +195,14 @@
 
               if (addResponse.ok) {
                 const trackInfo = {
-                  year,
+                  year: randomYear,
                   name: track.name,
                   artist: track.artists.map((artist) => artist.name).join(", "),
                   uri: trackUri,
                 };
                 addedSongs.push(trackInfo);
-                console.log(`Track from ${year} found`);
-                logToConsole(`Track from ${year} found`);
+                console.log(`Track from ${randomYear} found`);
+                logToConsole(`Track from ${randomYear} found`);
                 success = true;
               } else {
                 const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
@@ -208,7 +210,7 @@
                 logToConsole(errorMessage);
               }
             } else {
-              const errorMessage = `No track found for year ${year}`;
+              const errorMessage = `No track found for year ${randomYear}`;
               console.error(errorMessage);
               logToConsole(errorMessage);
             }
