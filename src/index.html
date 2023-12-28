@@ -98,6 +98,9 @@
       const SCOPES =
         "playlist-modify-public playlist-modify-private playlist-read-private";
 
+      const numberOfSongs = parseInt(
+        document.getElementById("numberOfSongs").value
+      );
       const searchDelay = 75;
       let playlistTracks = [];
 
@@ -131,81 +134,99 @@
       const searchTrackAndAddToPlaylist = async (
         accessToken,
         playlistUrl,
-        year,
         addedSongs
       ) => {
-        const randomOffset = getRandomOffset();
-        const randomLimit = getRandomLimit();
-        const searchUrl = `https://api.spotify.com/v1/search?type=track&q=year:${year}&offset=${randomOffset}&limit=${randomLimit}`;
+        const maxRetries = numberOfSongs * 10;
+        let retryCount = 0;
+        let success = false;
 
-        try {
-          const response = await fetch(searchUrl, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
+        while (!success && retryCount < maxRetries) {
+          const randomYear = getRandomYear();
+          const randomOffset = getRandomOffset();
+          const randomLimit = getRandomLimit();
 
-          const data = await response.json();
-          const tracks = data.tracks.items;
+          const searchUrl = `https://api.spotify.com/v1/search?type=track&q=year:${randomYear}&offset=${randomOffset}&limit=${randomLimit}`;
 
-          if (tracks.length > 0) {
-            const track = tracks[0];
-            const trackUri = track.uri;
-
-            // Check if the track URI is already in the playlist
-            const trackInPlaylist = playlistTracks.some(
-              (playlistTrack) => playlistTrack.uri === trackUri
-            );
-
-            if (trackInPlaylist) {
-              console.log(
-                `Track from ${year} is already in the playlist. Skipping.`
-              );
-              logToConsole(
-                `Track from ${year} is already in the playlist. Skipping.`
-              );
-              return;
-            }
-
-            const addResponse = await fetch(playlistUrl, {
-              method: "POST",
+          try {
+            const response = await fetch(searchUrl, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
-                "Content-Type": "application/json",
               },
-              body: JSON.stringify({
-                uris: [trackUri],
-              }),
             });
 
-            if (addResponse.ok) {
-              const trackInfo = {
-                year,
-                name: track.name,
-                artist: track.artists.map((artist) => artist.name).join(", "),
-                uri: trackUri,
-              };
-              addedSongs.push(trackInfo);
-              console.log(`Track from ${year} added to playlist successfully`);
-              logToConsole(`Track from ${year} added to playlist successfully`);
-              return;
+            if (!response.ok) {
+              throw new Error(
+                `Invalid search for year ${randomYear}: ${response.statusText}`
+              );
+            }
+
+            const data = await response.json();
+            const tracks = data.tracks.items;
+
+            if (tracks.length > 0) {
+              const track = tracks[0];
+              const trackUri = track.uri;
+
+              // Check if the track URI is already in the playlist
+              const trackInPlaylist = playlistTracks.some(
+                (playlistTrack) => playlistTrack.uri === trackUri
+              );
+
+              if (trackInPlaylist) {
+                console.log(
+                  `Track from ${randomYear} is already in the playlist. Skipping.`
+                );
+                logToConsole(
+                  `Track from ${randomYear} is already in the playlist. Skipping.`
+                );
+                return;
+              }
+
+              const addResponse = await fetch(playlistUrl, {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  uris: [trackUri],
+                }),
+              });
+
+              if (addResponse.ok) {
+                const trackInfo = {
+                  year: randomYear,
+                  name: track.name,
+                  artist: track.artists.map((artist) => artist.name).join(", "),
+                  uri: trackUri,
+                };
+                addedSongs.push(trackInfo);
+                console.log(`Track from ${randomYear} found`);
+                logToConsole(`Track from ${randomYear} found`);
+                success = true;
+              } else {
+                const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
+                console.error(errorMessage);
+                logToConsole(errorMessage);
+              }
             } else {
-              const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
+              const errorMessage = `No track found for year ${randomYear}`;
               console.error(errorMessage);
               logToConsole(errorMessage);
             }
-          } else {
-            const errorMessage = `No track found for year ${year}`;
+          } catch (error) {
+            const errorMessage = `Error searching for track: ${error.message}`;
             console.error(errorMessage);
             logToConsole(errorMessage);
           }
-        } catch (error) {
-          const errorMessage = `Error searching for track: ${error.message}`;
-          console.error(errorMessage);
-          logToConsole(errorMessage);
+
+          if (!success) {
+            retryCount++;
+            // Introduce a delay (e.g., 2 seconds) between retries
+            await new Promise((resolve) => setTimeout(resolve, searchDelay));
+          }
         }
       };
-
       const addTracksToPlaylist = async (
         accessToken,
         playlistId,
@@ -214,8 +235,8 @@
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
         const addedSongs = [];
 
-        // Function to search and add tracks with a delay
-        const searchAndAddWithDelay = async () => {
+        // Search and add tracks until the desired number is reached
+        while (addedSongs.length < numberOfSongs) {
           const randomYear = getRandomYear();
           await searchTrackAndAddToPlaylist(
             accessToken,
@@ -224,22 +245,53 @@
             addedSongs
           );
 
-          // Introduce a delay (e.g., 2 seconds) between requests
+          // Introduce a delay between requests
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
-        };
-
-        // Retry until the correct number of songs is added
-        while (addedSongs.length < numberOfSongs) {
-          const remainingSongs = numberOfSongs - addedSongs.length;
-
-          // Retry the search with a delay to avoid hitting API limits
-          const retryPromises = Array.from(
-            { length: remainingSongs },
-            searchAndAddWithDelay
-          );
-          await Promise.all(retryPromises);
         }
 
+        // Log the songs that are going to be batched
+        console.log("Songs to be batched:", addedSongs);
+
+        // Create a batch of up to 100 tracks
+        const batch = addedSongs.slice(0, 100);
+
+        // Add the batch to the playlist
+        if (batch.length > 0) {
+          const uris = batch.map((song) => song.uri);
+          try {
+            const addResponse = await fetch(playlistUrl, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                uris: uris,
+              }),
+            });
+
+            if (addResponse.ok) {
+              console.log(
+                `Batch of ${uris.length} tracks added to playlist successfully`
+              );
+            } else {
+              const errorMessage = `Error adding batch to the playlist: ${addResponse.statusText}`;
+              console.error(errorMessage);
+              logToConsole(errorMessage);
+              // Handle error if needed
+            }
+          } catch (error) {
+            const errorMessage = `Error adding batch to the playlist: ${error.message}`;
+            console.error(errorMessage);
+            logToConsole(errorMessage);
+            // Handle error if needed
+          }
+        }
+
+        // Display added songs information
+        displayAddedSongsInfo(addedSongs);
+      };
+      const displayAddedSongsInfo = (addedSongs) => {
         const uniqueAddedSongs = [];
         const uniqueUris = new Set();
         addedSongs.forEach((song) => {
@@ -248,18 +300,17 @@
             uniqueAddedSongs.push(song);
           }
         });
-        console.log(uniqueAddedSongs.length);
+
         addedSongsDiv.innerHTML += `<p><strong>Added Songs: ${uniqueAddedSongs.length}</strong></p>`;
-        console.log(uniqueAddedSongs.length);
 
         uniqueAddedSongs.forEach((song) => {
           addedSongsDiv.innerHTML += `<p>${song.year}: ${song.artist} - ${song.name} (${song.uri})</p>`;
         });
-        console.log(uniqueAddedSongs.length);
 
         // Scroll to the bottom to show the latest added songs
         addedSongsDiv.scrollTop = addedSongsDiv.scrollHeight;
       };
+
       const getPlaylistTracks = async (accessToken, playlistTracksUrl) => {
         try {
           const response = await fetch(playlistTracksUrl, {
@@ -385,11 +436,7 @@
             ? playlist.id
             : (await createPlaylist(accessToken)).id;
 
-          await addTracksToPlaylist(
-            accessToken,
-            playlistId,
-            parseInt(document.getElementById("numberOfSongs").value)
-          );
+          await addTracksToPlaylist(accessToken, playlistId, numberOfSongs);
         } catch (error) {
           console.error("An error occurred:", error);
           alert("An error occurred: " + error.message);
