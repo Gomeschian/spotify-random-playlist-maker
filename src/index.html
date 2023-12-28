@@ -98,9 +98,6 @@
       const SCOPES =
         "playlist-modify-public playlist-modify-private playlist-read-private";
 
-      const numberOfSongs = parseInt(
-        document.getElementById("numberOfSongs").value
-      );
       const searchDelay = 75;
       let playlistTracks = [];
 
@@ -136,7 +133,7 @@
         playlistUrl,
         addedSongs
       ) => {
-        const maxRetries = numberOfSongs * 10;
+        const maxRetries = 1000;
         let retryCount = 0;
         let success = false;
 
@@ -241,7 +238,6 @@
           await searchTrackAndAddToPlaylist(
             accessToken,
             playlistUrl,
-            randomYear,
             addedSongs
           );
 
@@ -436,7 +432,11 @@
             ? playlist.id
             : (await createPlaylist(accessToken)).id;
 
-          await addTracksToPlaylist(accessToken, playlistId, numberOfSongs);
+          await addTracksToPlaylist(
+            accessToken,
+            playlistId,
+            parseInt(document.getElementById("numberOfSongs").value)
+          );
         } catch (error) {
           console.error("An error occurred:", error);
           alert("An error occurred: " + error.message);
