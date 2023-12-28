@@ -211,24 +211,36 @@
         numberOfSongs
       ) => {
         const addedSongs = [];
-        const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
+        const playlistUrl = `https://api.spotify.com/v1/me/playlists`;
 
-        while (addedSongs.length < numberOfSongs) {
-          const randomYear = getRandomYear();
-          await searchTrackAndAddToPlaylist(
-            accessToken,
-            playlistUrl,
-            randomYear,
-            addedSongs
-          );
+        // Fetch the playlistId from the created playlist or the existing one
+        const playlist = await searchOrCreatePlaylist(
+          accessToken,
+          "Random Songs from All of Spotify"
+        );
 
-          await new Promise((resolve) => setTimeout(resolve, searchDelay));
+        if (playlist) {
+          const playlistId = playlist.id;
+
+          while (addedSongs.length < numberOfSongs) {
+            const randomYear = getRandomYear();
+            await searchTrackAndAddToPlaylist(
+              accessToken,
+              playlistId,
+              randomYear,
+              addedSongs
+            );
+
+            await new Promise((resolve) => setTimeout(resolve, searchDelay));
+          }
+
+          console.log("Songs to be batched:", addedSongs);
+          displayAddedSongsInfo(addedSongs);
+        } else {
+          console.error("Error: Playlist not found or created.");
+          alert("Error: Playlist not found or created.");
         }
-
-        console.log("Songs to be batched:", addedSongs);
-        displayAddedSongsInfo(addedSongs);
       };
-
       const addTracksToPlaylist = async (
         accessToken,
         playlistId,
