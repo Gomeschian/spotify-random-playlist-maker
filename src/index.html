@@ -126,6 +126,45 @@
         return Math.floor(Math.random() * 50) + 1;
       };
 
+      // Retrieve failed search attempts from the file
+      const failedSearchAttemptsFile = "failedAttempts.json";
+      let failedSearchAttempts;
+
+      const loadFailedSearchAttempts = async () => {
+        try {
+          const response = await fetch(failedSearchAttemptsFile);
+          failedSearchAttempts = new Set((await response.json()) || []);
+        } catch (error) {
+          console.error("Error loading failed attempts:", error);
+          failedSearchAttempts = new Set();
+        }
+      };
+
+      const saveFailedSearchAttempts = async () => {
+        try {
+          const response = await fetch(failedSearchAttemptsFile, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(Array.from(failedSearchAttempts)),
+          });
+
+          if (!response.ok) {
+            console.error(
+              "Error saving failed attempts:",
+              response.status,
+              response.statusText
+            );
+          }
+        } catch (error) {
+          console.error("Error saving failed attempts:", error);
+        }
+      };
+
+      // Initialize failed search attempts
+      loadFailedSearchAttempts();
+
       const searchTrackAndAddToPlaylist = async (
         accessToken,
         playlistUrl,
@@ -134,6 +173,19 @@
       ) => {
         const randomOffset = getRandomOffset();
         const randomLimit = getRandomLimit();
+        const searchAttempt = `${year}-${randomOffset}-${randomLimit}`;
+
+        // Check if the search attempt has already failed
+        if (failedSearchAttempts.has(searchAttempt)) {
+          console.log(
+            `Skipping search attempt ${searchAttempt} (previously failed)`
+          );
+          logToConsole(
+            `Skipping search attempt ${searchAttempt} (previously failed)`
+          );
+          return;
+        }
+
         const searchUrl = `https://api.spotify.com/v1/search?type=track&q=year:${year}&offset=${randomOffset}&limit=${randomLimit}`;
 
         try {
@@ -186,9 +238,14 @@
           const errorMessage = `Error searching for track: ${error.message}`;
           console.error(errorMessage);
           logToConsole(errorMessage);
+
+          // Mark this search attempt as failed to avoid reattempting
+          failedSearchAttempts.add(searchAttempt);
+
+          // Save updated failed search attempts to the file
+          saveFailedSearchAttempts();
         }
       };
-
       const addTracksToPlaylist = async (
         accessToken,
         playlistId,
