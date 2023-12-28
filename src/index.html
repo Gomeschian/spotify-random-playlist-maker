@@ -128,73 +128,111 @@
         return Math.floor(Math.random() * 50) + 1;
       };
 
+      const searchTrackAndAddToPlaylist = async (
+        accessToken,
+        playlistUrl,
+        year,
+        addedSongs
+      ) => {
+        const randomOffset = getRandomOffset();
+        const randomLimit = getRandomLimit();
+        const searchUrl = `https://api.spotify.com/v1/search?type=track&q=year:${year}&offset=${randomOffset}&limit=${randomLimit}`;
+
+        try {
+          const response = await fetch(searchUrl, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+
+          const data = await response.json();
+          const tracks = data.tracks.items;
+
+          if (tracks.length > 0) {
+            const track = tracks[0];
+            const trackUri = track.uri;
+
+            // Check if the track URI is already in the playlist
+            const trackInPlaylist = playlistTracks.some(
+              (playlistTrack) => playlistTrack.uri === trackUri
+            );
+
+            if (trackInPlaylist) {
+              console.log(
+                `Track from ${year} is already in the playlist. Skipping.`
+              );
+              logToConsole(
+                `Track from ${year} is already in the playlist. Skipping.`
+              );
+              return;
+            }
+
+            const addResponse = await fetch(playlistUrl, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                uris: [trackUri],
+              }),
+            });
+
+            if (addResponse.ok) {
+              const trackInfo = {
+                year,
+                name: track.name,
+                artist: track.artists.map((artist) => artist.name).join(", "),
+                uri: trackUri,
+              };
+              addedSongs.push(trackInfo);
+              console.log(`Track from ${year} added to playlist successfully`);
+              logToConsole(`Track from ${year} added to playlist successfully`);
+              return;
+            } else {
+              const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
+              console.error(errorMessage);
+              logToConsole(errorMessage);
+            }
+          } else {
+            const errorMessage = `No track found for year ${year}`;
+            console.error(errorMessage);
+            logToConsole(errorMessage);
+          }
+        } catch (error) {
+          const errorMessage = `Error searching for track: ${error.message}`;
+          console.error(errorMessage);
+          logToConsole(errorMessage);
+        }
+      };
+
       const searchAndPopulateClientSideList = async (
         accessToken,
         numberOfSongs
       ) => {
-        const maxRetries = 1000;
-        let retryCount = 0;
+        const addedSongs = [];
 
-        while (
-          playlistTracks.length < numberOfSongs &&
-          retryCount < maxRetries
-        ) {
+        // Search and add tracks until the desired number is reached
+        while (addedSongs.length < numberOfSongs) {
           const randomYear = getRandomYear();
-          const randomOffset = getRandomOffset();
-          const randomLimit = getRandomLimit();
+          await searchTrackAndAddToPlaylist(
+            accessToken,
+            playlistUrl,
+            randomYear,
+            addedSongs
+          );
 
-          const searchUrl = `https://api.spotify.com/v1/search?type=track&q=year:${randomYear}&offset=${randomOffset}&limit=${randomLimit}`;
-
-          try {
-            const response = await fetch(searchUrl, {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            });
-
-            if (!response.ok) {
-              throw new Error(
-                `Invalid search for year ${randomYear}: ${response.statusText}`
-              );
-            }
-
-            const data = await response.json();
-            const tracks = data.tracks.items;
-
-            if (tracks.length > 0) {
-              const track = tracks[0];
-              const trackUri = track.uri;
-
-              const trackInPlaylist = playlistTracks.some(
-                (playlistTrack) => playlistTrack.uri === trackUri
-              );
-
-              if (!trackInPlaylist) {
-                const trackInfo = {
-                  year: randomYear,
-                  name: track.name,
-                  artist: track.artists.map((artist) => artist.name).join(", "),
-                  uri: trackUri,
-                };
-                playlistTracks.push(trackInfo);
-                console.log(`Track from ${randomYear} found`);
-                logToConsole(`Track from ${randomYear} found`);
-              }
-            } else {
-              const errorMessage = `No track found for year ${randomYear}`;
-              console.error(errorMessage);
-              logToConsole(errorMessage);
-            }
-          } catch (error) {
-            const errorMessage = `Error searching for track: ${error.message}`;
-            console.error(errorMessage);
-            logToConsole(errorMessage);
-          }
-
-          retryCount++;
+          // Introduce a delay between requests
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
         }
+
+        // Log the songs that are going to be batched
+        console.log("Songs to be batched:", addedSongs);
+
+        // Display added songs information
+        displayAddedSongsInfo(addedSongs);
       };
+
       const addTracksToPlaylist = async (
         accessToken,
         playlistId,
@@ -205,7 +243,13 @@
 
         // Search and add tracks until the desired number is reached
         while (addedSongs.length < numberOfSongs) {
-          await searchAndPopulateClientSideList(accessToken, numberOfSongs);
+          const randomYear = getRandomYear();
+          await searchTrackAndAddToPlaylist(
+            accessToken,
+            playlistUrl,
+            randomYear,
+            addedSongs
+          );
 
           // Introduce a delay between requests
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
@@ -228,24 +272,22 @@
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                uris: uris.map((uri) => `spotify:track:${uri.split(":")[2]}`),
+                uris: uris,
               }),
             });
 
             if (addResponse.ok) {
-              const responseData = await addResponse.json();
               console.log(
-                `Tracks added to playlist successfully:`,
-                responseData
+                `Batch of ${uris.length} tracks added to playlist successfully`
               );
             } else {
-              const errorMessage = `Error adding tracks to the playlist: ${addResponse.statusText}`;
+              const errorMessage = `Error adding batch to the playlist: ${addResponse.statusText}`;
               console.error(errorMessage);
               logToConsole(errorMessage);
               // Handle error if needed
             }
           } catch (error) {
-            const errorMessage = `Error adding tracks to the playlist: ${error.message}`;
+            const errorMessage = `Error adding batch to the playlist: ${error.message}`;
             console.error(errorMessage);
             logToConsole(errorMessage);
             // Handle error if needed
@@ -255,6 +297,7 @@
         // Display added songs information
         displayAddedSongsInfo(addedSongs);
       };
+
       const displayAddedSongsInfo = (addedSongs) => {
         const uniqueAddedSongs = [];
         const uniqueUris = new Set();
@@ -300,64 +343,64 @@
         }
       };
 
-      const searchOrCreatePlaylist = async (accessToken, playlistName) => {
-        const existingPlaylist = await searchPlaylist(
-          accessToken,
-          playlistName
-        );
-
-        if (existingPlaylist) {
-          return existingPlaylist;
-        } else {
-          const newPlaylist = await createPlaylist(accessToken, playlistName);
-          return newPlaylist;
-        }
-      };
-
-      // Adjusted searchPlaylist function to return the first matching playlist
       const searchPlaylist = async (accessToken, playlistName) => {
         let offset = 0;
+        let playlist = null;
 
         try {
-          while (true) {
+          while (!playlist) {
             const searchUrl = `https://api.spotify.com/v1/me/playlists?limit=50&offset=${offset}`;
+
+            console.log("Searching playlists at offset", offset);
+
             const response = await fetch(searchUrl, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
               },
             });
 
+            console.log("Received response:", response);
+
             if (!response.ok) {
               throw new Error(
-                `Error fetching playlists: ${response.status} ${response.statusText}`
+                "Error fetching playlists : " +
+                  response.status +
+                  " " +
+                  response.statusText
               );
             }
 
             const data = await response.json();
-            const matchingPlaylist = data.items.find(
-              (item) => item.name === playlistName
-            );
 
-            if (matchingPlaylist) {
-              console.log("Found playlist:", matchingPlaylist);
-              return matchingPlaylist;
-            }
+            console.log("Received JSON data:", data);
 
-            if (!data.next) {
+            playlist = data.items.find((item) => item.name === playlistName);
+
+            if (!playlist && data.next) {
+              offset += 50;
+              await new Promise((resolve) => setTimeout(resolve, searchDelay));
+            } else {
               break;
             }
-
-            offset += 50;
-            await new Promise((resolve) => setTimeout(resolve, searchDelay));
           }
 
-          console.log(`Playlist "${playlistName}" not found.`);
-          return null;
+          if (playlist) {
+            // Fetch and store the playlist tracks once
+            playlistTracks = await getPlaylistTracks(
+              accessToken,
+              playlist.tracks.href
+            );
+          }
+
+          console.log("Found playlist:", playlist);
+          return playlist;
         } catch (error) {
           console.error("Error searching playlist:", error);
+          alert("An error occurred while searching for the playlist: " + error);
           throw error;
         }
       };
+
       const createPlaylist = async (accessToken) => {
         const createPlaylistUrl = "https://api.spotify.com/v1/me/playlists";
 
@@ -386,6 +429,7 @@
         const params = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = params.get("access_token");
 
+        // Notify the user that the process is running
         alert(
           "This may take a minute. Close this alert to begin, and then leave this page open."
         );
