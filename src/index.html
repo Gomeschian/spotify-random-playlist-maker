@@ -232,7 +232,7 @@
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                uris: uris,
+                uris: uris.map((uri) => `spotify:track:${uri.split(":")[2]}`),
               }),
             });
 
