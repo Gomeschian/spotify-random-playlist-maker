@@ -53,7 +53,7 @@
         ***Unclear if anything that old is actually on Spotify under its
         original release date.
       </p>
-      <div class="mb-4">
+      <div class="mb-4" id="buttons"> <!-- Move id="buttons" here -->
         <label for="numberOfSongs" class="block mb-2 text-lg"
           >Number of Tracks:</label
         >
@@ -65,30 +65,34 @@
           class="w-16 p-2 text-lg border border-gray-300 rounded"
         />
       </div>
-      <button
-        id="createPlaylistAndAddTracksButton"
-        class="px-6 py-3 bg-green-500 text-white rounded cursor-pointer text-lg hover:bg-green-600"
-      >
-        Create Playlist and/or Add Tracks
-      </button>
+      <div class="flex flex-col items-center justify-center"> <!-- Add this div -->
+        <button
+          id="createPlaylistAndAddTracksButton"
+          class="px-6 py-3 bg-green-500 text-white rounded cursor-pointer text-xl hover:bg-green-600"
+        >
+          Create Playlist and/or Add Tracks
+        </button>
 
-      <button
-        id="copyResultsButton"
-        class="ml-4 px-4 py-2 bg-blue-500 text-white rounded cursor-pointer text-lg hover:bg-blue-600"
-      >
-        Results (click to copy to clipboard)
-      </button>
+        <button
+          id="copyResultsButton"
+          class=" px-6 py-3 bg-blue-500 text-white rounded cursor-pointer text-lg hover:bg-blue-600"
+        >
+          Results (click to copy to clipboard)
+        </button>
 
-      <div
-        id="added-songs"
-        class="mt-8 max-w-screen-xl text-lg p-4 border border-gray-300 max-h-52 overflow-y-auto"
-      ></div>
+        <div
+          id="added-songs"
+          class="mt-8 max-w-screen-xl text-lg p-4 border border-gray-300 max-h-52 overflow-y-auto"
+        ></div>
 
-      <div
-        id="console"
-        class="h-20 overflow-y-auto border-1 border-gray-300 p-4 mt-4 text-lg hidden"
-      ></div>
+        <div
+          id="console"
+          class="h-20 overflow-y-auto border-1 border-gray-300 p-4 mt-4 text-lg hidden"
+        ></div>
+      </div>
     </div>
+  </body>
+</html>
 
     <script>
       const CLIENT_ID = "a34e83c02f6e439a891f4c2f6ba197fe";
