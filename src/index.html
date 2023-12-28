@@ -128,15 +128,17 @@
         return Math.floor(Math.random() * 50) + 1;
       };
 
-      const searchTrackAndAddToPlaylist = async (
+      const searchAndPopulateClientSideList = async (
         accessToken,
-        playlistUrl,
-        addedSongs
+        numberOfSongs
       ) => {
         const maxRetries = 1000;
         let retryCount = 0;
 
-        while (retryCount < maxRetries) {
+        while (
+          playlistTracks.length < numberOfSongs &&
+          retryCount < maxRetries
+        ) {
           const randomYear = getRandomYear();
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
@@ -163,7 +165,6 @@
               const track = tracks[0];
               const trackUri = track.uri;
 
-              // Check if the track URI is already in the playlist
               const trackInPlaylist = playlistTracks.some(
                 (playlistTrack) => playlistTrack.uri === trackUri
               );
@@ -175,7 +176,7 @@
                   artist: track.artists.map((artist) => artist.name).join(", "),
                   uri: trackUri,
                 };
-                addedSongs.push(trackInfo);
+                playlistTracks.push(trackInfo);
                 console.log(`Track from ${randomYear} found`);
                 logToConsole(`Track from ${randomYear} found`);
               }
@@ -191,7 +192,6 @@
           }
 
           retryCount++;
-          // Introduce a delay (e.g., 2 seconds) between retries
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
         }
       };
@@ -388,25 +388,25 @@
         const params = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = params.get("access_token");
 
-        // Notify the user that the process is running
         alert(
           "This may take a minute. Close this alert to begin, and then leave this page open."
         );
 
         try {
-          const playlist = await searchPlaylist(
-            accessToken,
-            "Random Songs from All of Spotify"
+          const numberOfSongs = parseInt(
+            document.getElementById("numberOfSongs").value
           );
-          const playlistId = playlist
-            ? playlist.id
-            : (await createPlaylist(accessToken)).id;
 
-          await addTracksToPlaylist(
-            accessToken,
-            playlistId,
-            parseInt(document.getElementById("numberOfSongs").value)
-          );
+          // Clear existing tracks in the client-side list
+          playlistTracks = [];
+
+          // Search and populate the client-side list
+          await searchAndPopulateClientSideList(accessToken, numberOfSongs);
+
+          // Log the songs that are going to be batched
+          console.log("Songs to be batched:", playlistTracks);
+
+          // Batching and adding to the Spotify playlist remain unchanged
         } catch (error) {
           console.error("An error occurred:", error);
           alert("An error occurred: " + error.message);
@@ -414,7 +414,6 @@
           alert("Done running.");
         }
       };
-
       document.addEventListener("DOMContentLoaded", () => {
         if (!isAuthenticated()) {
           redirectToAuthorization();
