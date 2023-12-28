@@ -304,64 +304,64 @@
         }
       };
 
+      const searchOrCreatePlaylist = async (accessToken, playlistName) => {
+        const existingPlaylist = await searchPlaylist(
+          accessToken,
+          playlistName
+        );
+
+        if (existingPlaylist) {
+          return existingPlaylist;
+        } else {
+          const newPlaylist = await createPlaylist(accessToken, playlistName);
+          return newPlaylist;
+        }
+      };
+
+      // Adjusted searchPlaylist function to return the first matching playlist
       const searchPlaylist = async (accessToken, playlistName) => {
         let offset = 0;
-        let playlist = null;
 
         try {
-          while (!playlist) {
+          while (true) {
             const searchUrl = `https://api.spotify.com/v1/me/playlists?limit=50&offset=${offset}`;
-
-            console.log("Searching playlists at offset", offset);
-
             const response = await fetch(searchUrl, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
               },
             });
 
-            console.log("Received response:", response);
-
             if (!response.ok) {
               throw new Error(
-                "Error fetching playlists : " +
-                  response.status +
-                  " " +
-                  response.statusText
+                `Error fetching playlists: ${response.status} ${response.statusText}`
               );
             }
 
             const data = await response.json();
+            const matchingPlaylist = data.items.find(
+              (item) => item.name === playlistName
+            );
 
-            console.log("Received JSON data:", data);
+            if (matchingPlaylist) {
+              console.log("Found playlist:", matchingPlaylist);
+              return matchingPlaylist;
+            }
 
-            playlist = data.items.find((item) => item.name === playlistName);
-
-            if (!playlist && data.next) {
-              offset += 50;
-              await new Promise((resolve) => setTimeout(resolve, searchDelay));
-            } else {
+            if (!data.next) {
               break;
             }
+
+            offset += 50;
+            await new Promise((resolve) => setTimeout(resolve, searchDelay));
           }
 
-          if (playlist) {
-            // Fetch and store the playlist tracks once
-            playlistTracks = await getPlaylistTracks(
-              accessToken,
-              playlist.tracks.href
-            );
-          }
-
-          console.log("Found playlist:", playlist);
-          return playlist;
+          console.log(`Playlist "${playlistName}" not found.`);
+          return null;
         } catch (error) {
           console.error("Error searching playlist:", error);
-          alert("An error occurred while searching for the playlist: " + error);
           throw error;
         }
       };
-
       const createPlaylist = async (accessToken) => {
         const createPlaylistUrl = "https://api.spotify.com/v1/me/playlists";
 
@@ -405,8 +405,22 @@
           // Search and populate the client-side list
           await searchAndPopulateClientSideList(accessToken, numberOfSongs);
 
-          // Log the songs that are going to be batched
-          console.log("Songs to be batched:", playlistTracks);
+          // Search for or create the playlist
+          const playlistName = "Random Songs from All of Spotify";
+          const playlist = await searchOrCreatePlaylist(
+            accessToken,
+            playlistName
+          );
+
+          if (playlist) {
+            // Add tracks to the playlist
+            await addTracksToPlaylist(accessToken, playlist.id, numberOfSongs);
+          } else {
+            console.error(
+              `Error: Playlist "${playlistName}" not found or created.`
+            );
+            alert(`Error: Playlist "${playlistName}" not found or created.`);
+          }
         } catch (error) {
           console.error("An error occurred:", error);
           alert("An error occurred: " + error.message);
