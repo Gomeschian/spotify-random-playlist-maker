@@ -428,6 +428,22 @@
         const data = await response.json();
         return data;
       };
+      const searchOrCreatePlaylist = async (accessToken, playlistName) => {
+        // Search for the playlist
+        const existingPlaylist = await searchPlaylist(
+          accessToken,
+          playlistName
+        );
+
+        // If the playlist exists, return it
+        if (existingPlaylist) {
+          return existingPlaylist;
+        }
+
+        // If the playlist doesn't exist, create it
+        const newPlaylist = await createPlaylist(accessToken);
+        return newPlaylist;
+      };
 
       const createPlaylistAndAddTracks = async () => {
         if (!isAuthenticated()) {
