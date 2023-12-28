@@ -188,32 +188,29 @@
       ) => {
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
         const addedSongs = [];
-        const searchPromises = [];
 
-        const retrySearch = async (remainingSongs) => {
-          for (let i = 0; i < remainingSongs; i++) {
-            const randomYear = getRandomYear();
-            searchPromises.push(
-              searchTrackAndAddToPlaylist(
-                accessToken,
-                playlistUrl,
-                randomYear,
-                addedSongs
-              )
-            );
-          }
-          await Promise.all(searchPromises);
+        // Function to search and add tracks
+        const searchAndAdd = async () => {
+          const randomYear = getRandomYear();
+          const result = await searchTrackAndAddToPlaylist(
+            accessToken,
+            playlistUrl,
+            randomYear,
+            addedSongs
+          );
+          return result;
         };
 
-        // Initial search
-        await retrySearch(numberOfSongs);
-
-        // Check if the number of added songs is equal to the desired number
-        if (addedSongs.length < numberOfSongs) {
+        // Retry until the correct number of songs is added
+        while (addedSongs.length < numberOfSongs) {
           const remainingSongs = numberOfSongs - addedSongs.length;
 
           // Retry the search to make up the difference
-          await retrySearch(remainingSongs);
+          const retryPromises = Array.from(
+            { length: remainingSongs },
+            searchAndAdd
+          );
+          await Promise.all(retryPromises);
         }
 
         // The rest of the code remains the same
