@@ -67,7 +67,7 @@
       </div>
       <button
         id="createPlaylistAndAddTracksButton"
-        class="px-6 py-3 bg-green-500 text-white rounded cursor-pointer text-lg hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300 focus-visible:ring focus-visible:ring-green-300 active:bg-green-700"
+        class="px-6 py-3 bg-green-500 text-white rounded cursor-pointer text-lg hover:bg-green-600"
       >
         Create Playlist and/or Add Tracks
       </button>
@@ -310,7 +310,7 @@
         const accessToken = params.get("access_token");
 
         // Notify the user that the process is running
-        alert("Creating playlist and adding tracks. Please wait...");
+        alert("This may take a minute. Click OK to begin, and leave this page open.");
 
         try {
           const playlist = await searchPlaylist(
@@ -331,7 +331,7 @@
           alert("An error occurred: " + error.message);
         } finally {
           // Remove the alert when the process is complete or an error occurs
-          alert("Playlist creation and track addition complete!");
+          alert("Complete!");
         }
       };
 
