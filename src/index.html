@@ -135,9 +135,8 @@
       ) => {
         const maxRetries = 1000;
         let retryCount = 0;
-        let success = false;
 
-        while (!success && retryCount < maxRetries) {
+        while (retryCount < maxRetries) {
           const randomYear = getRandomYear();
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
@@ -176,21 +175,7 @@
                 logToConsole(
                   `Track from ${randomYear} is already in the playlist. Skipping.`
                 );
-                return;
-              }
-
-              const addResponse = await fetch(playlistUrl, {
-                method: "POST",
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  uris: [trackUri],
-                }),
-              });
-
-              if (addResponse.ok) {
+              } else {
                 const trackInfo = {
                   year: randomYear,
                   name: track.name,
@@ -200,11 +185,6 @@
                 addedSongs.push(trackInfo);
                 console.log(`Track from ${randomYear} found`);
                 logToConsole(`Track from ${randomYear} found`);
-                success = true;
-              } else {
-                const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
-                console.error(errorMessage);
-                logToConsole(errorMessage);
               }
             } else {
               const errorMessage = `No track found for year ${randomYear}`;
@@ -217,11 +197,9 @@
             logToConsole(errorMessage);
           }
 
-          if (!success) {
-            retryCount++;
-            // Introduce a delay (e.g., 2 seconds) between retries
-            await new Promise((resolve) => setTimeout(resolve, searchDelay));
-          }
+          retryCount++;
+          // Introduce a delay (e.g., 2 seconds) between retries
+          await new Promise((resolve) => setTimeout(resolve, searchDelay));
         }
       };
       const addTracksToPlaylist = async (
@@ -234,7 +212,6 @@
 
         // Search and add tracks until the desired number is reached
         while (addedSongs.length < numberOfSongs) {
-          const randomYear = getRandomYear();
           await searchTrackAndAddToPlaylist(
             accessToken,
             playlistUrl,
@@ -287,6 +264,7 @@
         // Display added songs information
         displayAddedSongsInfo(addedSongs);
       };
+
       const displayAddedSongsInfo = (addedSongs) => {
         const uniqueAddedSongs = [];
         const uniqueUris = new Set();
