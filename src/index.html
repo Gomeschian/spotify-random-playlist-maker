@@ -156,7 +156,7 @@
               // Check if the track URI is already in the playlist from before this run
               const trackInPlaylist = playlistTracks.some(
                 (playlistTrack) =>
-                  playlistTrack.uri === trackUri ||
+                  playlistTrack.track.uri === trackUri ||
                   addedTrackUris.includes(trackUri)
               );
 
@@ -187,6 +187,16 @@
                   uri: trackUri,
                 };
                 addedSongs.push(trackInfo);
+
+                // Fetch and update the playlist tracks
+                playlistTracks = await getPlaylistTracks(
+                  accessToken,
+                  playlistUrl.replace(
+                    `https://api.spotify.com/v1/playlists/`,
+                    `https://api.spotify.com/v1/playlists/${playlistId}/tracks`
+                  )
+                );
+
                 console.log(
                   `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} found`
                 );
