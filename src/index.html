@@ -53,7 +53,7 @@
         *Unclear if anything that old is actually on Spotify under its original
         release date.
       </p>
-      <div class="mb-4 flex flex-col items-center justify-center" id="buttons">
+      <!-- <div class="mb-4 flex flex-col items-center justify-center" id="buttons">
         <label for="numberOfSongs" class="block mb-2 text-lg"
           >Number of Tracks:</label
         >
@@ -64,7 +64,7 @@
           value="23"
           class="w-16 p-2 text-lg border border-gray-300 rounded"
         />
-      </div>
+      </div> -->
       <div class="flex flex-col items-center justify-center">
         <button
           id="createPlaylistAndAddTracksButton"
@@ -97,6 +97,8 @@
       const REDIRECT_URI = "https://spotify-topaz-nine.vercel.app/";
       const SCOPES =
         "playlist-modify-public playlist-modify-private playlist-read-private";
+
+      const NUMBER_OF_SONGS = 10;
 
       const searchDelay = 75;
       let playlistTracks = [];
@@ -432,11 +434,7 @@
             ? playlist.id
             : (await createPlaylist(accessToken)).id;
 
-          await addTracksToPlaylist(
-            accessToken,
-            playlistId,
-            parseInt(document.getElementById("numberOfSongs").value)
-          );
+          await addTracksToPlaylist(accessToken, playlistId, NUMBER_OF_SONGS);
         } catch (error) {
           console.error("An error occurred:", error);
           alert("An error occurred: " + error.message);
