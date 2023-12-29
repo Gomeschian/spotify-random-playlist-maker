@@ -293,7 +293,7 @@
           }
         });
 
-        addedSongsDiv.innerHTML += `<p><strong>Added Songs: ${uniqueAddedSongs.length}</strong></p>`;
+        addedSongsDiv.innerHTML += `<p><strong>Added Songs:</strong></p>`;
 
         uniqueAddedSongs.forEach((song) => {
           addedSongsDiv.innerHTML += `<p>${song.year}: ${song.artist} - ${song.name} (${song.uri})</p>`;
