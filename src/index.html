@@ -151,9 +151,7 @@
             if (tracks.length > 0) {
               const track = tracks[0];
               const trackUri = track.uri;
-              // Check if the track URI has already been added this run
-              addedTrackUris.push(trackUri);
-              // Check if the track URI is already in the playlist from before this run
+              // Check if the track URI has already been added
               const trackInPlaylist = playlistTracks.some(
                 (playlistTrack) =>
                   playlistTrack.uri === trackUri ||
@@ -205,6 +203,7 @@
           }
 
           if (!success) {
+            addedTrackUris.push(trackUri);
             retryCount++;
             // Introduce a delay (e.g., 2 seconds) between retries
             await new Promise((resolve) => setTimeout(resolve, searchDelay));
