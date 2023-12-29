@@ -295,7 +295,7 @@
       const getPlaylistTracks = async (accessToken, playlistTracksUrl) => {
         const tracksPerPage = 100; // Spotify API returns up to 100 tracks per request
         let allPlaylistTracks = [];
-
+        console.log("Fetching all playlist tracks...");
         try {
           let offset = 0;
           let hasNextPage = true;
