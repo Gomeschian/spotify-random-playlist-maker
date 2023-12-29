@@ -128,9 +128,8 @@
         return Math.floor(Math.random() * 50) + 1;
       };
 
-      const searchTrackAndAddToPlaylist = async (
+      const searchTrackAndAddToClientSideList = async (
         accessToken,
-        playlistUrl,
         addedSongs
       ) => {
         const maxRetries = 1000;
@@ -164,48 +163,28 @@
               const track = tracks[0];
               const trackUri = track.uri;
 
-              // Check if the track URI is already in the playlist
-              const trackInPlaylist = playlistTracks.some(
-                (playlistTrack) => playlistTrack.uri === trackUri
+              // Check if the track URI is already in the client-side list
+              const trackInClientList = clientSideTrackList.some(
+                (clientTrack) => clientTrack.uri === trackUri
               );
 
-              if (trackInPlaylist) {
-                console.log(
-                  `Track from ${randomYear} is already in the playlist. Skipping.`
-                );
-                logToConsole(
-                  `Track from ${randomYear} is already in the playlist. Skipping.`
-                );
-                return;
-              }
-
-              const addResponse = await fetch(playlistUrl, {
-                method: "POST",
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  uris: [trackUri],
-                }),
-              });
-
-              if (addResponse.ok) {
+              if (!trackInClientList) {
                 const trackInfo = {
                   year: randomYear,
                   name: track.name,
                   artist: track.artists.map((artist) => artist.name).join(", "),
                   uri: trackUri,
                 };
-                addedSongs.push(trackInfo);
-                console.log(`Track from ${randomYear} found`);
-                logToConsole(`Track from ${randomYear} found`);
-                success = true;
-              } else {
-                const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
-                console.error(errorMessage);
-                logToConsole(errorMessage);
+                clientSideTrackList.push(trackInfo);
+                console.log(
+                  `Track from ${randomYear} found and added to client list`
+                );
+                logToConsole(
+                  `Track from ${randomYear} found and added to client list`
+                );
               }
+
+              success = true;
             } else {
               const errorMessage = `No track found for year ${randomYear}`;
               console.error(errorMessage);
@@ -224,6 +203,7 @@
           }
         }
       };
+
       const addTracksToPlaylist = async (
         accessToken,
         playlistId,
@@ -234,12 +214,7 @@
 
         // Search and add tracks until the desired number is reached
         while (addedSongs.length < numberOfSongs) {
-          const randomYear = getRandomYear();
-          await searchTrackAndAddToPlaylist(
-            accessToken,
-            playlistUrl,
-            addedSongs
-          );
+          await searchTrackAndAddToClientSideList(accessToken, addedSongs);
 
           // Introduce a delay between requests
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
