@@ -147,8 +147,6 @@
             }
 
             const data = await response.json();
-            console.log("Search API Response:", data); // Log the response
-
             const tracks = data.tracks.items;
 
             if (tracks.length > 0) {
@@ -163,12 +161,6 @@
               const trackInPlaylist = playlistTracks.some(
                 (playlistTrack) =>
                   playlistTrack.track && playlistTrack.track.uri === trackUri
-              );
-
-              console.log("Checking track URI:", trackUri);
-              console.log(
-                "Playlist Track URIs:",
-                playlistTracks.map((t) => t.track.uri)
               );
 
               if (trackInPlaylist) {
