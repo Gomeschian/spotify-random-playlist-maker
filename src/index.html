@@ -160,7 +160,8 @@
 
               const trackInPlaylist = playlistTracks.some(
                 (playlistTrack) =>
-                  playlistTrack.uri === trackUri ||
+                  (playlistTrack.track &&
+                    playlistTrack.track.uri === trackUri) ||
                   addedTrackUris.includes(trackUri)
               );
 
