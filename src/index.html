@@ -87,6 +87,7 @@
 
       const searchDelay = 100;
       let playlistTracks = [];
+      let addedDuringRuntime = [];
 
       const addedSongsDiv = document.getElementById("added-songs");
       const consoleDiv = document.getElementById("console");
@@ -152,12 +153,16 @@
             if (tracks.length > 0) {
               const track = tracks[0];
               trackUri = track.uri;
-              console.log("Current Track URI:", trackUri);
-              console.log(
-                "Playlist Track URIs:",
-                playlistTracks.map((track) => track.uri)
-              );
 
+              // Check if the track has already been added during runtime
+              if (addedDuringRuntime.includes(trackUri)) {
+                console.log(
+                  `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} has already been added during this runtime. Skipping.`
+                );
+                return;
+              }
+
+              // Check if the track is already in the playlist
               const trackInPlaylist = playlistTracks.some(
                 (playlistTrack) =>
                   playlistTrack.track && playlistTrack.track.uri === trackUri
@@ -167,7 +172,6 @@
                 console.log(
                   `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} is already in the playlist. Skipping.`
                 );
-
                 return;
               }
 
@@ -214,6 +218,9 @@
             await new Promise((resolve) => setTimeout(resolve, searchDelay));
           }
         }
+
+        // After successfully adding a track, update the list of tracks added during runtime
+        addedDuringRuntime.push(trackUri);
       };
       const addTracksToPlaylist = async (
         accessToken,
