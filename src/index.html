@@ -128,11 +128,7 @@
         return Math.floor(Math.random() * 50) + 1;
       };
 
-      const searchTrackAndAddToPlaylist = async (
-        accessToken,
-        playlistUrl,
-        addedSongs
-      ) => {
+      const searchAndAddSong = async (accessToken) => {
         const maxRetries = 1000;
         let retryCount = 0;
         let success = false;
@@ -176,21 +172,7 @@
                 logToConsole(
                   `Track from ${randomYear} is already in the playlist. Skipping.`
                 );
-                return;
-              }
-
-              const addResponse = await fetch(playlistUrl, {
-                method: "POST",
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  uris: [trackUri],
-                }),
-              });
-
-              if (addResponse.ok) {
+              } else {
                 const trackInfo = {
                   year: randomYear,
                   name: track.name,
@@ -201,10 +183,6 @@
                 console.log(`Track from ${randomYear} found`);
                 logToConsole(`Track from ${randomYear} found`);
                 success = true;
-              } else {
-                const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
-                console.error(errorMessage);
-                logToConsole(errorMessage);
               }
             } else {
               const errorMessage = `No track found for year ${randomYear}`;
@@ -224,6 +202,7 @@
           }
         }
       };
+
       const addTracksToPlaylist = async (
         accessToken,
         playlistId,
@@ -232,14 +211,9 @@
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
         const addedSongs = [];
 
-        // Search and add tracks until the desired number is reached
+        // Search and add songs until the desired number is reached
         while (addedSongs.length < numberOfSongs) {
-          const randomYear = getRandomYear();
-          await searchTrackAndAddToPlaylist(
-            accessToken,
-            playlistUrl,
-            addedSongs
-          );
+          await searchAndAddSong(accessToken);
 
           // Introduce a delay between requests
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
