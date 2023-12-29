@@ -157,7 +157,7 @@
               // Check if the track has already been added during runtime
               if (addedDuringRuntime.includes(trackUri)) {
                 console.log(
-                  `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} has already been added during this runtime. Skipping.`
+                  `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} is a duplicate. Skipping.`
                 );
                 return;
               }
@@ -170,7 +170,7 @@
 
               if (trackInPlaylist) {
                 console.log(
-                  `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} is already in the playlist. Skipping.`
+                  `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} is a duplicate. Skipping.`
                 );
                 return;
               }
@@ -343,6 +343,11 @@
 
           // Update the global playlistTracks array with a single array
           playlistTracks = allPlaylistTracks;
+
+          // Add playlist track URIs to the array of tracks added during runtime
+          addedDuringRuntime = addedDuringRuntime.concat(
+            allPlaylistTracks.map((playlistTrack) => playlistTrack.uri)
+          );
 
           console.log("Updated playlistTracks:", playlistTracks);
 
