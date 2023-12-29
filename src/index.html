@@ -175,9 +175,7 @@
                 console.log(
                   `Track from ${randomYear} is already in the playlist. Skipping.`
                 );
-                logToConsole(
-                  `Track from ${randomYear} is already in the playlist. Skipping.`
-                );
+               
                 return;
               }
 
@@ -201,22 +199,18 @@
                 };
                 addedSongs.push(trackInfo);
                 console.log(`Track from ${randomYear} found`);
-                logToConsole(`Track from ${randomYear} found`);
                 success = true;
               } else {
                 const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
                 console.error(errorMessage);
-                logToConsole(errorMessage);
               }
             } else {
               const errorMessage = `No track found for year ${randomYear}`;
               console.error(errorMessage);
-              logToConsole(errorMessage);
             }
           } catch (error) {
             const errorMessage = `Error searching for track: ${error.message}`;
             console.error(errorMessage);
-            logToConsole(errorMessage);
           }
 
           if (!success) {
@@ -275,13 +269,11 @@
         //     } else {
         //       const errorMessage = `Error adding batch to the playlist: ${addResponse.statusText}`;
         //       console.error(errorMessage);
-        //       logToConsole(errorMessage);
         //       // Handle error if needed
         //     }
         //   } catch (error) {
         //     const errorMessage = `Error adding batch to the playlist: ${error.message}`;
         //     console.error(errorMessage);
-        //     logToConsole(errorMessage);
         //     // Handle error if needed
         //   }
         // }
