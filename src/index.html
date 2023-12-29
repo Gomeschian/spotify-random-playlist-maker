@@ -158,9 +158,12 @@
                 playlistTracks.map((track) => track.uri)
               );
 
-              const trackInPlaylist = playlistTracks.some(
-                (playlistTrack) =>
-                  playlistTrack.track && playlistTrack.track.uri === trackUri
+              // Loop through all batches of tracks in the playlist
+              const trackInPlaylist = playlistTracks.some((playlistTrack) =>
+                playlistTrack.some(
+                  (batchTrack) =>
+                    batchTrack.track && batchTrack.track.uri === trackUri
+                )
               );
 
               if (trackInPlaylist) {
