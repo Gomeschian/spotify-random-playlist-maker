@@ -152,6 +152,11 @@
             if (tracks.length > 0) {
               const track = tracks[0];
               trackUri = track.uri;
+              console.log("Current Track URI:", trackUri);
+              console.log(
+                "Playlist Track URIs:",
+                playlistTracks.map((track) => track.uri)
+              );
 
               const trackInPlaylist = playlistTracks.some(
                 (playlistTrack) =>
