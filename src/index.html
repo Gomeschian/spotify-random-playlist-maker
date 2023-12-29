@@ -155,7 +155,7 @@
 
             if (!response.ok) {
               throw new Error(
-                `Invalid search for year ${randomYear}: ${response.statusText}`
+                `Invalid search for year ${randomYear} and offset ${randomOffset} and limit ${randomLimit}: ${response.statusText}`
               );
             }
 
@@ -173,9 +173,9 @@
 
               if (trackInPlaylist) {
                 console.log(
-                  `Track from ${randomYear} is already in the playlist. Skipping.`
+                  `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} is already in the playlist. Skipping.`
                 );
-               
+
                 return;
               }
 
@@ -198,14 +198,16 @@
                   uri: trackUri,
                 };
                 addedSongs.push(trackInfo);
-                console.log(`Track from ${randomYear} found`);
+                console.log(
+                  `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} found`
+                );
                 success = true;
               } else {
                 const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
                 console.error(errorMessage);
               }
             } else {
-              const errorMessage = `No track found for year ${randomYear}`;
+              const errorMessage = `No track found for year ${randomYear} and offset ${randomOffset} and limit ${randomLimit}`;
               console.error(errorMessage);
             }
           } catch (error) {
