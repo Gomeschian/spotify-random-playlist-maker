@@ -247,44 +247,44 @@
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
         }
 
-        // Log the songs that are going to be batched
-        console.log("Songs to be batched:", addedSongs);
+        // // Log the songs that are going to be batched
+        // console.log("Songs to be batched:", addedSongs);
 
-        // Create a batch of up to 100 tracks
-        const batch = addedSongs.slice(0, 100);
+        // // Create a batch of up to 100 tracks
+        // const batch = addedSongs.slice(0, 100);
 
-        // Add the batch to the playlist
-        if (batch.length > 0) {
-          const uris = batch.map((song) => song.uri);
-          try {
-            const addResponse = await fetch(playlistUrl, {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                uris: uris,
-              }),
-            });
+        // // Add the batch to the playlist
+        // if (batch.length > 0) {
+        //   const uris = batch.map((song) => song.uri);
+        //   try {
+        //     const addResponse = await fetch(playlistUrl, {
+        //       method: "POST",
+        //       headers: {
+        //         Authorization: `Bearer ${accessToken}`,
+        //         "Content-Type": "application/json",
+        //       },
+        //       body: JSON.stringify({
+        //         uris: uris,
+        //       }),
+        //     });
 
-            if (addResponse.ok) {
-              console.log(
-                `Batch of ${uris.length} tracks added to playlist successfully`
-              );
-            } else {
-              const errorMessage = `Error adding batch to the playlist: ${addResponse.statusText}`;
-              console.error(errorMessage);
-              logToConsole(errorMessage);
-              // Handle error if needed
-            }
-          } catch (error) {
-            const errorMessage = `Error adding batch to the playlist: ${error.message}`;
-            console.error(errorMessage);
-            logToConsole(errorMessage);
-            // Handle error if needed
-          }
-        }
+        //     if (addResponse.ok) {
+        //       console.log(
+        //         `Batch of ${uris.length} tracks added to playlist successfully`
+        //       );
+        //     } else {
+        //       const errorMessage = `Error adding batch to the playlist: ${addResponse.statusText}`;
+        //       console.error(errorMessage);
+        //       logToConsole(errorMessage);
+        //       // Handle error if needed
+        //     }
+        //   } catch (error) {
+        //     const errorMessage = `Error adding batch to the playlist: ${error.message}`;
+        //     console.error(errorMessage);
+        //     logToConsole(errorMessage);
+        //     // Handle error if needed
+        //   }
+        // }
 
         // Display added songs information
         displayAddedSongsInfo(addedSongs);
