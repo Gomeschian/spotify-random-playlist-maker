@@ -220,15 +220,8 @@
           // Introduce a delay between requests
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
 
-          // Log the current number of added songs
-          console.log("Current number of added songs:", addedSongs.length);
-
-          // Log the desired number of songs
-          console.log("Desired number of songs:", numberOfSongs);
-
           // If the desired number of songs is reached, break the loop
           if (addedSongs.length >= numberOfSongs) {
-            console.log("Desired number of songs reached. Breaking the loop.");
             break;
           }
         }
@@ -278,6 +271,7 @@
         // Display added songs information
         displayAddedSongsInfo(trimmedSongs);
       };
+
       const displayAddedSongsInfo = (addedSongs) => {
         const uniqueAddedSongs = [];
         const uniqueUris = new Set();
