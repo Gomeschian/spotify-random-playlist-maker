@@ -219,21 +219,13 @@
 
           // Introduce a delay between requests
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
-
-          // If the desired number of songs is reached, break the loop
-          if (addedSongs.length >= numberOfSongs) {
-            break;
-          }
         }
 
-        // Trim the list to the desired number of songs
-        const trimmedSongs = addedSongs.slice(0, numberOfSongs);
-
         // Log the songs that are going to be batched
-        console.log("Songs to be batched:", trimmedSongs);
+        console.log("Songs to be batched:", addedSongs);
 
         // Create a batch of up to 100 tracks
-        const batch = trimmedSongs.slice(0, 100);
+        const batch = addedSongs.slice(0, 100);
 
         // Add the batch to the playlist
         if (batch.length > 0) {
@@ -269,9 +261,8 @@
         }
 
         // Display added songs information
-        displayAddedSongsInfo(trimmedSongs);
+        displayAddedSongsInfo(addedSongs);
       };
-
       const displayAddedSongsInfo = (addedSongs) => {
         const uniqueAddedSongs = [];
         const uniqueUris = new Set();
