@@ -306,7 +306,9 @@
           }
 
           const data = await response.json();
-          return data.items;
+          playlistTracks = data.items; // Update playlistTracks
+          console.log("Updated playlistTracks:", playlistTracks); // Log updated playlistTracks
+          return playlistTracks;
         } catch (error) {
           console.error("Error fetching playlist tracks:", error);
           throw error;
