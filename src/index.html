@@ -17,9 +17,8 @@
     <div id="app" class="flex flex-col items-center justify-center text-center">
       <h1 class="mb-6 text-4xl font-bold">Spotify Random Track Playlist</h1>
       <p class="mb-6 text-xl">
-        Adds 30 random, non-duplicate tracks to a playlist called
-        "Random Songs from All of Spotify" (will be created if it doesn't
-        exist).
+        Adds 30 random, non-duplicate tracks to a playlist called "Random Songs
+        from All of Spotify" (will be created if it doesn't exist).
       </p>
       <p class="mb-6 text-lg">
         Methodology: Searches for a random year between 1860 (year of oldest
@@ -140,7 +139,10 @@
                 Authorization: `Bearer ${accessToken}`,
               },
             });
-
+            if (response.status === 429) {
+              console.error("Too Many Requests: Please try again later.");
+              return; // Stop the function execution
+            }
             if (!response.ok) {
               throw new Error(
                 `Invalid search for year ${randomYear} and offset ${randomOffset} and limit ${randomLimit}: ${response.statusText}`
