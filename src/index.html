@@ -123,7 +123,7 @@
         const maxRetries = 1000;
         let retryCount = 0;
         let success = false;
-        let addedTrackUris = [];
+        const addedTrackUris = [];
 
         while (!success && retryCount < maxRetries) {
           const randomYear = getRandomYear();
