@@ -151,9 +151,7 @@
             if (tracks.length > 0) {
               const track = tracks[0];
               const trackUri = track.uri;
-              // Check if the track URI has already been added this run
-              addedTrackUris.push(trackUri);
-              // Check if the track URI is already in the playlist from before this run
+              // Check if the track URI is already in the playlist 
               const trackInPlaylist = playlistTracks.some(
                 (playlistTrack) =>
                   playlistTrack.track.uri === trackUri ||
@@ -187,6 +185,7 @@
                   uri: trackUri,
                 };
                 addedSongs.push(trackInfo);
+                addedTrackUris.push(trackUri);
 
                 // Fetch and update the playlist tracks
                 playlistTracks = await getPlaylistTracks(
