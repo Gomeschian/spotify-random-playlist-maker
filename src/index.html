@@ -172,9 +172,7 @@
               );
 
               if (trackInPlaylist) {
-                console.log(
-                  `Track from ${randomYear} is already in the playlist. Skipping.`
-                );
+               
                 logToConsole(
                   `Track from ${randomYear} is already in the playlist. Skipping.`
                 );
@@ -200,22 +198,18 @@
                   uri: trackUri,
                 };
                 addedSongs.push(trackInfo);
-                console.log(`Track from ${randomYear} found`);
                 logToConsole(`Track from ${randomYear} found`);
                 success = true;
               } else {
                 const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
-                console.error(errorMessage);
                 logToConsole(errorMessage);
               }
             } else {
               const errorMessage = `No track found for year ${randomYear}`;
-              console.error(errorMessage);
               logToConsole(errorMessage);
             }
           } catch (error) {
             const errorMessage = `Error searching for track: ${error.message}`;
-            console.error(errorMessage);
             logToConsole(errorMessage);
           }
 
@@ -248,7 +242,7 @@
         }
 
         // // Log the songs that are going to be batched
-        // console.log("Songs to be batched:", addedSongs);
+        // logToConsole("Songs to be batched:", addedSongs);
 
         // // Create a batch of up to 100 tracks
         // const batch = addedSongs.slice(0, 100);
@@ -269,7 +263,7 @@
         //     });
 
         //     if (addResponse.ok) {
-        //       console.log(
+        //       logToConsole(
         //         `Batch of ${uris.length} tracks added to playlist successfully`
         //       );
         //     } else {
@@ -342,7 +336,7 @@
           while (!playlist) {
             const searchUrl = `https://api.spotify.com/v1/me/playlists?limit=50&offset=${offset}`;
 
-            console.log("Searching playlists at offset", offset);
+            logToConsole("Searching playlists at offset", offset);
 
             const response = await fetch(searchUrl, {
               headers: {
@@ -350,7 +344,7 @@
               },
             });
 
-            console.log("Received response:", response);
+            logToConsole("Received response:", response);
 
             if (!response.ok) {
               throw new Error(
@@ -363,7 +357,7 @@
 
             const data = await response.json();
 
-            console.log("Received JSON data:", data);
+           logToConsole("Received JSON data:", data);
 
             playlist = data.items.find((item) => item.name === playlistName);
 
@@ -383,7 +377,7 @@
             );
           }
 
-          console.log("Found playlist:", playlist);
+          logToConsole("Found playlist:", playlist);
           return playlist;
         } catch (error) {
           console.error("Error searching playlist:", error);
@@ -461,7 +455,7 @@
       }
 
       const logToConsole = (message) => {
-        console.log(message); // Log to the browser console
+        logToConsole(message); // Log to the browser console
         consoleDiv.innerHTML += `<p>${message}</p>`;
         consoleDiv.scrollTop = consoleDiv.scrollHeight;
       };
