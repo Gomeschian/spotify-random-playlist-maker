@@ -85,7 +85,7 @@
 
       const NUMBER_OF_SONGS = 30;
 
-      const searchDelay = 75;
+      const searchDelay = 100;
       let playlistTracks = [];
 
       const addedSongsDiv = document.getElementById("added-songs");
@@ -160,9 +160,7 @@
 
               const trackInPlaylist = playlistTracks.some(
                 (playlistTrack) =>
-                  (playlistTrack.track &&
-                    playlistTrack.track.uri === trackUri) ||
-                  addedTrackUris.includes(trackUri)
+                  playlistTrack.track && playlistTrack.track.uri === trackUri
               );
 
               if (trackInPlaylist) {
@@ -331,6 +329,7 @@
             } else {
               hasNextPage = false;
             }
+            playlistTracks = allPlaylistTracks;
 
             // Introduce a delay between requests
             await new Promise((resolve) => setTimeout(resolve, searchDelay));
