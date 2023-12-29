@@ -123,6 +123,7 @@
         const maxRetries = 1000;
         let retryCount = 0;
         let success = false;
+        const addedTrackUris = [];
 
         while (!success && retryCount < maxRetries) {
           const randomYear = getRandomYear();
@@ -150,10 +151,13 @@
             if (tracks.length > 0) {
               const track = tracks[0];
               const trackUri = track.uri;
-
-              // Check if the track URI is already in the playlist
+              // Check if the track URI has already been added this run
+              addedTrackUris.push(trackUri);
+              // Check if the track URI is already in the playlist from before this run
               const trackInPlaylist = playlistTracks.some(
-                (playlistTrack) => playlistTrack.uri === trackUri
+                (playlistTrack) =>
+                  playlistTrack.uri === trackUri ||
+                  addedTrackUris.includes(trackUri)
               );
 
               if (trackInPlaylist) {
