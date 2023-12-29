@@ -297,55 +297,54 @@
       };
 
       const getPlaylistTracks = async (accessToken, playlistTracksUrl) => {
-  const tracksPerPage = 100; // Spotify API returns up to 100 tracks per request
-  let allPlaylistTracks = [];
+        const tracksPerPage = 100; // Spotify API returns up to 100 tracks per request
+        let allPlaylistTracks = [];
 
-  try {
-    let offset = 0;
-    let hasNextPage = true;
+        try {
+          let offset = 0;
+          let hasNextPage = true;
 
-    while (hasNextPage) {
-      const response = await fetch(
-        `${playlistTracksUrl}?offset=${offset}&limit=${tracksPerPage}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          while (hasNextPage) {
+            const response = await fetch(
+              `${playlistTracksUrl}?offset=${offset}&limit=${tracksPerPage}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error(
+                `Error fetching playlist tracks: ${response.status} ${response.statusText}`
+              );
+            }
+
+            const data = await response.json();
+            const currentTracks = data.items.map((item) => item.track);
+
+            if (currentTracks.length > 0) {
+              allPlaylistTracks = allPlaylistTracks.concat(currentTracks);
+              offset += tracksPerPage;
+            } else {
+              hasNextPage = false;
+            }
+
+            // Introduce a delay between requests
+            await new Promise((resolve) => setTimeout(resolve, searchDelay));
+          }
+
+          // Update the global playlistTracks array
+          playlistTracks = allPlaylistTracks;
+
+          console.log("Updated playlistTracks:", playlistTracks);
+
+          return allPlaylistTracks;
+        } catch (error) {
+          console.error("Error fetching all playlist tracks:", error);
+          throw error;
         }
-      );
-
-      if (!response.ok) {
-        throw new Error(
-          `Error fetching playlist tracks: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const data = await response.json();
-      const currentTracks = data.items;
-
-      if (currentTracks.length > 0) {
-        allPlaylistTracks = allPlaylistTracks.concat(currentTracks);
-        offset += tracksPerPage;
-      } else {
-        hasNextPage = false;
-      }
-
-      // Introduce a delay between requests
-      await new Promise((resolve) => setTimeout(resolve, searchDelay));
-    }
-
-    // Update the global playlistTracks array
-    playlistTracks = allPlaylistTracks.map((item) => item.track);
-
-    console.log("Updated playlistTracks:", playlistTracks);
-
-    return allPlaylistTracks;
-  } catch (error) {
-    console.error("Error fetching all playlist tracks:", error);
-    throw error;
-  }
-};
-
+      };
 
       const searchPlaylist = async (accessToken, playlistName) => {
         let offset = 0;
