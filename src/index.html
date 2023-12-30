@@ -372,8 +372,7 @@
           while (!playlist) {
             const searchUrl = `https://api.spotify.com/v1/me/playlists?limit=50&offset=${offset}`;
 
-            console.log("Searching playlists at offset", offset);
-
+            logToConsole(`Searching for playlists at offset ${offset}`);
             const response = await fetch(searchUrl, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
