@@ -67,12 +67,16 @@
         <div
           id="added-songs"
           class="mt-8 max-w-screen-xl text-lg p-4 border border-gray-300 max-h-52 overflow-y-auto"
-        >Results will be here</div>
+        >
+          Results
+        </div>
 
         <div
-          id="console"
-          class="h-40 overflow-y-auto border-1 border-gray-300 p-4 mt-4 text-lg"
-        ></div>
+          id="console-div"
+          class="mt-8 max-w-screen-xl text-lg p-4 border border-gray-300 max-h-52 overflow-y-auto"
+        >
+          Progress
+        </div>
       </div>
     </div>
 
@@ -89,7 +93,7 @@
       let addedDuringRuntime = [];
 
       const addedSongsDiv = document.getElementById("added-songs");
-      const consoleDiv = document.getElementById("console");
+      const consoleDiv = document.getElementById("console-div");
 
       const isAuthenticated = () => {
         const params = new URLSearchParams(window.location.hash.substring(1));
@@ -409,13 +413,13 @@
           }
 
           console.log("Found playlist:", playlist);
-          logToConsole("Playlist found")
+          logToConsole("Playlist found");
 
           return playlist;
         } catch (error) {
           console.error("Error searching playlist:", error);
           alert("An error occurred while searching for the playlist: " + error);
-          logToConsole("An error occurred while searching for the playlist")
+          logToConsole("An error occurred while searching for the playlist");
 
           throw error;
         }
@@ -510,7 +514,7 @@
 
       const logToConsole = (message) => {
         console.log(message); // Log to the browser console
-        addedSongsDiv.innerHTML += `<p>${message}</p>`;
+        consoleDiv.innerHTML += `<p>${message}</p>`;
       };
 
       // Copy results to clipboard when the button is clicked
