@@ -158,7 +158,7 @@
 
               // Check if the track has already been added during runtime
               if (addedDuringRuntime.includes(trackUri)) {
-                console.log(
+                logToConsole(
                   `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} is a duplicate. Skipping.`
                 );
                 return;
@@ -171,7 +171,7 @@
               );
 
               if (trackInPlaylist) {
-                console.log(
+                logToConsole(
                   `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} is a duplicate. Skipping.`
                 );
                 return;
@@ -196,7 +196,7 @@
                   uri: trackUri,
                 };
                 addedSongs.push(trackInfo);
-                console.log(
+                logToConsole(
                   `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} found`
                 );
                 success = true;
@@ -363,7 +363,7 @@
       const searchPlaylist = async (accessToken, playlistName) => {
         let offset = 0;
         let playlist = null;
-
+        logToConsole("Searching for playlist...");
         try {
           while (!playlist) {
             const searchUrl = `https://api.spotify.com/v1/me/playlists?limit=50&offset=${offset}`;
@@ -390,7 +390,6 @@
             const data = await response.json();
 
             console.log("Received JSON data:", data);
-
             playlist = data.items.find((item) => item.name === playlistName);
 
             if (!playlist && data.next) {
@@ -410,10 +409,14 @@
           }
 
           console.log("Found playlist:", playlist);
+          logToConsole("Playlist found")
+
           return playlist;
         } catch (error) {
           console.error("Error searching playlist:", error);
           alert("An error occurred while searching for the playlist: " + error);
+          logToConsole("An error occurred while searching for the playlist")
+
           throw error;
         }
       };
@@ -507,8 +510,7 @@
 
       const logToConsole = (message) => {
         console.log(message); // Log to the browser console
-        consoleDiv.innerHTML += `<p>${message}</p>`;
-        consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        addedSongsDiv.innerHTML += `<p>${message}</p>`;
       };
 
       // Copy results to clipboard when the button is clicked
