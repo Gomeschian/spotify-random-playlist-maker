@@ -312,7 +312,7 @@
       const getPlaylistTracks = async (accessToken, playlistTracksUrl) => {
         const tracksPerPage = 100; // Spotify API returns up to 100 tracks per request
         let allPlaylistTracks = [];
-
+        logToConsole("Playlist found - reading tracks...");
         try {
           let offset = 0;
           let hasNextPage = true;
@@ -412,7 +412,7 @@
           }
 
           console.log("Found playlist:", playlist);
-          logToConsole("Playlist found - adding songs");
+          logToConsole("Adding songs");
 
           return playlist;
         } catch (error) {
@@ -425,6 +425,7 @@
       };
 
       const createPlaylist = async (accessToken) => {
+        logToConsole("Playlist not found - creating")
         const createPlaylistUrl = "https://api.spotify.com/v1/me/playlists";
 
         const response = await fetch(createPlaylistUrl, {
@@ -440,7 +441,6 @@
         });
 
         const data = await response.json();
-        logToConsole("Playlist created - adding songs");
         return data;
       };
 
@@ -455,7 +455,7 @@
 
         // Notify the user that the process is running
         alert(
-          "This may take a minute, probably less. Close this alert to begin, and then leave this page open. An alert will run when the process is complete or if there's a fatal error. Check console for more details."
+          "This may take a minute. Close this alert to begin, and then leave this page open. An alert will run when the process is complete or if there's a fatal error. Check console for more details."
         );
         document.getElementById(
           "createPlaylistAndAddTracksButton"
