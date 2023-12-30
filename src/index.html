@@ -425,7 +425,6 @@
       };
 
       const createPlaylist = async (accessToken) => {
-        logToConsole("Playlist not found - creating")
         const createPlaylistUrl = "https://api.spotify.com/v1/me/playlists";
 
         const response = await fetch(createPlaylistUrl, {
