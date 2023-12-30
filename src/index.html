@@ -296,7 +296,7 @@
         });
 
         addedSongsDiv.innerHTML += `<p><strong>Added Songs:</strong></p>`;
-        addedSongsDiv.hidden = false;
+
         uniqueAddedSongs.forEach((song) => {
           addedSongsDiv.innerHTML += `<p>${song.year}: ${song.artist} - ${song.name} (${song.uri})</p>`;
         });
@@ -516,6 +516,7 @@
       copyResultsButton.addEventListener("click", () => {
         const addedSongsDiv = document.getElementById("added-songs");
         const textToCopy = addedSongsDiv.innerText;
+
         const tempTextarea = document.createElement("textarea");
         tempTextarea.value = textToCopy;
         document.body.appendChild(tempTextarea);
