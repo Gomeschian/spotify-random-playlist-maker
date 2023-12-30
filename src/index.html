@@ -367,7 +367,7 @@
       const searchPlaylist = async (accessToken, playlistName) => {
         let offset = 0;
         let playlist = null;
-        logToConsole("Searching for playlist...");
+        logToConsole("Getting playlist...");
         try {
           while (!playlist) {
             const searchUrl = `https://api.spotify.com/v1/me/playlists?limit=50&offset=${offset}`;
@@ -413,7 +413,7 @@
           }
 
           console.log("Found playlist:", playlist);
-          logToConsole("Playlist found");
+          logToConsole("Playlist found - adding songs");
 
           return playlist;
         } catch (error) {
@@ -441,7 +441,7 @@
         });
 
         const data = await response.json();
-        logToConsole("Created playlist.");
+        logToConsole("Playlist created - adding songs");
         return data;
       };
 
