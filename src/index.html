@@ -87,6 +87,7 @@
         "playlist-modify-public playlist-modify-private playlist-read-private";
 
       const NUMBER_OF_SONGS = 50;
+      const BATCH_SIZE = 100; // 100 is the max songs that can be added at once per Spotify's Web API
 
       const searchDelay = 200;
       let playlistTracks = [];
@@ -138,6 +139,9 @@
           const searchUrl = `https://api.spotify.com/v1/search?type=track&q=year:${randomYear}&offset=${randomOffset}&limit=${randomLimit}`;
 
           try {
+            
+            await new Promise((resolve) => setTimeout(resolve, searchDelay));
+
             const response = await fetch(searchUrl, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -165,7 +169,7 @@
                 logToConsole(
                   `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} is a duplicate. Skipping.`
                 );
-                return;
+                return null;
               }
 
               // Check if the track is already in the playlist
@@ -178,39 +182,25 @@
                 logToConsole(
                   `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} is a duplicate. Skipping.`
                 );
-                return;
+                return null;
               }
 
-              const addResponse = await fetch(playlistUrl, {
-                method: "POST",
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  uris: [trackUri],
-                }),
+              addedSongs.push({
+                year: randomYear,
+                name: track.name,
+                artist: track.artists.map((artist) => artist.name).join(", "),
+                uri: trackUri,
               });
 
-              if (addResponse.ok) {
-                const trackInfo = {
-                  year: randomYear,
-                  name: track.name,
-                  artist: track.artists.map((artist) => artist.name).join(", "),
-                  uri: trackUri,
-                };
-                addedSongs.push(trackInfo);
-                logToConsole(
-                  `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} found`
-                );
-                success = true;
-              } else {
-                const errorMessage = `Error adding track to the playlist: ${addResponse.statusText}`;
-                console.error(errorMessage);
-              }
+              logToConsole(
+                `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} found`
+              );
+
+              return trackUri;
             } else {
               const errorMessage = `No track found for year ${randomYear} and offset ${randomOffset} and limit ${randomLimit}`;
               console.error(errorMessage);
+              return null;
             }
           } catch (error) {
             const errorMessage = `Error searching for track: ${error.message}`;
@@ -238,56 +228,67 @@
 
         // Search and add tracks until the desired number is reached
         while (addedSongs.length < numberOfSongs) {
-          const randomYear = getRandomYear();
-          await searchTrackAndAddToPlaylist(
-            accessToken,
-            playlistUrl,
-            addedSongs
+          const tracksToAdd = Math.min(
+            numberOfSongs - addedSongs.length,
+            BATCH_SIZE
           );
+          const trackBatch = [];
 
-          // Introduce a delay between requests
+          for (let i = 0; i < tracksToAdd; i++) {
+            const randomYear = getRandomYear();
+            const trackUri = await searchTrackAndAddToPlaylist(
+              accessToken,
+              playlistUrl,
+              addedSongs
+            );
+
+            if (trackUri) {
+              trackBatch.push(trackUri);
+            }
+          }
+
+          // Make a single API request to add the batch of tracks to the playlist
+          await addBatchToPlaylist(accessToken, playlistUrl, trackBatch);
+
+          // Introduce a delay between batches to avoid rate limits
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
         }
 
-        // // Log the songs that are going to be batched
-        // console.log("Songs to be batched:", addedSongs);
-
-        // // Create a batch of up to 100 tracks
-        // const batch = addedSongs.slice(0, 100);
-
-        // // Add the batch to the playlist
-        // if (batch.length > 0) {
-        //   const uris = batch.map((song) => song.uri);
-        //   try {
-        //     const addResponse = await fetch(playlistUrl, {
-        //       method: "POST",
-        //       headers: {
-        //         Authorization: `Bearer ${accessToken}`,
-        //         "Content-Type": "application/json",
-        //       },
-        //       body: JSON.stringify({
-        //         uris: uris,
-        //       }),
-        //     });
-
-        //     if (addResponse.ok) {
-        //       console.log(
-        //         `Batch of ${uris.length} tracks added to playlist successfully`
-        //       );
-        //     } else {
-        //       const errorMessage = `Error adding batch to the playlist: ${addResponse.statusText}`;
-        //       console.error(errorMessage);
-        //       // Handle error if needed
-        //     }
-        //   } catch (error) {
-        //     const errorMessage = `Error adding batch to the playlist: ${error.message}`;
-        //     console.error(errorMessage);
-        //     // Handle error if needed
-        //   }
-        // }
-
         // Display added songs information
         displayAddedSongsInfo(addedSongs);
+      };
+
+      const addBatchToPlaylist = async (
+        accessToken,
+        playlistUrl,
+        trackBatch
+      ) => {
+        try {
+          const addResponse = await fetch(playlistUrl, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              uris: trackBatch,
+            }),
+          });
+
+          if (addResponse.ok) {
+            console.log(
+              `${trackBatch.length} tracks added to the playlist successfully`
+            );
+          } else {
+            const errorMessage = `Error adding batch to the playlist: ${addResponse.statusText}`;
+            console.error(errorMessage);
+            // Handle error if needed
+          }
+        } catch (error) {
+          const errorMessage = `Error adding batch to the playlist: ${error.message}`;
+          console.error(errorMessage);
+          // Handle error if needed
+        }
       };
       const displayAddedSongsInfo = (addedSongs) => {
         const uniqueAddedSongs = [];
