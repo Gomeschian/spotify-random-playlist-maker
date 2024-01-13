@@ -138,17 +138,16 @@
         let trackUri;
 
         while (!success && retryCount < maxRetries) {
-          const randomYear = getRandomYear();
+          const randomYearIncluded = shouldIncludeYear(); // Determine if year should be included in the search
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
 
-          // Generate random characters for each field
-          const randomTrackName = getRandomCharacter();
-          const randomArtistName = getRandomCharacter();
-          const randomAlbumName = getRandomCharacter();
-          const randomGenre = getRandomCharacter();
+          // Generate random characters for one or two additional fields
+          const randomFields = getRandomFields(randomYearIncluded ? 2 : 1);
 
-          const searchQuery = `q=track:${randomTrackName} artist:${randomArtistName} album:${randomAlbumName} genre:${randomGenre} year:${randomYear}&offset=${randomOffset}&limit=${randomLimit}`;
+          const searchQuery = `q=${randomFields.join(
+            " "
+          )}&offset=${randomOffset}&limit=${randomLimit}`;
 
           const searchUrl = `https://api.spotify.com/v1/search?type=track&${searchQuery}`;
 
@@ -179,7 +178,7 @@
               // Check if the track has already been added during runtime
               if (addedDuringRuntime.includes(trackUri)) {
                 logToConsole(
-                  `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} is a duplicate. Skipping.`
+                  `Track with offset ${randomOffset} and limit ${randomLimit} is a duplicate. Skipping.`
                 );
                 return null;
               }
@@ -192,20 +191,20 @@
 
               if (trackInPlaylist) {
                 logToConsole(
-                  `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} is a duplicate. Skipping.`
+                  `Track with offset ${randomOffset} and limit ${randomLimit} is a duplicate. Skipping.`
                 );
                 return null;
               }
 
               addedSongs.push({
-                year: randomYear,
+                year: randomYearIncluded ? getRandomYear() : null,
                 name: track.name,
                 artist: track.artists.map((artist) => artist.name).join(", "),
                 uri: trackUri,
               });
 
               logToConsole(
-                `Track from ${randomYear} and offset ${randomOffset} and limit ${randomLimit} found`
+                `Track with offset ${randomOffset} and limit ${randomLimit} found`
               );
 
               return trackUri;
@@ -229,6 +228,23 @@
 
         // After successfully adding a track, update the list of tracks added during runtime
         addedDuringRuntime.push(trackUri);
+      };
+
+      const shouldIncludeYear = () => {
+        // Randomly determine if the search should include the year
+        return Math.random() < 0.5;
+      };
+
+      const getRandomFields = (count) => {
+        const fields = ["track", "artist", "album", "genre"];
+        const randomFields = [];
+        while (randomFields.length < count) {
+          const randomField = fields[Math.floor(Math.random() * fields.length)];
+          if (!randomFields.includes(randomField)) {
+            randomFields.push(randomField);
+          }
+        }
+        return randomFields.map((field) => `${field}:${getRandomCharacter()}`);
       };
       const addTracksToPlaylist = async (
         accessToken,
