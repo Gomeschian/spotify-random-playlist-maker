@@ -136,10 +136,17 @@
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
 
-          const searchUrl = `https://api.spotify.com/v1/search?type=track&q=year:${randomYear}&offset=${randomOffset}&limit=${randomLimit}`;
+          // Generate random characters for each field
+          const randomTrackName = getRandomCharacter();
+          const randomArtistName = getRandomCharacter();
+          const randomAlbumName = getRandomCharacter();
+          const randomGenre = getRandomCharacter();
+
+          const searchQuery = `q=track:${randomTrackName} artist:${randomArtistName} album:${randomAlbumName} genre:${randomGenre} year:${randomYear}&offset=${randomOffset}&limit=${randomLimit}`;
+
+          const searchUrl = `https://api.spotify.com/v1/search?type=track&${searchQuery}`;
 
           try {
-            
             await new Promise((resolve) => setTimeout(resolve, searchDelay));
 
             const response = await fetch(searchUrl, {
@@ -147,14 +154,13 @@
                 Authorization: `Bearer ${accessToken}`,
               },
             });
+
             if (response.status === 429) {
               console.error("Too Many Requests: Please try again later.");
               return; // Stop the function execution
             }
             if (!response.ok) {
-              throw new Error(
-                `Invalid search for year ${randomYear} and offset ${randomOffset} and limit ${randomLimit}: ${response.statusText}`
-              );
+              throw new Error(`Invalid search query: ${response.statusText}`);
             }
 
             const data = await response.json();
@@ -198,7 +204,7 @@
 
               return trackUri;
             } else {
-              const errorMessage = `No track found for year ${randomYear} and offset ${randomOffset} and limit ${randomLimit}`;
+              const errorMessage = `No track found for ${searchQuery}`;
               console.error(errorMessage);
               return null;
             }
