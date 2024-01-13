@@ -138,12 +138,9 @@
         let trackUri;
 
         while (!success && retryCount < maxRetries) {
-          const randomYearIncluded = shouldIncludeYear(); // Determine if year should be included in the search
-          const randomOffset = getRandomOffset();
-          const randomLimit = getRandomLimit();
-
-          // Generate random characters for one or two additional fields
-          const randomFields = getRandomFields(randomYearIncluded ? 2 : 1);
+          const searchCriteria = generateSearchCriteria(); // Generate search criteria for each search
+          const { includeYear, randomFields, randomOffset, randomLimit } =
+            searchCriteria;
 
           const searchQuery = `q=${randomFields.join(
             " "
@@ -201,7 +198,7 @@
               }
 
               addedSongs.push({
-                year: randomYearIncluded ? getRandomYear() : null,
+                year: includeYear ? getRandomYear() : null,
                 name: track.name,
                 artist: track.artists.map((artist) => artist.name).join(", "),
                 uri: trackUri,
@@ -234,6 +231,21 @@
 
         // After successfully adding a track, update the list of tracks added during runtime
         addedDuringRuntime.push(trackUri);
+      };
+
+      const generateSearchCriteria = () => {
+        const includeYear = shouldIncludeYear(); // Randomly determine if the search should include the year
+        const randomFieldsCount = includeYear ? 2 : 1;
+        const randomFields = getRandomFields(randomFieldsCount);
+        const randomOffset = getRandomOffset();
+        const randomLimit = getRandomLimit();
+
+        return {
+          includeYear,
+          randomFields,
+          randomOffset,
+          randomLimit,
+        };
       };
 
       const shouldIncludeYear = () => {
