@@ -178,7 +178,9 @@
               // Check if the track has already been added during runtime
               if (addedDuringRuntime.includes(trackUri)) {
                 logToConsole(
-                  `Track with offset ${randomOffset} and limit ${randomLimit} is a duplicate. Skipping.`
+                  `Duplicate Track found with criteria ${randomFields.join(
+                    ", "
+                  )}. Skipping.`
                 );
                 return null;
               }
@@ -191,7 +193,9 @@
 
               if (trackInPlaylist) {
                 logToConsole(
-                  `Track with offset ${randomOffset} and limit ${randomLimit} is a duplicate. Skipping.`
+                  `Duplicate Track found with criteria ${randomFields.join(
+                    ", "
+                  )}. Skipping.`
                 );
                 return null;
               }
@@ -204,7 +208,9 @@
               });
 
               logToConsole(
-                `Track with offset ${randomOffset} and limit ${randomLimit} found`
+                `Track found with criteria ${randomFields.join(
+                  ", "
+                )} at offset ${randomOffset} and limit ${randomLimit}.`
               );
 
               return trackUri;
