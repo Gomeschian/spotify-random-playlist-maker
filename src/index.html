@@ -371,12 +371,14 @@
           } else {
             const errorMessage = `Error adding batch to the playlist: ${addResponse.statusText}`;
             console.error(errorMessage);
-            // Handle error if needed
+            // Run an alert if batch adding fails
+            alert(errorMessage);
           }
         } catch (error) {
           const errorMessage = `Error adding batch to the playlist: ${error.message}`;
           console.error(errorMessage);
-          // Handle error if needed
+          // Run an alert if batch adding fails
+          alert(errorMessage);
         }
       };
       const displayAddedSongsInfo = (addedSongs) => {
