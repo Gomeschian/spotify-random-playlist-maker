@@ -288,6 +288,17 @@
       const getRandomNumberInRange = (min, max) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       };
+      const getRandomFields = (count) => {
+        const fields = ["track", "artist", "album", "genre"];
+        const randomFields = [];
+
+        for (let i = 0; i < count; i++) {
+          const randomField = fields[Math.floor(Math.random() * fields.length)];
+          randomFields.push(randomField);
+        }
+
+        return randomFields;
+      };
       const addTracksToPlaylist = async (
         accessToken,
         playlistId,
