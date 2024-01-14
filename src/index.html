@@ -23,13 +23,13 @@
       <p class="mb-6 sm:text-lg">
         Searches a random year between 1860 (oldest known recording) and the
         current year, and/or a random character each on a random combination of
-        fields from track title, artist, album, ISRC, and/or genre, This search will
-        find anything Spotify considers a track, so not necessarily only songs
-        but possibly noise or spoken word, but no podcast episodes. If an API
-        limit is hit during running then fewer songs than requested may actually
-        be added - unexplained errors are probably due to hitting API limits
-        (Code 429), check console for details and/or wait a little before trying
-        again.
+        fields from track title, artist, album, ISRC, and/or genre, This search
+        will find anything Spotify considers a track, so not necessarily only
+        songs but possibly noise or spoken word, but no podcast episodes. If an
+        API limit is hit during running then fewer songs than requested may
+        actually be added - unexplained errors are probably due to hitting API
+        limits (Code 429), check console for details and/or wait a little before
+        trying again.
       </p>
 
       <!-- <div class="mb-4 flex flex-col items-center justify-center" id="buttons">
@@ -315,29 +315,26 @@
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
         const addedSongs = [];
 
-        // Search and add tracks until the desired number is reached
         while (addedSongs.length < numberOfSongs) {
           const tracksToAdd = Math.min(
             numberOfSongs - addedSongs.length,
             BATCH_SIZE
           );
-          const trackBatch = [];
+          const trackPromises = [];
 
           for (let i = 0; i < tracksToAdd; i++) {
-            const randomYear = getRandomYear();
-            const trackUri = await searchTrackAndAddToPlaylist(
-              accessToken,
-              playlistUrl,
-              addedSongs
+            trackPromises.push(
+              searchTrackAndAddToPlaylist(accessToken, playlistUrl, addedSongs)
             );
-
-            if (trackUri) {
-              trackBatch.push(trackUri);
-            }
           }
 
-          // Make a single API request to add the batch of tracks to the playlist
-          await addBatchToPlaylist(accessToken, playlistUrl, trackBatch);
+          // Batch addition of tracks to the playlist
+          const trackUris = await Promise.all(trackPromises);
+          await addBatchToPlaylist(
+            accessToken,
+            playlistUrl,
+            trackUris.filter(Boolean)
+          );
 
           // Introduce a delay between batches to avoid rate limits
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
