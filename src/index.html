@@ -353,6 +353,7 @@
               console.warn("No track URIs to add. Skipping batch addition.");
               return;
             }
+            console.log("JSON Payload:", JSON.stringify({ uris: trackUris }));
 
             const addResponse = await fetch(playlistUrl, {
               method: "POST",
