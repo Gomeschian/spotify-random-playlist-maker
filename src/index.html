@@ -150,6 +150,8 @@
           const { includeYear, randomFields, randomOffset, randomLimit } =
             searchCriteria;
 
+          fieldsWithValues = randomFields; // Assign fieldsWithValues here
+
           let queryString = Object.entries(randomFields)
             .map(([key, value]) => `${key}:${encodeURIComponent(value)}`)
             .join("&");
@@ -188,7 +190,6 @@
                 );
                 return null;
               }
-              fieldsWithValues = generateSearchCriteria().randomFields; // Assign fieldsWithValues here
 
               trackUri = track.uri;
 
@@ -197,7 +198,6 @@
                 logToConsole(
                   `Duplicate Track found for search: ${searchQuery}. Skipping.`
                 );
-
                 return null;
               }
 
@@ -211,7 +211,6 @@
                 logToConsole(
                   `Duplicate Track found in playlist for search: ${searchQuery}. Skipping.`
                 );
-
                 return null;
               }
 
