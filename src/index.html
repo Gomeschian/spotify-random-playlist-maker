@@ -316,25 +316,25 @@
         const addedSongs = [];
 
         while (addedSongs.length < numberOfSongs) {
-          const tracksToAdd = Math.min(
-            numberOfSongs - addedSongs.length,
-            BATCH_SIZE
-          );
-          const trackPromises = [];
+          const remainingSongs = numberOfSongs - addedSongs.length;
+          const tracksToAdd = Math.min(remainingSongs, BATCH_SIZE);
+          const trackBatch = [];
 
           for (let i = 0; i < tracksToAdd; i++) {
-            trackPromises.push(
-              searchTrackAndAddToPlaylist(accessToken, playlistUrl, addedSongs)
+            const randomYear = getRandomYear();
+            const trackUri = await searchTrackAndAddToPlaylist(
+              accessToken,
+              playlistUrl,
+              addedSongs
             );
+
+            if (trackUri) {
+              trackBatch.push(trackUri);
+            }
           }
 
           // Batch addition of tracks to the playlist
-          const trackUris = await Promise.all(trackPromises);
-          await addBatchToPlaylist(
-            accessToken,
-            playlistUrl,
-            trackUris.filter(Boolean)
-          );
+          await addBatchToPlaylist(accessToken, playlistUrl, trackBatch);
 
           // Introduce a delay between batches to avoid rate limits
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
