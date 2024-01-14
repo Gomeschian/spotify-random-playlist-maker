@@ -142,17 +142,10 @@
           const { includeYear, randomFields, randomOffset, randomLimit } =
             searchCriteria;
 
-          const searchQuery = randomFields
-            .map((field) => {
-              const value =
-                field === "year"
-                  ? getRandomYear()
-                  : getRandomValueForField(field);
-              return `${field}:"${encodeURIComponent(value)}"`;
-            })
-            .join(" ");
+          const searchQuery = `q=${randomFields.join(
+            " "
+          )}&offset=${randomOffset}&limit=${randomLimit}`;
 
-          const fullQuery = `${searchQuery}&offset=${randomOffset}&limit=${randomLimit}`;
           const searchUrl = `https://api.spotify.com/v1/search?type=track&${searchQuery}`;
 
           try {
@@ -234,22 +227,12 @@
         // After successfully adding a track, update the list of tracks added during runtime
         addedDuringRuntime.push(trackUri);
       };
-      const getRandomValueForField = (field) => {
-        if (field === "year") {
-          return encodeURIComponent(getRandomYear().toString());
-        } else {
-          const characters =
-            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
-          return encodeURIComponent(
-            characters[Math.floor(Math.random() * characters.length)]
-          );
-        }
-      };
 
       const generateSearchCriteria = () => {
-        const scenario = getRandomScenario();
+        const scenario = getRandomScenario(); // Randomly determine the scenario
 
         if (scenario === "yearOnly") {
+          // Scenario C: Search based only on a random year
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
 
@@ -260,11 +243,9 @@
             randomLimit,
           };
         } else if (scenario === "yearWithCriteria") {
-          const randomFieldsCount = getRandomNumberInRange(1, 2);
-          const randomFields = [
-            "year",
-            ...Array.from({ length: randomFieldsCount }, getRandomCharacter),
-          ];
+          // Scenario A: Include a random year plus one or two additional criteria
+          const randomFieldsCount = getRandomNumberInRange(2, 3); // Choose 2 or 3 fields including the year
+          const randomFields = getRandomFields(randomFieldsCount);
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
 
@@ -275,11 +256,9 @@
             randomLimit,
           };
         } else {
-          const randomFieldsCount = getRandomNumberInRange(1, 2);
-          const randomFields = Array.from(
-            { length: randomFieldsCount },
-            getRandomCharacter
-          );
+          // Scenario B: Exclude the year and choose one or two criteria randomly
+          const randomFieldsCount = getRandomNumberInRange(1, 2); // Choose 1 or 2 fields without the year
+          const randomFields = getRandomFields(randomFieldsCount);
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
 
