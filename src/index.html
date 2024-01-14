@@ -42,19 +42,21 @@
           Log In to Spotify
         </button>
 
-        <button
-          id="createPlaylistAndAddTracksButton"
-          class="mb-4 px-6 py-3 bg-purple-600 text-white rounded cursor-pointer text-xl hover:bg-purple-700"
-        >
-          Create Playlist and/or Add Tracks
-        </button>
+        <div id="buttons-container" class="hidden">
+          <button
+            id="createPlaylistAndAddTracksButton"
+            class="mb-4 px-6 py-3 bg-purple-600 text-white rounded cursor-pointer text-xl hover:bg-purple-700"
+          >
+            Create Playlist and/or Add Tracks
+          </button>
 
-        <button
-          id="copyResultsButton"
-          class="px-6 py-3 bg-blue-500 text-white rounded cursor-pointer text-lg hover:bg-blue-600"
-        >
-          Results (click to copy to clipboard)
-        </button>
+          <button
+            id="copyResultsButton"
+            class="px-6 py-3 bg-blue-500 text-white rounded cursor-pointer text-lg hover:bg-blue-600"
+          >
+            Results (click to copy to clipboard)
+          </button>
+        </div>
 
         <div
           id="added-songs"
@@ -596,20 +598,22 @@
 
       const updateLoginStatus = () => {
         const loginButton = document.getElementById("loginButton");
+        const buttonsContainer = document.getElementById("buttons-container");
 
-        if (loginButton) {
+        if (loginButton && buttonsContainer) {
           if (isAuthenticated()) {
             // User is logged in
             loginButton.innerText = "Logged In";
             loginButton.disabled = true; // Optionally disable the button
+            buttonsContainer.classList.remove("hidden");
           } else {
             // User is not logged in
             loginButton.innerText = "Log In to Spotify";
             loginButton.disabled = false;
+            buttonsContainer.classList.add("hidden");
           }
         }
       };
-
       // Call this function whenever you need to update the login status, e.g., after successful login.
       updateLoginStatus();
 
