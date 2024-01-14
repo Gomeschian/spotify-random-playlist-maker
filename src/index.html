@@ -46,6 +46,13 @@
       </div> -->
       <div class="flex flex-col items-center justify-center">
         <button
+          id="loginButton"
+          class="px-6 py-3 bg-purple-500 text-white rounded cursor-pointer text-lg hover:bg-purple-600"
+        >
+          Log In to Spotify
+        </button>
+
+        <button
           id="createPlaylistAndAddTracksButton"
           class="mb-4 px-6 py-3 bg-green-500 text-white rounded cursor-pointer text-xl hover:bg-green-600"
         >
@@ -587,10 +594,35 @@
       };
 
       document.addEventListener("DOMContentLoaded", () => {
-        if (!isAuthenticated()) {
-          redirectToAuthorization();
+        const loginButton = document.getElementById("loginButton");
+
+        if (loginButton) {
+          loginButton.addEventListener("click", () => {
+            redirectToAuthorization();
+          });
+        } else {
+          console.error('Button with id "loginButton" not found.');
         }
       });
+
+      const updateLoginStatus = () => {
+        const loginButton = document.getElementById("loginButton");
+
+        if (loginButton) {
+          if (isAuthenticated()) {
+            // User is logged in
+            loginButton.innerText = "Logged In";
+            loginButton.disabled = true; // Optionally disable the button
+          } else {
+            // User is not logged in
+            loginButton.innerText = "Log In to Spotify";
+            loginButton.disabled = false;
+          }
+        }
+      };
+
+      // Call this function whenever you need to update the login status, e.g., after successful login.
+      updateLoginStatus();
 
       const button = document.getElementById(
         "createPlaylistAndAddTracksButton"
