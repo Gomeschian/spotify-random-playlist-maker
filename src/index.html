@@ -21,22 +21,17 @@
         from All of Spotify" (will be created if it doesn't exist).
       </p>
       <p class="mb-6 sm:text-lg">
-        Methodology: Searches for a random year between 1860 (year of oldest
-        sound recording*) and the current year and chooses a track dated that
-        year, per Spotify, based on a random section of the results (up to the
-        one thousand and first result, from pages randomly containing 1 to 50
-        results, varying per search). The limits are Spotify's, the
-        randomization here chosen to mitigate them. This search will find
-        anything Spotify considers a track, so not necessarily only songs but
-        possibly noise or spoken word. If an API limit is hit during running
-        then fewer songs than requested may actually be added - unexplained
-        errors are probably due to hitting API limits (Code 429), check console
-        for details and/or wait a little before trying again.
+        Searches a random year between 1860 (oldest known recording) and the
+        current year, and/or a random character each on a random combination of
+        fields from track title, artist, album, and/or genre, This search will
+        find anything Spotify considers a track, so not necessarily only songs
+        but possibly noise or spoken word, but no podcast episodes. If an API
+        limit is hit during running then fewer songs than requested may actually
+        be added - unexplained errors are probably due to hitting API limits
+        (Code 429), check console for details and/or wait a little before trying
+        again.
       </p>
-      <p class="mb-6 sm:text-lg">
-        *Unclear if anything that old is actually on Spotify under its original
-        release date.
-      </p>
+
       <!-- <div class="mb-4 flex flex-col items-center justify-center" id="buttons">
         <label for="numberOfSongs" class="block mb-2 text-lg"
           >Number of Tracks:</label
