@@ -198,7 +198,8 @@
               }
 
               addedSongs.push({
-                year: track.year,
+                year: track.album.release_date.slice(0, 4),
+                album: track.album.name,
                 name: track.name,
                 artist: track.artists.map((artist) => artist.name).join(", "),
                 uri: trackUri,
@@ -384,7 +385,7 @@
         addedSongsDiv.innerHTML += `<p><strong>Added Songs:</strong></p>`;
 
         uniqueAddedSongs.forEach((song) => {
-          addedSongsDiv.innerHTML += `<p>${song.artist} - ${song.name} (${song.year}) | ${song.uri}</p>`;
+          addedSongsDiv.innerHTML += `<p>${song.artist} - ${song.name} (${song.album},${song.year}) | ${song.uri}</p>`;
         });
 
         // Scroll to the bottom to show the latest added songs
