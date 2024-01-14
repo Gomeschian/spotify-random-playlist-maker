@@ -374,7 +374,6 @@
               console.error(
                 `Error adding batch to the playlist: ${addResponse.status} ${addResponse.statusText}`
               );
-              console.log("Response Body:", await addResponse.text());
               // Handle error if needed
             }
           } catch (error) {
@@ -395,7 +394,6 @@
           `Max retries reached. Unable to add batch to the playlist.`
         );
       };
-
       const displayAddedSongsInfo = (addedSongs) => {
         const uniqueAddedSongs = [];
         const uniqueUris = new Set();
