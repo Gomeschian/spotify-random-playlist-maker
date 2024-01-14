@@ -230,10 +230,13 @@
       };
       const getRandomValueForField = (field) => {
         if (field === "year") {
-          return getRandomYear();
+          return encodeURIComponent(getRandomYear().toString());
         } else {
-          // Handle other fields if needed
-          return getRandomCharacter(); // Example, change this based on your requirements
+          const characters =
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+          return encodeURIComponent(
+            characters[Math.floor(Math.random() * characters.length)]
+          );
         }
       };
 
