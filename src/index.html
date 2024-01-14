@@ -32,6 +32,13 @@
         trying again.
       </p>
 
+      <button
+        id="authenticateButton"
+        class="mb-4 px-6 py-3 bg-yellow-500 text-white rounded cursor-pointer text-lg hover:bg-yellow-600"
+      >
+        Authenticate with Spotify
+      </button>
+
       <!-- <div class="mb-4 flex flex-col items-center justify-center" id="buttons">
         <label for="numberOfSongs" class="block mb-2 text-lg"
           >Number of Tracks:</label
@@ -586,22 +593,29 @@
         }
       };
 
-      document.addEventListener("DOMContentLoaded", () => {
-        if (!isAuthenticated()) {
-          redirectToAuthorization();
-        }
-      });
+      const updateAuthButton = () => {
+        const authenticateButton =
+          document.getElementById("authenticateButton");
 
-      const button = document.getElementById(
-        "createPlaylistAndAddTracksButton"
-      );
-      if (button) {
-        button.addEventListener("click", createPlaylistAndAddTracks);
-      } else {
-        console.error(
-          'Button with id "createPlaylistAndAddTracksButton" not found.'
-        );
-      }
+        if (isAuthenticated()) {
+          authenticateButton.innerText = "Authenticated";
+          authenticateButton.disabled = true; // Disable the button if already authenticated
+        } else {
+          authenticateButton.innerText = "Authenticate with Spotify";
+          authenticateButton.disabled = false;
+        }
+      };
+
+      const initiateAuthentication = () => {
+        redirectToAuthorization();
+
+        // Update the button after initiating authentication
+        updateAuthButton();
+      };
+
+      document
+        .getElementById("authenticateButton")
+        .addEventListener("click", initiateAuthentication);
 
       const logToConsole = (message) => {
         console.log(message); // Log to the browser console
