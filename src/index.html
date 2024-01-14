@@ -321,16 +321,19 @@
           const trackBatch = [];
 
           for (let i = 0; i < tracksToAdd; i++) {
-            const randomYear = getRandomYear();
-            const trackUri = await searchTrackAndAddToPlaylist(
-              accessToken,
-              playlistUrl,
-              addedSongs
-            );
+            let trackUri;
 
-            if (trackUri) {
-              trackBatch.push(trackUri);
+            // Continue searching until a valid track is found
+            while (!trackUri) {
+              const randomYear = getRandomYear();
+              trackUri = await searchTrackAndAddToPlaylist(
+                accessToken,
+                playlistUrl,
+                addedSongs
+              );
             }
+
+            trackBatch.push(trackUri);
           }
 
           // Batch addition of tracks to the playlist
