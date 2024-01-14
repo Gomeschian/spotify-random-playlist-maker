@@ -198,7 +198,7 @@
               }
 
               addedSongs.push({
-                year: includeYear ? getRandomYear() : null,
+                year: track.year,
                 name: track.name,
                 artist: track.artists.map((artist) => artist.name).join(", "),
                 uri: trackUri,
