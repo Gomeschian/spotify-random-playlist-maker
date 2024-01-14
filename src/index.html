@@ -13,9 +13,11 @@
     />
   </head>
 
-  <body class="font-sans bg-gray-100 p-10">
+  <body class="font-sans bg-black text-white p-10">
     <div id="app" class="flex flex-col items-center justify-center text-center">
-      <h1 class="mb-6 sm:text-4xl font-bold">Spotify Random Track Playlist</h1>
+      <h1 class="mb-6 sm:text-4xl font-bold text-green-400">
+        Spotify Random Track Playlist
+      </h1>
       <p class="mb-6 sm:text-xl">
         Adds 25 random, non-duplicate tracks to a playlist called "Random Songs
         from All of Spotify" (will be created if it doesn't exist).
@@ -32,29 +34,17 @@
         trying again.
       </p>
 
-      <!-- <div class="mb-4 flex flex-col items-center justify-center" id="buttons">
-        <label for="numberOfSongs" class="block mb-2 text-lg"
-          >Number of Tracks:</label
-        >
-        <input
-          type="number"
-          id="numberOfSongs"
-          min="1"
-          value="23"
-          class="w-16 p-2 text-lg border border-gray-300 rounded"
-        />
-      </div> -->
       <div class="flex flex-col items-center justify-center">
         <button
           id="loginButton"
-          class="px-6 py-3 bg-purple-500 text-white rounded cursor-pointer text-lg hover:bg-purple-600"
+          class="px-6 py-3 mb-4 bg-green-400 text-white rounded cursor-pointer text-lg hover:bg-green-600"
         >
           Log In to Spotify
         </button>
 
         <button
           id="createPlaylistAndAddTracksButton"
-          class="mb-4 px-6 py-3 bg-green-500 text-white rounded cursor-pointer text-xl hover:bg-green-600"
+          class="mb-4 px-6 py-3 bg-purple-600 text-white rounded cursor-pointer text-xl hover:bg-purple-700"
         >
           Create Playlist and/or Add Tracks
         </button>
@@ -81,7 +71,6 @@
         </div>
       </div>
     </div>
-
     <script>
       const CLIENT_ID = "a34e83c02f6e439a891f4c2f6ba197fe";
       const REDIRECT_URI = "https://spotify-topaz-nine.vercel.app/";
