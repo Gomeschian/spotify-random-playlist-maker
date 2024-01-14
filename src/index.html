@@ -13,16 +13,18 @@
     />
   </head>
 
-  <body class="font-sans bg-black text-white p-10">
+  <body class="font-sans bg-black text-white p-4 md:p-10">
     <div id="app" class="flex flex-col items-center justify-center text-center">
-      <h1 class="mb-6 sm:text-4xl font-bold text-green-400">
+      <h1 class="mb-4 sm:mb-6 text-2xl sm:text-4xl font-bold text-green-400">
         Spotify Random Track Playlist
       </h1>
-      <p class="mb-6 sm:text-xl">
+
+      <p class="mb-4 sm:mb-6 text-sm sm:text-xl text-left">
         Adds 25 random, non-duplicate tracks to a playlist called "Random Songs
         from All of Spotify" (will be created if it doesn't exist).
       </p>
-      <p class="mb-6 sm:text-lg">
+
+      <p class="mb-4 sm:mb-6 text-xs sm:text-lg text-left">
         Searches a random year between 1860 (oldest known recording) and the
         current year, and/or a random character each on a random combination of
         fields from track title, artist, album, ISRC, and/or genre, This search
@@ -37,7 +39,7 @@
       <div class="flex flex-col items-center justify-center">
         <button
           id="loginButton"
-          class="px-6 py-3 mb-4 bg-green-400 text-white rounded cursor-pointer text-lg hover:bg-green-600"
+          class="px-4 py-2 mb-4 bg-green-400 text-white rounded cursor-pointer text-base sm:text-lg hover:bg-green-600"
         >
           Log In to Spotify
         </button>
@@ -45,14 +47,14 @@
         <div id="buttons-container" class="hidden">
           <button
             id="createPlaylistAndAddTracksButton"
-            class="mb-4 px-6 py-3 bg-purple-600 text-white rounded cursor-pointer text-xl hover:bg-purple-700"
+            class="mb-4 px-4 py-2 bg-purple-600 text-white rounded cursor-pointer text-base sm:text-lg hover:bg-purple-700"
           >
             Create Playlist and/or Add Tracks
           </button>
 
           <button
             id="copyResultsButton"
-            class="px-6 py-3 bg-blue-500 text-white rounded cursor-pointer text-lg hover:bg-blue-600"
+            class="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer text-sm sm:text-lg hover:bg-blue-600"
           >
             Results (click to copy to clipboard)
           </button>
@@ -60,14 +62,14 @@
 
         <div
           id="added-songs"
-          class="mt-8 max-w-screen-xl text-lg p-4 border border-gray-300 max-h-52 overflow-y-auto"
+          class="mt-4 max-w-screen-md text-sm sm:text-lg p-2 border border-gray-300 max-h-52 overflow-y-auto"
         >
           Results
         </div>
 
         <div
           id="console-div"
-          class="mt-8 max-w-screen-xl text-lg p-4 border border-gray-300 max-h-52 overflow-y-auto"
+          class="mt-4 max-w-screen-md text-sm sm:text-lg p-2 border border-gray-300 max-h-52 overflow-y-auto"
         >
           Progress
         </div>
