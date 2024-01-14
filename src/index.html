@@ -244,8 +244,8 @@
           };
         } else if (scenario === "yearWithCriteria") {
           // Scenario A: Include a random year plus one or two additional criteria
-          const randomFieldsCount = getRandomNumberInRange(2, 3); // Choose 2 or 3 fields including the year
-          const randomFields = getRandomFields(randomFieldsCount);
+          const randomFieldsCount = getRandomNumberInRange(1, 2); // Choose 1 or 2 additional fields
+          const randomFields = ["year", ...getRandomFields(randomFieldsCount)];
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
 
