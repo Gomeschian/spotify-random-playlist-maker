@@ -344,32 +344,55 @@
         playlistUrl,
         trackUris
       ) => {
-        try {
-          const addResponse = await fetch(playlistUrl, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              uris: trackUris,
-            }),
-          });
+        const maxRetries = 5;
+        let retryCount = 0;
 
-          if (addResponse.ok) {
-            console.log(
-              `${trackUris.length} tracks added to the playlist successfully`
+        while (retryCount < maxRetries) {
+          try {
+            if (trackUris.length === 0) {
+              console.warn("No track URIs to add. Skipping batch addition.");
+              return;
+            }
+
+            const addResponse = await fetch(playlistUrl, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                uris: trackUris,
+              }),
+            });
+
+            if (addResponse.ok) {
+              console.log(
+                `${trackUris.length} tracks added to the playlist successfully`
+              );
+              return;
+            } else {
+              console.error(
+                `Error adding batch to the playlist: ${addResponse.status} ${addResponse.statusText}`
+              );
+              // Handle error if needed
+            }
+          } catch (error) {
+            console.error(
+              `Error adding batch to the playlist: ${error.message}`
             );
-          } else {
-            const errorMessage = `Error adding batch to the playlist: ${addResponse.statusText}`;
-            console.error(errorMessage);
             // Handle error if needed
           }
-        } catch (error) {
-          const errorMessage = `Error adding batch to the playlist: ${error.message}`;
-          console.error(errorMessage);
-          // Handle error if needed
+
+          retryCount++;
+          console.log(`Retrying (${retryCount}/${maxRetries})...`);
+
+          // Introduce a delay between retries (e.g., 2 seconds)
+          await new Promise((resolve) => setTimeout(resolve, 2000));
         }
+
+        console.error(
+          `Max retries reached. Unable to add batch to the playlist.`
+        );
       };
       const displayAddedSongsInfo = (addedSongs) => {
         const uniqueAddedSongs = [];
