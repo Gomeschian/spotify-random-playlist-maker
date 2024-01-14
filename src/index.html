@@ -142,9 +142,9 @@
           const { includeYear, randomFields, randomOffset, randomLimit } =
             searchCriteria;
 
-          const searchQuery = `q=${randomFields.join(
-            " "
-          )}&offset=${randomOffset}&limit=${randomLimit}`;
+          const searchQuery = `${randomFields
+            .map((field) => `${field}:${getRandomValueForField(field)}`)
+            .join(" ")}&offset=${randomOffset}&limit=${randomLimit}`;
 
           const searchUrl = `https://api.spotify.com/v1/search?type=track&${searchQuery}`;
 
@@ -226,6 +226,14 @@
 
         // After successfully adding a track, update the list of tracks added during runtime
         addedDuringRuntime.push(trackUri);
+      };
+      const getRandomValueForField = (field) => {
+        if (field === "year") {
+          return getRandomYear();
+        } else {
+          // Handle other fields if needed
+          return getRandomCharacter(); // Example, change this based on your requirements
+        }
       };
 
       const generateSearchCriteria = () => {
