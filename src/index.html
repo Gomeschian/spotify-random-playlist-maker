@@ -146,8 +146,10 @@
         while (!success && retryCount < maxRetries) {
           let fieldsWithValues; // Define fieldsWithValues here
 
-          const { randomFields, randomOffset, randomLimit } =
-            generateSearchCriteria(); // Generate search criteria for each search
+          const searchCriteria = generateSearchCriteria(); // Generate search criteria for each search
+          const { includeYear, randomFields, randomOffset, randomLimit } =
+            searchCriteria;
+
           fieldsWithValues = randomFields; // Assign fieldsWithValues here
 
           let queryString = Object.entries(randomFields)
