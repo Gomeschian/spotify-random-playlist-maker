@@ -175,10 +175,9 @@
               // Check if the track has already been added during runtime
               if (addedDuringRuntime.includes(trackUri)) {
                 logToConsole(
-                  `Duplicate Track found with criteria ${randomFields.join(
-                    ", "
-                  )}. Skipping.`
+                  `Duplicate Track found for search: ${searchQuery}. Skipping.`
                 );
+
                 return null;
               }
 
@@ -190,10 +189,9 @@
 
               if (trackInPlaylist) {
                 logToConsole(
-                  `Duplicate Track found with criteria ${randomFields.join(
-                    ", "
-                  )}. Skipping.`
+                  `Duplicate Track found in playlist for search: ${searchQuery}. Skipping.`
                 );
+
                 return null;
               }
 
@@ -205,15 +203,11 @@
                 uri: trackUri,
               });
 
-              logToConsole(
-                `Track found with criteria ${randomFields.join(
-                  ", "
-                )} at offset ${randomOffset} and limit ${randomLimit}.`
-              );
+              logToConsole(`Track found for search: ${searchQuery}`);
 
               return trackUri;
             } else {
-              const errorMessage = `No track found for ${searchQuery}`;
+              const errorMessage = `No track found for search: ${searchQuery}`;
               console.error(errorMessage);
               return null;
             }
