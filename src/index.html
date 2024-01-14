@@ -142,9 +142,11 @@
           const { includeYear, randomFields, randomOffset, randomLimit } =
             searchCriteria;
 
-          const searchQuery = `q=${randomFields.join(
-            " "
-          )}&offset=${randomOffset}&limit=${randomLimit}`;
+          let queryString = Object.entries(randomFields)
+            .map(([key, value]) => `${key}:${encodeURIComponent(value)}`)
+            .join("&");
+
+          const searchQuery = `q=${queryString}&offset=${randomOffset}&limit=${randomLimit}`;
 
           const searchUrl = `https://api.spotify.com/v1/search?type=track&${searchQuery}`;
 
