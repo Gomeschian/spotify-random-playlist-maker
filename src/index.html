@@ -133,7 +133,7 @@
         const progressBar = document.getElementById("progressIndicator");
         const progressText = document.getElementById("progressText");
 
-        progressText.innerText = `Progress: ${completed}/${total} songs added`;
+        progressText.innerText = `Songs Found: ${completed}/${total}`;
         const percentage = (completed / total) * 100;
         progressBar.style.width = `${percentage}%`;
       };
