@@ -144,6 +144,8 @@
         let trackUri;
 
         while (!success && retryCount < maxRetries) {
+          let fieldsWithValues; // Define fieldsWithValues here
+
           const searchCriteria = generateSearchCriteria(); // Generate search criteria for each search
           const { includeYear, randomFields, randomOffset, randomLimit } =
             searchCriteria;
@@ -186,6 +188,7 @@
                 );
                 return null;
               }
+              fieldsWithValues = generateSearchCriteria().randomFields; // Assign fieldsWithValues here
 
               trackUri = track.uri;
 
