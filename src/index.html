@@ -23,7 +23,7 @@
       <p class="mb-6 sm:text-lg">
         Searches a random year between 1860 (oldest known recording) and the
         current year, and/or a random character each on a random combination of
-        fields from track title, artist, album, and/or genre, This search will
+        fields from track title, artist, album, ISRC, and/or genre, This search will
         find anything Spotify considers a track, so not necessarily only songs
         but possibly noise or spoken word, but no podcast episodes. If an API
         limit is hit during running then fewer songs than requested may actually
@@ -297,7 +297,7 @@
         return Math.floor(Math.random() * (max - min + 1)) + min;
       };
       const getRandomFields = (count) => {
-        const fields = ["track", "artist", "album", "genre"];
+        const fields = ["track", "artist", "album", "genre", "isrc"];
         const randomFields = [];
 
         for (let i = 0; i < count; i++) {
