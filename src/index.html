@@ -347,38 +347,58 @@
         displayAddedSongsInfo(addedSongs);
       };
 
-      const addBatchToPlaylist = async (
+      const addTracksToPlaylist = async (
         accessToken,
-        playlistUrl,
-        trackBatch
+        playlistId,
+        numberOfSongs
       ) => {
-        try {
-          const addResponse = await fetch(playlistUrl, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              uris: trackBatch,
-            }),
-          });
+        const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
+        const addedSongs = [];
 
-          if (addResponse.ok) {
-            console.log(
-              `${trackBatch.length} tracks added to the playlist successfully`
-            );
-          } else {
-            const errorMessage = `Error adding batch to the playlist: ${addResponse.statusText}`;
-            console.error(errorMessage);
-            // Handle error if needed
+        while (addedSongs.length < numberOfSongs) {
+          const remainingSongs = numberOfSongs - addedSongs.length;
+          const tracksToAdd = Math.min(remainingSongs, BATCH_SIZE);
+          const trackBatch = [];
+
+          for (let i = 0; i < tracksToAdd; i++) {
+            let trackUri;
+
+            // Continue searching until a valid track is found
+            while (!trackUri) {
+              try {
+                const randomYear = getRandomYear();
+                trackUri = await searchTrackAndAddToPlaylist(
+                  accessToken,
+                  playlistUrl,
+                  addedSongs
+                );
+              } catch (error) {
+                console.error("Error during batching:", error);
+                alert("An error occurred during batching. Please try again.");
+                return; // Stop the process
+              }
+            }
+
+            trackBatch.push(trackUri);
           }
-        } catch (error) {
-          const errorMessage = `Error adding batch to the playlist: ${error.message}`;
-          console.error(errorMessage);
-          // Handle error if needed
+
+          // Batch addition of tracks to the playlist
+          try {
+            await addBatchToPlaylist(accessToken, playlistUrl, trackBatch);
+          } catch (error) {
+            console.error("Error during batch addition:", error);
+            alert("An error occurred during batch addition. Please try again.");
+            return; // Stop the process
+          }
+
+          // Introduce a delay between batches to avoid rate limits
+          await new Promise((resolve) => setTimeout(resolve, searchDelay));
         }
+
+        // Display added songs information
+        displayAddedSongsInfo(addedSongs);
       };
+
       const displayAddedSongsInfo = (addedSongs) => {
         const uniqueAddedSongs = [];
         const uniqueUris = new Set();
