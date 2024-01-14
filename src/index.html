@@ -59,7 +59,16 @@
             Results (click to copy to clipboard)
           </button>
         </div>
-
+        <!-- Progress bar -->
+        <div class="w-full p-2">
+          <div id="progressBar" class="w-full bg-gray-200">
+            <div
+              id="progressIndicator"
+              class="h-2 bg-green-400 transition-all duration-300 ease-in-out"
+            ></div>
+          </div>
+          <p id="progressText" class="text-xs text-white mt-1">Progress: 0%</p>
+        </div>
         <div
           id="added-songs"
           class="mt-4 max-w-screen-md text-sm sm:text-lg p-2 border border-gray-300 max-h-52 overflow-y-auto"
@@ -120,7 +129,18 @@
           "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
         return characters[Math.floor(Math.random() * characters.length)];
       };
+      const updateProgressBar = (completed, total) => {
+        const progressBar = document.getElementById("progressIndicator");
+        const progressText = document.getElementById("progressText");
 
+        progressText.innerText = `Songs Found: ${completed}/${total}`;
+        const percentage = (completed / total) * 100;
+        progressBar.style.width = `${percentage}%`;
+      };
+
+      const resetProgressBar = () => {
+        updateProgressBar(0, NUMBER_OF_SONGS);
+      };
       const searchTrackAndAddToPlaylist = async (
         accessToken,
         playlistUrl,
@@ -203,6 +223,8 @@
               logToConsole(`Track found for search: ${searchQuery}`);
 
               return trackUri;
+              // Update progress bar
+              updateProgressBar(addedSongs.length, NUMBER_OF_SONGS);
             } else {
               const errorMessage = `No track found for search: ${searchQuery}`;
               console.error(errorMessage);
@@ -584,6 +606,9 @@
           // Display "Done running" alert
           alert("Done running.");
         }
+        const finishScript = () => {
+          resetProgressBar();
+        };
       };
 
       document.addEventListener("DOMContentLoaded", () => {
