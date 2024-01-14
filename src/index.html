@@ -49,21 +49,6 @@
           Create Playlist and/or Add Tracks
         </button>
 
-        <label for="excludeGenreCheckbox" class="mb-2">
-          <input type="checkbox" id="excludeGenreCheckbox" />
-          Exclude tracks with genre "writing"
-        </label>
-
-        <label for="excludeLiteratureCheckbox" class="mb-2">
-          <input type="checkbox" id="excludeLiteratureCheckbox" />
-          Exclude tracks with genre containing "literature"
-        </label>
-
-        <label for="excludeCapituloCheckbox" class="mb-2">
-          <input type="checkbox" id="excludeCapituloCheckbox" />
-          Exclude tracks with title containing "capitulo" followed by a number
-        </label>
-
         <button
           id="copyResultsButton"
           class="px-6 py-3 bg-blue-500 text-white rounded cursor-pointer text-lg hover:bg-blue-600"
@@ -178,15 +163,6 @@
 
             if (tracks.length > 0) {
               const track = tracks[0];
-
-              // Check exclusion criteria
-              if (shouldExcludeTrack(track)) {
-                logToConsole(
-                  `Excluded Track found for search: ${searchQuery}. Skipping.`
-                );
-                return null;
-              }
-
               trackUri = track.uri;
 
               // Check if the track has already been added during runtime
@@ -244,63 +220,8 @@
         // After successfully adding a track, update the list of tracks added during runtime
         addedDuringRuntime.push(trackUri);
       };
-      const shouldExcludeTrack = (track) => {
-        const excludeGenre = document.getElementById(
-          "excludeGenreCheckbox"
-        ).checked;
-        const excludeLiterature = document.getElementById(
-          "excludeLiteratureCheckbox"
-        ).checked;
-        const excludeCapitulo = document.getElementById(
-          "excludeCapituloCheckbox"
-        ).checked;
 
-        if (excludeGenre && track.album && track.album.genre === "writing") {
-          return true;
-        }
-
-        if (
-          excludeLiterature &&
-          track.album &&
-          track.album.genre.includes("literature")
-        ) {
-          return true;
-        }
-
-        if (
-          excludeCapitulo &&
-          track.name &&
-          /capitulo\s*\d+/i.test(track.name)
-        ) {
-          return true;
-        }
-
-        return false;
-      };
       const generateSearchCriteria = () => {
-        const excludeGenre = document.getElementById(
-          "excludeGenreCheckbox"
-        ).checked;
-        const excludeLiterature = document.getElementById(
-          "excludeLiteratureCheckbox"
-        ).checked;
-        const excludeCapitulo = document.getElementById(
-          "excludeCapituloCheckbox"
-        ).checked;
-
-        // Update the fieldsWithValues object based on checkbox states
-        if (excludeGenre) {
-          fieldsWithValues.genre = `NOT "writing"`;
-        }
-
-        if (excludeLiterature) {
-          fieldsWithValues.genre = `NOT "literature"`;
-        }
-
-        if (excludeCapitulo) {
-          fieldsWithValues.title = `NOT "capitulo"`;
-        }
-
         const scenario = getRandomScenario(); // Randomly determine the scenario
 
         if (scenario === "yearOnly") {
