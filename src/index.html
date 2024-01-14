@@ -229,10 +229,9 @@
       };
 
       const generateSearchCriteria = () => {
-        const scenario = getRandomScenario(); // Randomly determine the scenario
+        const scenario = getRandomScenario();
 
         if (scenario === "yearOnly") {
-          // Scenario C: Search based only on a random year
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
 
@@ -243,9 +242,11 @@
             randomLimit,
           };
         } else if (scenario === "yearWithCriteria") {
-          // Scenario A: Include a random year plus one or two additional criteria
-          const randomFieldsCount = getRandomNumberInRange(1, 2); // Choose 1 or 2 additional fields
-          const randomFields = ["year", ...getRandomFields(randomFieldsCount)];
+          const randomFieldsCount = getRandomNumberInRange(1, 2);
+          const randomFields = [
+            "year",
+            ...Array.from({ length: randomFieldsCount }, getRandomCharacter),
+          ];
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
 
@@ -256,9 +257,11 @@
             randomLimit,
           };
         } else {
-          // Scenario B: Exclude the year and choose one or two criteria randomly
-          const randomFieldsCount = getRandomNumberInRange(1, 2); // Choose 1 or 2 fields without the year
-          const randomFields = getRandomFields(randomFieldsCount);
+          const randomFieldsCount = getRandomNumberInRange(1, 2);
+          const randomFields = Array.from(
+            { length: randomFieldsCount },
+            getRandomCharacter
+          );
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
 
