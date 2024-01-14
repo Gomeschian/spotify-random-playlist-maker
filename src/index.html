@@ -238,7 +238,9 @@
 
           return {
             includeYear: true,
-            randomFields: ["year"],
+            randomFields: {
+              year: getRandomYear(),
+            },
             randomOffset,
             randomLimit,
           };
@@ -249,9 +251,18 @@
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
 
+          const fieldsWithValues = randomFields.reduce((acc, field) => {
+            if (field === "year") {
+              acc[field] = getRandomYear();
+            } else {
+              acc[field] = getRandomCharacter();
+            }
+            return acc;
+          }, {});
+
           return {
             includeYear: true,
-            randomFields,
+            randomFields: fieldsWithValues,
             randomOffset,
             randomLimit,
           };
@@ -262,9 +273,14 @@
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
 
+          const fieldsWithValues = randomFields.reduce((acc, field) => {
+            acc[field] = getRandomCharacter();
+            return acc;
+          }, {});
+
           return {
             includeYear: false,
-            randomFields,
+            randomFields: fieldsWithValues,
             randomOffset,
             randomLimit,
           };
