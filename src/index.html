@@ -328,9 +328,10 @@
             addedSongs.push(trackUri);
           }
         }
+        const trackUris = addedSongs.map((song) => song.uri);
 
         // Make a single API request to add all tracks to the playlist
-        await addBatchToPlaylist(accessToken, playlistUrl, addedSongs);
+        await addBatchToPlaylist(accessToken, playlistUrl, trackUris);
 
         // Introduce a delay between batches to avoid rate limits
         await new Promise((resolve) => setTimeout(resolve, searchDelay));
@@ -353,7 +354,9 @@
               console.warn("No track URIs to add. Skipping batch addition.");
               return;
             }
-            console.log("JSON Payload:", JSON.stringify({ uris: trackUris }));
+
+            // Simplify the payload to include only track URIs
+            const payload = { uris: trackUris };
 
             const addResponse = await fetch(playlistUrl, {
               method: "POST",
@@ -361,11 +364,8 @@
                 Authorization: `Bearer ${accessToken}`,
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({
-                uris: trackUris,
-              }),
+              body: JSON.stringify(payload),
             });
-
             if (addResponse.ok) {
               console.log(
                 `${trackUris.length} tracks added to the playlist successfully`
