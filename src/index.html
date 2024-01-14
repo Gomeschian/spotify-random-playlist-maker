@@ -143,10 +143,16 @@
             searchCriteria;
 
           const searchQuery = randomFields
-            .map((field) => `${field}:"${getRandomValueForField(field)}"`)
+            .map((field) => {
+              const value =
+                field === "year"
+                  ? getRandomYear()
+                  : getRandomValueForField(field);
+              return `${field}:"${encodeURIComponent(value)}"`;
+            })
             .join(" ");
-          const fullQuery = `${searchQuery}&offset=${randomOffset}&limit=${randomLimit}`;
 
+          const fullQuery = `${searchQuery}&offset=${randomOffset}&limit=${randomLimit}`;
           const searchUrl = `https://api.spotify.com/v1/search?type=track&${searchQuery}`;
 
           try {
