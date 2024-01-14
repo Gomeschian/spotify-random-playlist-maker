@@ -385,7 +385,7 @@
         addedSongsDiv.innerHTML += `<p><strong>Added Songs:</strong></p>`;
 
         uniqueAddedSongs.forEach((song) => {
-          addedSongsDiv.innerHTML += `<p>${song.artist} - ${song.name} (${song.album},${song.year}) | ${song.uri}</p>`;
+          addedSongsDiv.innerHTML += `<p>${song.artist} - ${song.name} | ${song.album}, ${song.year}  (${song.uri})</p>`;
         });
 
         // Scroll to the bottom to show the latest added songs
