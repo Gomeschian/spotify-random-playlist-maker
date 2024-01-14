@@ -144,7 +144,7 @@
 
           const searchQuery = `${randomFields
             .map((field) => `${field}:${getRandomValueForField(field)}`)
-            .join(" ")}&offset=${randomOffset}&limit=${randomLimit}`;
+            .join("%20")}&offset=${randomOffset}&limit=${randomLimit}`;
 
           const searchUrl = `https://api.spotify.com/v1/search?type=track&${searchQuery}`;
 
