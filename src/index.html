@@ -234,18 +234,17 @@
         if (scenario === "yearOnly") {
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
-          const randomYear = getRandomYear();
 
           return {
             includeYear: true,
-            randomFields: [`year:${randomYear}`], // Include the actual random year in the search
+            randomFields: ["year"],
             randomOffset,
             randomLimit,
           };
         } else if (scenario === "yearWithCriteria") {
           const randomFieldsCount = getRandomNumberInRange(1, 2);
           const randomFields = [
-            `year:${getRandomYear()}`,
+            "year",
             ...Array.from({ length: randomFieldsCount }, getRandomCharacter),
           ];
           const randomOffset = getRandomOffset();
@@ -261,7 +260,7 @@
           const randomFieldsCount = getRandomNumberInRange(1, 2);
           const randomFields = Array.from(
             { length: randomFieldsCount },
-            (field) => `${field}:${getRandomCharacter()}`
+            getRandomCharacter
           );
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
