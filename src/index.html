@@ -175,9 +175,8 @@
               // Check if the track has already been added during runtime
               if (addedDuringRuntime.includes(trackUri)) {
                 logToConsole(
-                  `Duplicate Track found for search: ${searchQuery}. Skipping.`
+                  `Duplicate Track found for search: ${getSearchQueryString()}. Skipping.`
                 );
-
                 return null;
               }
 
@@ -189,9 +188,8 @@
 
               if (trackInPlaylist) {
                 logToConsole(
-                  `Duplicate Track found in playlist for search: ${searchQuery}. Skipping.`
+                  `Duplicate Track found in playlist for search: ${getSearchQueryString()}. Skipping.`
                 );
-
                 return null;
               }
 
@@ -203,11 +201,10 @@
                 uri: trackUri,
               });
 
-              logToConsole(`Track found for search: ${searchQuery}`);
-
+              logToConsole(`Track found for search: ${getSearchQueryString()}`);
               return trackUri;
             } else {
-              const errorMessage = `No track found for search: ${searchQuery}`;
+              const errorMessage = `No track found for search: ${getSearchQueryString()}`;
               console.error(errorMessage);
               return null;
             }
@@ -226,6 +223,14 @@
 
         // After successfully adding a track, update the list of tracks added during runtime
         addedDuringRuntime.push(trackUri);
+      };
+
+      const getSearchQueryString = () => {
+        const { randomFields, randomOffset, randomLimit } =
+          generateSearchCriteria();
+        return `q=${randomFields.join(
+          " "
+        )}&offset=${randomOffset}&limit=${randomLimit}`;
       };
 
       const generateSearchCriteria = () => {
