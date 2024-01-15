@@ -123,6 +123,7 @@
           "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
         return characters[Math.floor(Math.random() * characters.length)];
       };
+      let progressCounter = 0;
       const searchTrackAndAddToPlaylist = async (
         accessToken,
         playlistUrl,
@@ -205,6 +206,7 @@
               progressCounter++;
               const progressText = `Processing... ${progressCounter}/${NUMBER_OF_SONGS}`;
               copyResultsButton.innerText = progressText;
+              logToConsole(`Track found for search: ${searchQuery}`);
 
               return trackUri;
             } else {
@@ -541,8 +543,6 @@
       };
 
       const createPlaylistAndAddTracks = async () => {
-        let progressCounter = 0;
-
         if (!isAuthenticated()) {
           redirectToAuthorization();
           return;
