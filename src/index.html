@@ -209,8 +209,7 @@
 
               logToConsole(`Track found for search: ${searchQuery}`);
               songsFound++;
-              copyResultsButton.innerText +=
-                " ${songsFound}/${NUMBER_OF_SONGS} tracks found";
+              copyResultsButton.innerText += ` ${songsFound}/${NUMBER_OF_SONGS} tracks found`;
               return trackUri;
             } else {
               const errorMessage = `No track found for search: ${searchQuery}`;
@@ -568,23 +567,6 @@
           "createPlaylistAndAddTracksButton"
         ).disabled = true;
         const copyResultsButton = document.getElementById("copyResultsButton");
-
-        // Define variables for the animation
-        let dots = 0;
-        const maxDots = 3;
-        let animationInterval;
-
-        // Function to start the animation
-        const startAnimation = () => {
-          animationInterval = setInterval(() => {
-            dots = (dots + 1) % (maxDots + 1);
-            const dotsText = ".".repeat(dots);
-            copyResultsButton.innerText = `Processing${dotsText}`;
-          }, 500); // Change the interval as needed (500 milliseconds in this example)
-        };
-
-        // Start the animation
-        startAnimation();
 
         try {
           const playlist = await searchPlaylist(
