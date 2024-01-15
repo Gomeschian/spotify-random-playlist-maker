@@ -33,7 +33,7 @@
         API limit is hit during running then fewer songs than requested may
         actually be added - unexplained errors are probably due to hitting API
         limits (Code 429), check console for details and/or wait a little before
-        trying again.
+        trying again. Otherwise just leave this page open - this may take a minute.
       </p>
 
       <div class="flex flex-col items-center justify-center">
@@ -209,7 +209,7 @@
 
               logToConsole(`Track found for search: ${searchQuery}`);
               songsFound++;
-              copyResultsButton.innerText = ` ${songsFound}/${NUMBER_OF_SONGS} tracks found`;
+              copyResultsButton.innerText = `Searching...${songsFound}/${NUMBER_OF_SONGS} tracks found`;
               return trackUri;
             } else {
               const errorMessage = `No track found for search: ${searchQuery}`;
@@ -321,7 +321,6 @@
       ) => {
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
         const addedSongs = [];
-
         while (addedSongs.length < numberOfSongs) {
           const remainingSongs = numberOfSongs - addedSongs.length;
           const tracksToAdd = Math.min(remainingSongs, BATCH_SIZE);
@@ -360,6 +359,7 @@
         playlistUrl,
         trackBatch
       ) => {
+        copyResultsButton.innerText = `Adding tracks to playlist...`;
         try {
           const addResponse = await fetch(playlistUrl, {
             method: "POST",
@@ -559,15 +559,12 @@
         const params = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = params.get("access_token");
 
-        // Notify the user that the process is running
-        alert(
-          "This may take a minute. Close this alert to begin, and then leave this page open. An alert will run when the process is complete or if there's a fatal error. Check console for more details."
-        );
+        
         document.getElementById(
           "createPlaylistAndAddTracksButton"
         ).disabled = true;
         const copyResultsButton = document.getElementById("copyResultsButton");
-        copyResultsButton.innerText = "Processing...";
+        copyResultsButton.innerText = "Finding/creating playlist...";
         try {
           const playlist = await searchPlaylist(
             accessToken,
@@ -597,8 +594,7 @@
             "createPlaylistAndAddTracksButton"
           ).disabled = false;
 
-          // Display "Done running" alert
-          alert("Done running.");
+          
         }
       };
 
