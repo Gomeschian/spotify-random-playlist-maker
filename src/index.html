@@ -314,22 +314,27 @@
       ) => {
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
 
-        for (let i = addedSongs.length; i < numberOfSongs; i++) {
-          const trackUri = await searchTrackAndAddToPlaylist(
-            accessToken,
-            playlistUrl,
-            addedSongs,
-            progressCounter
-          );
+        while (addedSongs.length < numberOfSongs) {
+          const remainingSongs = numberOfSongs - addedSongs.length;
+          const tracksToAdd = Math.min(remainingSongs, BATCH_SIZE);
+          const trackBatch = [];
 
-          if (trackUri) {
-            addedSongs.push(trackUri);
-            progressCounter++;
+          for (let i = 0; i < tracksToAdd; i++) {
+            let trackUri;
+
+            while (!trackUri) {
+              trackUri = await searchTrackAndAddToPlaylist(
+                accessToken,
+                playlistUrl,
+                addedSongs,
+                progressCounter
+              );
+            }
+
+            trackBatch.push(trackUri);
           }
 
-          const progressText = `Processing... ${progressCounter}/${NUMBER_OF_SONGS}`;
-          copyResultsButton.innerText = progressText;
-
+          await addBatchToPlaylist(accessToken, playlistUrl, trackBatch);
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
         }
 
