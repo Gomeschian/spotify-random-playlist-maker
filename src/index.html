@@ -81,8 +81,7 @@
       const CLIENT_ID = "a34e83c02f6e439a891f4c2f6ba197fe";
       const REDIRECT_URI = "https://spotify-topaz-nine.vercel.app/";
       const SCOPES =
-        "playlist-modify-public playlist-modify-private playlist-read-private";
-
+        "user-read-private user-read-email user-library-read playlist-read-private";
       const NUMBER_OF_SONGS = 25;
       const BATCH_SIZE = 100; // 100 is the max songs that can be added at once per Spotify's Web API
 
@@ -131,9 +130,20 @@
         }
       };
 
-      // Call fetchAvailableMarkets with your access token
-      const accessToken = "YOUR_ACCESS_TOKEN";
-      fetchAvailableMarkets(accessToken);
+      // Function to extract access token from URL hash
+      const getAccessTokenFromHash = () => {
+        const params = new URLSearchParams(window.location.hash.substring(1));
+        return params.get("access_token");
+      };
+
+      // Call fetchAvailableMarkets with the dynamically obtained access token
+      const accessToken = getAccessTokenFromHash();
+      if (accessToken) {
+        fetchAvailableMarkets(accessToken);
+      } else {
+        console.error("Access token not found. User may not be logged in.");
+        // Handle the case where the user is not logged in
+      }
 
       const getRandomYear = () => {
         const currentYear = new Date().getFullYear();
