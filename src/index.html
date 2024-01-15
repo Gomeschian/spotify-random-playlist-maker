@@ -700,14 +700,18 @@
       //See which checkboxes are checked and update exclusions accordingly
       const compileExclusions = () => {
         if (audiobooksCheckbox.checked) {
-          trackTitleStringsToExclude.push(
-            ...bookTitles.map((title) => title.toLowerCase())
+          const audiobookTitles = bookTitles.map((title) =>
+            title.toLowerCase()
           );
+          console.log("Excluding audiobook titles:", audiobookTitles);
+          trackTitleStringsToExclude.push(...audiobookTitles);
         }
         if (classicalCheckbox.checked) {
-          trackTitleStringsToExclude.push(
-            ...classicalTitles.map((title) => title.toLowerCase())
+          const classicalTitlesLowerCase = classicalTitles.map((title) =>
+            title.toLowerCase()
           );
+          console.log("Excluding classical titles:", classicalTitlesLowerCase);
+          trackTitleStringsToExclude.push(...classicalTitlesLowerCase);
         }
         return;
       };
