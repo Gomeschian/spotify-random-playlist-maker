@@ -175,7 +175,7 @@
               // Check if the track has already been added during runtime
               if (addedDuringRuntime.includes(trackUri)) {
                 logToConsole(
-                  `Duplicate Track found for search: ${searchQuery}. Skipping.`
+                  `Duplicate track found for search: ${searchQuery}. Skipping.`
                 );
 
                 return null;
@@ -202,7 +202,10 @@
                 artist: track.artists.map((artist) => artist.name).join(", "),
                 uri: trackUri,
               });
-
+              
+              const tracksAdded = addedSongs.length;
+              const progressText = `Processing... ${tracksAdded}/${NUMBER_OF_SONGS}`;
+              copyResultsButton.innerText = progressText;
               logToConsole(`Track found for search: ${searchQuery}`);
 
               return trackUri;
