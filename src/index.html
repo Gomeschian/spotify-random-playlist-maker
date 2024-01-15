@@ -89,6 +89,7 @@
       const searchDelay = 200;
       let playlistTracks = [];
       let addedDuringRuntime = [];
+      let availableMarkets = [];
 
       const addedSongsDiv = document.getElementById("added-songs");
       const consoleDiv = document.getElementById("console-div");
@@ -103,6 +104,36 @@
           REDIRECT_URI
         )}&scope=${encodeURIComponent(SCOPES)}&response_type=token`;
       };
+
+      // Function to fetch available markets
+      const fetchAvailableMarkets = async (accessToken) => {
+        const availableMarketsUrl = "https://api.spotify.com/v1/markets";
+        try {
+          const response = await fetch(availableMarketsUrl, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(
+              `Error fetching available markets: ${response.status} ${response.statusText}`
+            );
+          }
+
+          const data = await response.json();
+          availableMarkets = data.markets;
+
+          console.log("Available markets:", availableMarkets);
+        } catch (error) {
+          console.error("Error fetching available markets:", error);
+          // Handle the error as needed
+        }
+      };
+
+      // Call fetchAvailableMarkets with your access token
+      const accessToken = "YOUR_ACCESS_TOKEN";
+      fetchAvailableMarkets(accessToken);
 
       const getRandomYear = () => {
         const currentYear = new Date().getFullYear();
@@ -226,9 +257,9 @@
         // After successfully adding a track, update the list of tracks added during runtime
         addedDuringRuntime.push(trackUri);
       };
-
       const generateSearchCriteria = () => {
-        const scenario = getRandomScenario(); // Randomly determine the scenario
+        const includeMarket = Math.random() < 0.5; // 50% chance to include a market
+        const scenario = getRandomScenario();
 
         if (scenario === "yearOnly") {
           // Scenario C: Search based only on a random year
@@ -259,6 +290,14 @@
             return acc;
           }, {});
 
+          if (includeMarket && availableMarkets.length > 0) {
+            const randomMarket =
+              availableMarkets[
+                Math.floor(Math.random() * availableMarkets.length)
+              ];
+            fieldsWithValues.market = randomMarket;
+          }
+
           return {
             includeYear: true,
             randomFields: fieldsWithValues,
@@ -276,6 +315,14 @@
             acc[field] = getRandomCharacter();
             return acc;
           }, {});
+
+          if (includeMarket && availableMarkets.length > 0) {
+            const randomMarket =
+              availableMarkets[
+                Math.floor(Math.random() * availableMarkets.length)
+              ];
+            fieldsWithValues.market = randomMarket;
+          }
 
           return {
             includeYear: false,
