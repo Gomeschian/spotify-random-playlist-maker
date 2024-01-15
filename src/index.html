@@ -563,19 +563,7 @@
           animationInterval = setInterval(() => {
             dots = (dots + 1) % (maxDots + 1);
             const dotsText = ".".repeat(dots);
-            const buttonText = "Processing";
-            copyResultsButton.innerText = `${buttonText}${dotsText}`;
-            copyResultsButton.style.width = `${copyResultsButton.clientWidth}px`; // Fix the button width
-
-            // Function to update the dots
-            const updateDots = () => {
-              dots = (dots + 1) % (maxDots + 1);
-              const dotsText = ".".repeat(dots);
-              copyResultsButton.innerText = `${buttonText}${dotsText}`;
-            };
-
-            // Start the animation
-            animationInterval = setInterval(updateDots, 500); // Change the interval as needed (500 milliseconds in this example)
+            copyResultsButton.innerText = `Processing${dotsText}`;
           }, 500); // Change the interval as needed (500 milliseconds in this example)
         };
 
