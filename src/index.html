@@ -20,20 +20,20 @@
       </h1>
 
       <p class="mb-4 sm:mb-6 text-sm sm:text-xl text-left">
-        Adds 25 random, non-duplicate tracks to a playlist called "Random Songs
+        Adds 50 random, non-duplicate tracks to a playlist called "Random Songs
         from All of Spotify" (will be created if it doesn't exist).
       </p>
 
       <p class="mb-4 sm:mb-6 text-xs sm:text-lg text-left">
         Searches a random year between 1860 (oldest known recording) and the
-        current year, and/or a random character each on a random combination of
-        fields from track title, artist, album, ISRC, and/or genre, This search
-        will find anything Spotify considers a track, so not necessarily only
-        songs but possibly noise or spoken word, but no podcast episodes. If an
-        API limit is hit during running then fewer songs than requested may
-        actually be added - unexplained errors are probably due to hitting API
-        limits (Code 429), check console for details and/or wait a little before
-        trying again.
+        current year, and/or a random market, and/or a random character each on
+        a random combination of fields from track title, artist, album, ISRC,
+        and/or genre, This search will find anything Spotify considers a track,
+        so not necessarily only songs but possibly noise or spoken word, but no
+        podcast episodes. If an API limit is hit during running then fewer songs
+        than requested may actually be added - unexplained errors are probably
+        due to hitting API limits (Code 429), check console for details and/or
+        wait a little before trying again.
       </p>
 
       <div class="flex flex-col items-center justify-center">
@@ -82,7 +82,7 @@
       const REDIRECT_URI = "https://spotify-topaz-nine.vercel.app/";
       const SCOPES =
         "user-read-private user-read-email user-library-read playlist-read-private playlist-modify-public playlist-modify-private";
-      const NUMBER_OF_SONGS = 25;
+      const NUMBER_OF_SONGS = 50;
       const BATCH_SIZE = 100; // 100 is the max songs that can be added at once per Spotify's Web API
 
       const searchDelay = 200;
