@@ -134,6 +134,7 @@
         let success = false;
         const addedTrackUris = [];
         let trackUri;
+        let tracksAdded;
 
         while (!success && retryCount < maxRetries) {
           const searchCriteria = generateSearchCriteria(); // Generate search criteria for each search
@@ -202,8 +203,8 @@
                 artist: track.artists.map((artist) => artist.name).join(", "),
                 uri: trackUri,
               });
-              
-              const tracksAdded = addedSongs.length;
+
+              tracksAdded++;
               const progressText = `Processing... ${tracksAdded}/${NUMBER_OF_SONGS}`;
               copyResultsButton.innerText = progressText;
               logToConsole(`Track found for search: ${searchQuery}`);
