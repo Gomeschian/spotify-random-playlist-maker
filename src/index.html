@@ -126,8 +126,7 @@
       const searchTrackAndAddToPlaylist = async (
         accessToken,
         playlistUrl,
-        addedSongs,
-        progressCounter
+        addedSongs
       ) => {
         const maxRetries = 1000;
         let retryCount = 0;
@@ -334,8 +333,7 @@
               trackUri = await searchTrackAndAddToPlaylist(
                 accessToken,
                 playlistUrl,
-                addedSongs,
-                progressCounter
+                addedSongs
               );
             }
 
