@@ -203,7 +203,8 @@
               });
 
               logToConsole(`Track found for search: ${searchQuery}`);
-
+              const progressText = `Processing...${addedDuringRuntime.length}/${NUMBER_OF_SONGS}`;
+              copyResultsButton.innerText = progressText;
               return trackUri;
             } else {
               const errorMessage = `No track found for search: ${searchQuery}`;
@@ -566,8 +567,9 @@
           animationInterval = setInterval(() => {
             dots = (dots + 1) % (maxDots + 1);
             const dotsText = ".".repeat(dots);
-            copyResultsButton.innerText = `Processing${dotsText}`;
-          }, 500); // Change the interval as needed (500 milliseconds in this example)
+            const progressText = `Processing${dotsText} (${addedDuringRuntime.length}/${NUMBER_OF_SONGS})`;
+            copyResultsButton.innerText = progressText;
+          }, 500);
         };
 
         // Start the animation
