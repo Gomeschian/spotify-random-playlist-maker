@@ -65,7 +65,7 @@
 
         <div
           id="added-songs"
-          class="mt-4 max-w-screen-md text-sm sm:text-lg p-2 border border-gray-300 max-h-52 overflow-y-auto"
+          class="hidden mt-4 max-w-screen-md text-sm sm:text-lg p-2 border border-gray-300 max-h-52 overflow-y-auto"
         >
           Results
         </div>
@@ -348,6 +348,7 @@
         }
 
         // Display added songs information
+        addedSongsDiv.classList.remove("hidden");
         displayAddedSongsInfo(addedSongs);
       };
 
