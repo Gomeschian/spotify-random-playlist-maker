@@ -256,7 +256,12 @@
             return acc;
           }, {});
 
-
+          return {
+            includeYear: true,
+            randomFields: fieldsWithValues,
+            randomOffset,
+            randomLimit,
+          };
         } else {
           // Scenario B: Exclude the year and choose one or two criteria randomly
           const randomFieldsCount = getRandomNumberInRange(1, 2); // Choose 1 or 2 fields without the year
@@ -269,7 +274,13 @@
             return acc;
           }, {});
 
-
+          return {
+            includeYear: false,
+            randomFields: fieldsWithValues,
+            randomOffset,
+            randomLimit,
+          };
+        }
       };
 
       const getRandomScenario = () => {
