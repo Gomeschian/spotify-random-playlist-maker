@@ -89,6 +89,7 @@
       let playlistTracks = [];
       let addedDuringRuntime = [];
       let allQueriesAndTracks = [];
+      let songsFound = 0;
 
       const addedSongsDiv = document.getElementById("added-songs");
       const consoleDiv = document.getElementById("console-div");
@@ -207,7 +208,9 @@
               });
 
               logToConsole(`Track found for search: ${searchQuery}`);
-
+              songsFound++;
+              copyResultsButton.innerText +=
+                " ${songsFound}/${NUMBER_OF_SONGS} tracks found";
               return trackUri;
             } else {
               const errorMessage = `No track found for search: ${searchQuery}`;
