@@ -209,7 +209,7 @@
 
               logToConsole(`Track found for search: ${searchQuery}`);
               songsFound++;
-              copyResultsButton.innerText += ` ${songsFound}/${NUMBER_OF_SONGS} tracks found`;
+              copyResultsButton.innerText = ` ${songsFound}/${NUMBER_OF_SONGS} tracks found`;
               return trackUri;
             } else {
               const errorMessage = `No track found for search: ${searchQuery}`;
