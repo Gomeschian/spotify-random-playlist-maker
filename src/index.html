@@ -88,6 +88,7 @@
       const searchDelay = 200;
       let playlistTracks = [];
       let addedDuringRuntime = [];
+      let allQueriesAndTracks = [];
 
       const addedSongsDiv = document.getElementById("added-songs");
       const consoleDiv = document.getElementById("console-div");
@@ -168,7 +169,12 @@
             if (tracks.length > 0) {
               const track = tracks[0];
               trackUri = track.uri;
-
+              // Log details of the query and the track
+              const queryDetails = {
+                query: searchQuery,
+                track: track,
+              };
+              allQueriesAndTracks.push(queryDetails);
               // Check if the track has already been added during runtime
               if (addedDuringRuntime.includes(trackUri)) {
                 logToConsole(
@@ -592,6 +598,8 @@
           document.getElementById("copyResultsButton").innerText =
             "Results (click to copy to clipboard)";
           clearInterval(animationInterval);
+          // Log all queries and tracks
+          logAllQueriesAndTracks();
         } catch (error) {
           console.error("An error occurred:", error);
           alert("An error occurred: " + error.message);
@@ -640,7 +648,7 @@
           }
         }
       };
-      // Call this function whenever you need to update the login status, e.g., after successful login.
+
       updateLoginStatus();
 
       const button = document.getElementById(
@@ -658,7 +666,14 @@
         console.log(message); // Log to the browser console
         consoleDiv.innerHTML += `<p>${message}</p>`;
       };
-
+      const logAllQueriesAndTracks = () => {
+        console.log("All Queries and Tracks:");
+        allQueriesAndTracks.forEach((entry, index) => {
+          console.log(`Query ${index + 1}: ${entry.query}`);
+          console.log(`Track details: ${JSON.stringify(entry.track)}`);
+          console.log("------------------------------");
+        });
+      };
       // Copy results to clipboard when the button is clicked
       const copyResultsButton = document.getElementById("copyResultsButton");
       copyResultsButton.addEventListener("click", () => {
