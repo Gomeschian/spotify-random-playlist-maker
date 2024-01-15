@@ -134,7 +134,6 @@
         let success = false;
         const addedTrackUris = [];
         let trackUri;
-        let tracksAdded;
 
         while (!success && retryCount < maxRetries) {
           const searchCriteria = generateSearchCriteria(); // Generate search criteria for each search
@@ -548,6 +547,8 @@
           redirectToAuthorization();
           return;
         }
+        
+        let tracksAdded=0;
 
         const params = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = params.get("access_token");
