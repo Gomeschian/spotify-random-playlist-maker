@@ -90,6 +90,7 @@
       let playlistTracks = [];
       let addedDuringRuntime = [];
       let addedSongs = [];
+      let progressCounter = 0;
 
       const addedSongsDiv = document.getElementById("added-songs");
       const consoleDiv = document.getElementById("console-div");
@@ -123,7 +124,6 @@
           "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
         return characters[Math.floor(Math.random() * characters.length)];
       };
-      let progressCounter = 0;
 
       const searchTrackAndAddToPlaylist = async (
         accessToken,
@@ -206,10 +206,7 @@
 
               progressCounter++;
               const progressText = `Processing... ${progressCounter}/${NUMBER_OF_SONGS}`;
-
-              // With this line
-              document.getElementById("copyResultsButton").innerText =
-                progressText;
+              copyResultsButton.innerText = progressText;
               logToConsole(`Track found for search: ${searchQuery}`);
 
               return trackUri;
