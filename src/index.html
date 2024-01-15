@@ -50,7 +50,7 @@
           class="hidden flex flex-col items-center justify-center"
         >
           <div class="exclusions">
-            Optional filters - not comprehensive and marginally limit other
+            Optional filters - not comprehensive and will marginally limit other
             tracks as well:<br />
             <input type="checkbox" id="audiobooksCheckbox" />
             <label for="audiobooksCheckbox">Fewer audiobook chapters </label>
@@ -129,8 +129,8 @@
         "Kapitola \\d+", // Slovak
       ];
       const classicalTitles = [
-        /\b(?:k[mz]|öchel|catalog(?:ue)?|bwv)\s*\d+/i,
-        // Mozart (K, KV, K. or Köchel), Op. or Opus, Bach (BWV)
+          /\b(?:k[mz]|öchel|catalog(?:ue)?|bwv|hwv|d(?:\.)?)\s*\d+/i,
+          // Mozart (K, KV, K. or Köchel), Op. or Opus, Bach (BWV), HWV, D.
       ];
 
       const addedSongsDiv = document.getElementById("added-songs");
@@ -672,6 +672,8 @@
           ).disabled = false;
           audiobooksCheckbox.disabled = false;
           classicalCheckbox.disabled = false;
+          eighteenHundredsCheckbox.disabled = false;
+          nineteenHundredsCheckbox.disabled = false;
         }
       };
 
