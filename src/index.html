@@ -217,9 +217,6 @@
                 titleRegex.test(trackName)
               );
 
-              console.log("Track Name:", trackName);
-              console.log("Exclusion Check Result:", isExcluded);
-
               if (isExcluded) {
                 logToConsole(
                   `Track excluded for search: ${searchQuery}. Skipping.`
@@ -640,8 +637,6 @@
           // Success: Update HTML elements
           document.getElementById("copyResultsButton").innerText =
             "Results (click to copy to clipboard)";
-          // Log all queries and tracks
-          logAllQueriesAndTracks();
         } catch (error) {
           console.error("An error occurred:", error);
           alert("An error occurred: " + error.message);
@@ -731,7 +726,6 @@
 
         // Convert allQueriesAndTracks to JSON format
         const jsonFormat = JSON.stringify(allQueriesAndTracks, null, 2);
-        //console.log(jsonFormat);
       };
       // Copy results to clipboard when the button is clicked
       const copyResultsButton = document.getElementById("copyResultsButton");
