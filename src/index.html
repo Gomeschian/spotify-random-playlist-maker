@@ -209,12 +209,15 @@
               };
               allQueriesAndTracks.push(queryDetails);
 
-              // Check if the track should be excluded
-              if (
-                trackTitleStringsToExclude.some((titleString) =>
-                  trackName.toLowerCase().includes(titleString)
-                )
-              ) {
+              // Check if the track should be excluded (case-insensitive)
+              const isExcluded = trackTitleStringsToExclude.some(
+                (titleString) => trackName.toLowerCase().includes(titleString)
+              );
+
+              console.log("Track Name:", trackName);
+              console.log("Exclusion Check Result:", isExcluded);
+
+              if (isExcluded) {
                 logToConsole(
                   `Track excluded for search: ${searchQuery}. Skipping.`
                 );
@@ -725,7 +728,7 @@
 
         // Convert allQueriesAndTracks to JSON format
         const jsonFormat = JSON.stringify(allQueriesAndTracks, null, 2);
-        console.log(jsonFormat);
+        //console.log(jsonFormat);
       };
       // Copy results to clipboard when the button is clicked
       const copyResultsButton = document.getElementById("copyResultsButton");
