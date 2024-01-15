@@ -535,7 +535,7 @@
 
             if (!response.ok) {
               throw new Error(
-                "Error fetching playlists : " +
+                "Error fetching playlists: " +
                   response.status +
                   " " +
                   response.statusText
@@ -543,13 +543,20 @@
             }
 
             const data = await response.json();
-
             console.log("Received JSON data:", data);
+
+            // Add this line to log the playlists found
+            console.log("Playlists found:", data.items);
+
             playlist = data.items.find((item) => item.name === playlistName);
 
             if (!playlist && data.next) {
               offset += 50;
               await new Promise((resolve) => setTimeout(resolve, searchDelay));
+            } else if (!playlist) {
+              // If playlist is still not found and there are no more results
+              playlist = await createPlaylist(accessToken, playlistName);
+              logToConsole("Playlist not found, creating a new one.");
             } else {
               break;
             }
