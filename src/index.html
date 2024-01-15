@@ -518,7 +518,7 @@
 
       const searchPlaylist = async (accessToken, playlistName) => {
         let offset = 0;
-        let playlist = null;
+        let playlist;
         logToConsole("Getting playlist...");
         try {
           while (!playlist) {
