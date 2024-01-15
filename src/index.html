@@ -50,12 +50,20 @@
           class="hidden flex flex-col items-center justify-center"
         >
           <div class="exclusions">
-            Optional filters - not comprehensive and will marginally limit other
+            Optional filters - not comprehensive and marginally limit other
             tracks as well:<br />
             <input type="checkbox" id="audiobooksCheckbox" />
             <label for="audiobooksCheckbox">Fewer audiobook chapters </label>
             <input type="checkbox" id="classicalCheckbox" />
             <label for="classicalCheckbox">Less classical </label>
+            <input type="checkbox" id="eighteenHundredsCheckbox" />
+            <label for="eighteenHundredsCheckbox"
+              >Fewer pre-1900 releases
+            </label>
+            <input type="checkbox" id="nineteenHundredsCheckbox" />
+            <label for="nineteenHundredsCheckbox"
+              >Fewer pre-2000 releases
+            </label>
           </div>
           <button
             id="createPlaylistAndAddTracksButton"
@@ -93,6 +101,7 @@
         "user-read-private user-read-email user-library-read playlist-read-private playlist-modify-public playlist-modify-private";
       const NUMBER_OF_SONGS = 50;
       const BATCH_SIZE = 100; // 100 is the max songs that can be added at once per Spotify's Web API
+      let earliestReleaseYear = 1860;
 
       const searchDelay = 200;
       let playlistTracks = [];
@@ -139,7 +148,10 @@
       };
       const getRandomYear = () => {
         const currentYear = new Date().getFullYear();
-        return Math.floor(Math.random() * (currentYear - 1860 + 1)) + 1860;
+        return (
+          Math.floor(Math.random() * (currentYear - earliestReleaseYear + 1)) +
+          earliestReleaseYear
+        );
       };
 
       const getRandomOffset = () => {
@@ -615,9 +627,18 @@
         const audiobooksCheckbox =
           document.getElementById("audiobooksCheckbox");
         const classicalCheckbox = document.getElementById("classicalCheckbox");
+        const eighteenHundredsCheckbox = document.getElementById(
+          "eighteenHundredsCheckbox"
+        );
+        const nineteenHundredsCheckbox = document.getElementById(
+          "nineteenHundredsCheckbox"
+        );
 
         audiobooksCheckbox.disabled = true;
         classicalCheckbox.disabled = true;
+        eighteenHundredsCheckbox.disabled = true;
+        nineteenHundredsCheckbox.disabled = true;
+
         compileExclusions();
 
         const copyResultsButton = document.getElementById("copyResultsButton");
@@ -700,18 +721,22 @@
 
       //See which checkboxes are checked and update exclusions accordingly
       const compileExclusions = () => {
+        if (eighteenHundredsCheckbox.checked) {
+          earliestReleaseYear = 1900;
+        }
+        if (nineteenHundredsCheckbox.checked) {
+          earliestReleaseYear = 2000;
+        }
         if (audiobooksCheckbox.checked) {
           const audiobookPatterns = bookTitles.map(
             (title) => new RegExp(title, "i")
           );
-          console.log("Excluding audiobook titles:", audiobookPatterns);
           trackTitleStringsToExclude.push(...audiobookPatterns);
         }
         if (classicalCheckbox.checked) {
           const classicalPatterns = classicalTitles.map(
             (title) => new RegExp(title, "i")
           );
-          console.log("Excluding classical titles:", classicalPatterns);
           trackTitleStringsToExclude.push(...classicalPatterns);
         }
         return;
