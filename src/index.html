@@ -84,12 +84,13 @@
         "playlist-modify-public playlist-modify-private playlist-read-private";
 
       const NUMBER_OF_SONGS = 25;
-      const BATCH_SIZE = 100; // 100 is the max songs that can be added at once per Spotify's Web API
+      const BATCH_SIZE = 100;
 
       const searchDelay = 200;
       let playlistTracks = [];
       let addedDuringRuntime = [];
       let addedSongs = [];
+      let progressCounter = 0;
 
       const addedSongsDiv = document.getElementById("added-songs");
       const consoleDiv = document.getElementById("console-div");
@@ -123,6 +124,7 @@
           "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
         return characters[Math.floor(Math.random() * characters.length)];
       };
+
       const searchTrackAndAddToPlaylist = async (
         accessToken,
         playlistUrl,
@@ -136,7 +138,7 @@
         let trackUri;
 
         while (!success && retryCount < maxRetries) {
-          const searchCriteria = generateSearchCriteria(); // Generate search criteria for each search
+          const searchCriteria = generateSearchCriteria();
           const { includeYear, randomFields, randomOffset, randomLimit } =
             searchCriteria;
 
@@ -159,7 +161,7 @@
 
             if (response.status === 429) {
               console.error("Too Many Requests: Please try again later.");
-              return; // Stop the function execution
+              return;
             }
             if (!response.ok) {
               throw new Error(`Invalid search query: ${response.statusText}`);
@@ -172,16 +174,13 @@
               const track = tracks[0];
               trackUri = track.uri;
 
-              // Check if the track has already been added during runtime
               if (addedDuringRuntime.includes(trackUri)) {
                 logToConsole(
                   `Duplicate track found for search: ${searchQuery}. Skipping.`
                 );
-
                 return null;
               }
 
-              // Check if the track is already in the playlist
               const trackInPlaylist = playlistTracks.some(
                 (playlistTrack) =>
                   playlistTrack.track && playlistTrack.track.uri === trackUri
@@ -191,7 +190,6 @@
                 logToConsole(
                   `Duplicate Track found in playlist for search: ${searchQuery}. Skipping.`
                 );
-
                 return null;
               }
 
@@ -221,20 +219,17 @@
           if (!success) {
             addedTrackUris.push(trackUri);
             retryCount++;
-            // Introduce a delay (e.g., 2 seconds) between retries
             await new Promise((resolve) => setTimeout(resolve, searchDelay));
           }
         }
 
-        // After successfully adding a track, update the list of tracks added during runtime
         addedDuringRuntime.push(trackUri);
       };
 
       const generateSearchCriteria = () => {
-        const scenario = getRandomScenario(); // Randomly determine the scenario
+        const scenario = getRandomScenario();
 
         if (scenario === "yearOnly") {
-          // Scenario C: Search based only on a random year
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
 
@@ -247,8 +242,7 @@
             randomLimit,
           };
         } else if (scenario === "yearWithCriteria") {
-          // Scenario A: Include a random year plus one or two additional criteria
-          const randomFieldsCount = getRandomNumberInRange(1, 2); // Choose 1 or 2 additional fields
+          const randomFieldsCount = getRandomNumberInRange(1, 2);
           const randomFields = ["year", ...getRandomFields(randomFieldsCount)];
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
@@ -269,8 +263,7 @@
             randomLimit,
           };
         } else {
-          // Scenario B: Exclude the year and choose one or two criteria randomly
-          const randomFieldsCount = getRandomNumberInRange(1, 2); // Choose 1 or 2 fields without the year
+          const randomFieldsCount = getRandomNumberInRange(1, 2);
           const randomFields = getRandomFields(randomFieldsCount);
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
@@ -301,6 +294,7 @@
       const getRandomNumberInRange = (min, max) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       };
+
       const getRandomFields = (count) => {
         const fields = ["track", "artist", "album", "genre", "isrc"];
         const randomFields = [];
@@ -312,13 +306,13 @@
 
         return randomFields;
       };
+
       const addTracksToPlaylist = async (
         accessToken,
         playlistId,
         numberOfSongs
       ) => {
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
-        const addedSongs = [];
 
         while (addedSongs.length < numberOfSongs) {
           const remainingSongs = numberOfSongs - addedSongs.length;
@@ -328,9 +322,7 @@
           for (let i = 0; i < tracksToAdd; i++) {
             let trackUri;
 
-            // Continue searching until a valid track is found
             while (!trackUri) {
-              const randomYear = getRandomYear();
               trackUri = await searchTrackAndAddToPlaylist(
                 accessToken,
                 playlistUrl,
@@ -342,14 +334,10 @@
             trackBatch.push(trackUri);
           }
 
-          // Batch addition of tracks to the playlist
           await addBatchToPlaylist(accessToken, playlistUrl, trackBatch);
-
-          // Introduce a delay between batches to avoid rate limits
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
         }
 
-        // Display added songs information
         addedSongsDiv.classList.remove("hidden");
         displayAddedSongsInfo(addedSongs);
       };
@@ -378,16 +366,15 @@
           } else {
             const errorMessage = `Error adding batch to the playlist: ${addResponse.statusText}`;
             console.error(errorMessage);
-            // Run an alert if batch adding fails
             alert(errorMessage);
           }
         } catch (error) {
           const errorMessage = `Error adding batch to the playlist: ${error.message}`;
           console.error(errorMessage);
-          // Run an alert if batch adding fails
           alert(errorMessage);
         }
       };
+
       const displayAddedSongsInfo = (addedSongs) => {
         const uniqueAddedSongs = [];
         const uniqueUris = new Set();
@@ -404,14 +391,13 @@
           addedSongsDiv.innerHTML += `<p>${song.artist} - ${song.name} | ${song.album}, ${song.year}  (${song.uri})</p>`;
         });
 
-        // Scroll to the top to show the latest added songs
         addedSongsDiv.scrollTop = 0;
       };
 
       const getPlaylistTracks = async (accessToken, playlistTracksUrl) => {
-        const tracksPerPage = 100; // Spotify API returns up to 100 tracks per request
+        const tracksPerPage = 100;
         let allPlaylistTracks = [];
-        logToConsole("Playlist found - reading tracks...");
+
         try {
           let offset = 0;
           let hasNextPage = true;
@@ -442,14 +428,10 @@
               hasNextPage = false;
             }
 
-            // Introduce a delay between requests
             await new Promise((resolve) => setTimeout(resolve, searchDelay));
           }
 
-          // Update the global playlistTracks array with a single array
           playlistTracks = allPlaylistTracks;
-
-          // Add playlist track URIs to the array of tracks added during runtime
           addedDuringRuntime = addedDuringRuntime.concat(
             allPlaylistTracks.map((playlistTrack) => playlistTrack.uri)
           );
@@ -466,19 +448,16 @@
       const searchPlaylist = async (accessToken, playlistName) => {
         let offset = 0;
         let playlist = null;
-        logToConsole("Getting playlist...");
+
         try {
           while (!playlist) {
             const searchUrl = `https://api.spotify.com/v1/me/playlists?limit=50&offset=${offset}`;
 
-            logToConsole(`Searching for playlists at offset ${offset}`);
             const response = await fetch(searchUrl, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
               },
             });
-
-            console.log("Received response:", response);
 
             if (!response.ok) {
               throw new Error(
@@ -491,7 +470,6 @@
 
             const data = await response.json();
 
-            console.log("Received JSON data:", data);
             playlist = data.items.find((item) => item.name === playlistName);
 
             if (!playlist && data.next) {
@@ -503,7 +481,6 @@
           }
 
           if (playlist) {
-            // Fetch and store the playlist tracks once
             playlistTracks = await getPlaylistTracks(
               accessToken,
               playlist.tracks.href
@@ -511,14 +488,11 @@
           }
 
           console.log("Found playlist:", playlist);
-          logToConsole("Adding songs");
 
           return playlist;
         } catch (error) {
           console.error("Error searching playlist:", error);
           alert("An error occurred while searching for the playlist: " + error);
-          logToConsole("An error occurred while searching for the playlist");
-
           throw error;
         }
       };
@@ -543,8 +517,6 @@
       };
 
       const createPlaylistAndAddTracks = async () => {
-        let progressCounter = 0;
-
         if (!isAuthenticated()) {
           redirectToAuthorization();
           return;
@@ -553,7 +525,6 @@
         const params = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = params.get("access_token");
 
-        // Notify the user that the process is running
         alert(
           "This may take a minute. Close this alert to begin, and then leave this page open. An alert will run when the process is complete or if there's a fatal error. Check console for more details."
         );
@@ -562,12 +533,10 @@
         ).disabled = true;
         const copyResultsButton = document.getElementById("copyResultsButton");
 
-        // Define variables for the animation
         let dots = 0;
         const maxDots = 3;
         let animationInterval;
 
-        // Function to start the animation
         const startAnimation = () => {
           animationInterval = setInterval(() => {
             dots = (dots + 1) % (maxDots + 1);
