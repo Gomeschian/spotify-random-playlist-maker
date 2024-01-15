@@ -668,11 +668,10 @@
       };
       const logAllQueriesAndTracks = () => {
         console.log("All Queries and Tracks:");
-        allQueriesAndTracks.forEach((entry, index) => {
-          console.log(`Query ${index + 1}: ${entry.query}`);
-          console.log(`Track details: ${JSON.stringify(entry.track)}`);
-          console.log("------------------------------");
-        });
+
+        // Convert allQueriesAndTracks to JSON format
+        const jsonFormat = JSON.stringify(allQueriesAndTracks, null, 2);
+        console.log(jsonFormat);
       };
       // Copy results to clipboard when the button is clicked
       const copyResultsButton = document.getElementById("copyResultsButton");
