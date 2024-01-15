@@ -26,14 +26,14 @@
 
       <p class="mb-4 sm:mb-6 text-xs sm:text-lg text-left">
         Searches a random year between 1860 (oldest known recording) and the
-        current year, and/or a random market, and/or a random character each on
-        a random combination of fields from track title, artist, album, ISRC,
-        and/or genre, This search will find anything Spotify considers a track,
-        so not necessarily only songs but possibly noise or spoken word, but no
-        podcast episodes. If an API limit is hit during running then fewer songs
-        than requested may actually be added - unexplained errors are probably
-        due to hitting API limits (Code 429), check console for details and/or
-        wait a little before trying again.
+        current year, and/or a random character each on a random combination of
+        fields from track title, artist, album, ISRC, and/or genre, This search
+        will find anything Spotify considers a track, so not necessarily only
+        songs but possibly noise or spoken word, but no podcast episodes. If an
+        API limit is hit during running then fewer songs than requested may
+        actually be added - unexplained errors are probably due to hitting API
+        limits (Code 429), check console for details and/or wait a little before
+        trying again.
       </p>
 
       <div class="flex flex-col items-center justify-center">
@@ -88,7 +88,6 @@
       const searchDelay = 200;
       let playlistTracks = [];
       let addedDuringRuntime = [];
-      let availableMarkets = [];
 
       const addedSongsDiv = document.getElementById("added-songs");
       const consoleDiv = document.getElementById("console-div");
@@ -103,48 +102,6 @@
           REDIRECT_URI
         )}&scope=${encodeURIComponent(SCOPES)}&response_type=token`;
       };
-
-      // Function to fetch available markets
-      const fetchAvailableMarkets = async (accessToken) => {
-        const availableMarketsUrl = "https://api.spotify.com/v1/markets";
-        try {
-          const response = await fetch(availableMarketsUrl, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error(
-              `Error fetching available markets: ${response.status} ${response.statusText}`
-            );
-          }
-
-          const data = await response.json();
-          availableMarkets = data.markets;
-
-          console.log("Available markets:", availableMarkets);
-        } catch (error) {
-          console.error("Error fetching available markets:", error);
-          // Handle the error as needed
-        }
-      };
-
-      // Function to extract access token from URL hash
-      const getAccessTokenFromHash = () => {
-        const params = new URLSearchParams(window.location.hash.substring(1));
-        return params.get("access_token");
-      };
-
-      // Call fetchAvailableMarkets with the dynamically obtained access token
-      const accessToken = getAccessTokenFromHash();
-      if (accessToken) {
-        fetchAvailableMarkets(accessToken);
-      } else {
-        console.error("Access token not found. User may not be logged in.");
-        // Handle the case where the user is not logged in
-      }
-
       const getRandomYear = () => {
         const currentYear = new Date().getFullYear();
         return Math.floor(Math.random() * (currentYear - 1860 + 1)) + 1860;
@@ -268,7 +225,6 @@
         addedDuringRuntime.push(trackUri);
       };
       const generateSearchCriteria = () => {
-        const includeMarket = Math.random() < 0.5; // 50% chance to include a market
         const scenario = getRandomScenario();
 
         if (scenario === "yearOnly") {
@@ -300,20 +256,7 @@
             return acc;
           }, {});
 
-          if (includeMarket && availableMarkets.length > 0) {
-            const randomMarket =
-              availableMarkets[
-                Math.floor(Math.random() * availableMarkets.length)
-              ];
-            fieldsWithValues.market = randomMarket;
-          }
 
-          return {
-            includeYear: true,
-            randomFields: fieldsWithValues,
-            randomOffset,
-            randomLimit,
-          };
         } else {
           // Scenario B: Exclude the year and choose one or two criteria randomly
           const randomFieldsCount = getRandomNumberInRange(1, 2); // Choose 1 or 2 fields without the year
@@ -326,21 +269,7 @@
             return acc;
           }, {});
 
-          if (includeMarket && availableMarkets.length > 0) {
-            const randomMarket =
-              availableMarkets[
-                Math.floor(Math.random() * availableMarkets.length)
-              ];
-            fieldsWithValues.market = randomMarket;
-          }
 
-          return {
-            includeYear: false,
-            randomFields: fieldsWithValues,
-            randomOffset,
-            randomLimit,
-          };
-        }
       };
 
       const getRandomScenario = () => {
