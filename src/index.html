@@ -567,7 +567,7 @@
           "createPlaylistAndAddTracksButton"
         ).disabled = true;
         const copyResultsButton = document.getElementById("copyResultsButton");
-
+        copyResultsButton.innerText = "Processing...";
         try {
           const playlist = await searchPlaylist(
             accessToken,
@@ -582,7 +582,6 @@
           // Success: Update HTML elements
           document.getElementById("copyResultsButton").innerText =
             "Results (click to copy to clipboard)";
-          clearInterval(animationInterval);
           // Log all queries and tracks
           logAllQueriesAndTracks();
         } catch (error) {
