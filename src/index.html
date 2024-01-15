@@ -51,16 +51,15 @@
         >
           <div class="exclusions">
             Optional filters - not comprehensive and will marginally limit other
-            tracks as well
-            <label for="audiobooksCheckbox">Fewer audiobook chapters</label>
+            tracks as well:<br>
             <input type="checkbox" id="audiobooksCheckbox" />
-
-            <label for="classicalCheckbox">Less classical</label>
+            <label for="audiobooksCheckbox">Fewer audiobook chapters</label>
             <input type="checkbox" id="classicalCheckbox" />
+            <label for="classicalCheckbox">Less classical</label>
           </div>
           <button
             id="createPlaylistAndAddTracksButton"
-            class="mb-4 px-4 py-2 bg-purple-600 text-white rounded cursor-pointer text-base sm:text-lg hover:bg-purple-700"
+            class="mt-4 mb-4 px-4 py-2 bg-purple-600 text-white rounded cursor-pointer text-base sm:text-lg hover:bg-purple-700"
           >
             Create Playlist and/or Add Tracks
           </button>
@@ -164,6 +163,7 @@
         let success = false;
         const addedTrackUris = [];
         let trackUri;
+        let trackName;
 
         while (!success && retryCount < maxRetries) {
           const searchCriteria = generateSearchCriteria(); // Generate search criteria for each search
@@ -208,10 +208,11 @@
               };
               allQueriesAndTracks.push(queryDetails);
 
+              trackName = track.name;
               // Check if the track should be excluded
               if (
                 trackTitleStringsToExclude.some((titleString) =>
-                  track.name.toLowerCase().includes(titleString)
+                  trackName.toLowerCase().includes(titleString)
                 )
               ) {
                 logToConsole(
@@ -696,13 +697,17 @@
         );
       }
 
-      //Function to see which checkboxes are checked and update exclusions accordingly
+      //See which checkboxes are checked and update exclusions accordingly
       const compileExclusions = () => {
         if (audiobooksCheckbox.checked) {
-          trackTitleStringsToExclude.push(bookTitles);
+          trackTitleStringsToExclude.push(
+            ...bookTitles.map((title) => title.toLowerCase())
+          );
         }
         if (classicalCheckbox.checked) {
-          trackTitleStringsToExclude.push(classicalTitles);
+          trackTitleStringsToExclude.push(
+            ...classicalTitles.map((title) => title.toLowerCase())
+          );
         }
         return;
       };
