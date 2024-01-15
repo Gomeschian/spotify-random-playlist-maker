@@ -209,9 +209,9 @@
               };
               allQueriesAndTracks.push(queryDetails);
 
-              // Check if the track should be excluded (case-insensitive)
-              const isExcluded = trackTitleStringsToExclude.some(
-                (titleString) => trackName.toLowerCase().includes(titleString)
+              // Check if the track should be excluded using regular expressions
+              const isExcluded = trackTitleStringsToExclude.some((titleRegex) =>
+                titleRegex.test(trackName)
               );
 
               console.log("Track Name:", trackName);
@@ -703,18 +703,18 @@
       //See which checkboxes are checked and update exclusions accordingly
       const compileExclusions = () => {
         if (audiobooksCheckbox.checked) {
-          const audiobookTitles = bookTitles.map((title) =>
-            title.toLowerCase()
+          const audiobookPatterns = bookTitles.map(
+            (title) => new RegExp(title, "i")
           );
-          console.log("Excluding audiobook titles:", audiobookTitles);
-          trackTitleStringsToExclude.push(...audiobookTitles);
+          console.log("Excluding audiobook titles:", audiobookPatterns);
+          trackTitleStringsToExclude.push(...audiobookPatterns);
         }
         if (classicalCheckbox.checked) {
-          const classicalTitlesLowerCase = classicalTitles.map((title) =>
-            title.toLowerCase()
+          const classicalPatterns = classicalTitles.map(
+            (title) => new RegExp(title, "i")
           );
-          console.log("Excluding classical titles:", classicalTitlesLowerCase);
-          trackTitleStringsToExclude.push(...classicalTitlesLowerCase);
+          console.log("Excluding classical titles:", classicalPatterns);
+          trackTitleStringsToExclude.push(...classicalPatterns);
         }
         return;
       };
