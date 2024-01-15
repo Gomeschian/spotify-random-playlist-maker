@@ -53,9 +53,9 @@
             Optional filters - not comprehensive and will marginally limit other
             tracks as well:<br>
             <input type="checkbox" id="audiobooksCheckbox" />
-            <label for="audiobooksCheckbox">Fewer audiobook chapters</label>
+            <label for="audiobooksCheckbox">Fewer audiobook chapters </label>
             <input type="checkbox" id="classicalCheckbox" />
-            <label for="classicalCheckbox">Less classical</label>
+            <label for="classicalCheckbox">Less classical </label>
           </div>
           <button
             id="createPlaylistAndAddTracksButton"
@@ -201,6 +201,7 @@
             if (tracks.length > 0) {
               const track = tracks[0];
               trackUri = track.uri;
+              trackName = track.name;
               // Log details of the query and the track
               const queryDetails = {
                 query: searchQuery,
@@ -208,7 +209,6 @@
               };
               allQueriesAndTracks.push(queryDetails);
 
-              trackName = track.name;
               // Check if the track should be excluded
               if (
                 trackTitleStringsToExclude.some((titleString) =>
@@ -224,7 +224,7 @@
               // Check if the track has already been added during runtime
               if (addedDuringRuntime.includes(trackUri)) {
                 logToConsole(
-                  `Duplicate Track found for search: ${searchQuery}. Skipping.`
+                  `Duplicate track found for search: ${searchQuery}. Skipping.`
                 );
 
                 return null;
@@ -238,7 +238,7 @@
 
               if (trackInPlaylist) {
                 logToConsole(
-                  `Duplicate Track found in playlist for search: ${searchQuery}. Skipping.`
+                  `Duplicate track found in playlist for search: ${searchQuery}. Skipping.`
                 );
 
                 return null;
