@@ -551,8 +551,24 @@
         document.getElementById(
           "createPlaylistAndAddTracksButton"
         ).disabled = true;
-        document.getElementById("copyResultsButton").innerText =
-          "Processing...";
+        const copyResultsButton = document.getElementById("copyResultsButton");
+
+        // Define variables for the animation
+        let dots = 0;
+        const maxDots = 3;
+        let animationInterval;
+
+        // Function to start the animation
+        const startAnimation = () => {
+          animationInterval = setInterval(() => {
+            dots = (dots + 1) % (maxDots + 1);
+            const dotsText = ".".repeat(dots);
+            copyResultsButton.innerText = `Processing${dotsText}`;
+          }, 500); // Change the interval as needed (500 milliseconds in this example)
+        };
+
+        // Start the animation
+        startAnimation();
 
         try {
           const playlist = await searchPlaylist(
@@ -568,6 +584,7 @@
           // Success: Update HTML elements
           document.getElementById("copyResultsButton").innerText =
             "Results (click to copy to clipboard)";
+          clearInterval(animationInterval);
         } catch (error) {
           console.error("An error occurred:", error);
           alert("An error occurred: " + error.message);
