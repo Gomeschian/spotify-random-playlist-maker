@@ -49,6 +49,15 @@
           id="buttons-container"
           class="hidden flex flex-col items-center justify-center"
         >
+          <div class="exclusions">
+            Optional filters - not comprehensive and will marginally limit other
+            tracks as well
+            <label for="audiobooksCheckbox">Fewer audiobook chapters</label>
+            <input type="checkbox" id="audiobooksCheckbox" />
+
+            <label for="classicalCheckbox">Less classical</label>
+            <input type="checkbox" id="classicalCheckbox" />
+          </div>
           <button
             id="createPlaylistAndAddTracksButton"
             class="mb-4 px-4 py-2 bg-purple-600 text-white rounded cursor-pointer text-base sm:text-lg hover:bg-purple-700"
@@ -91,6 +100,27 @@
       let addedDuringRuntime = [];
       let allQueriesAndTracks = [];
       let songsFound = 0;
+      const trackTitleStringsToExclude = [];
+      const bookTitles = [
+        "Chapter \\d+", // English
+        "Chapitre \\d+", // French
+        "Capítulo \\d+", // Spanish
+        "Kapitel \\d+", // German
+        "Capitolo \\d+", // Italian
+        "Capítulo \\d+", // Portuguese
+        "Hoofdstuk \\d+", // Dutch
+        "Kapitel \\d+", // Swedish
+        "Kapittel \\d+", // Norwegian
+        "Kapitel \\d+", // Danish
+        "Luku \\d+", // Finnish
+        "Глава \\d+", // Russian
+        "Rozdział \\d+", // Polish
+        "Κεφάλαιο \\d+", // Greek
+        "Fejezet \\d+", // Hungarian
+        "Kapitola \\d+", // Czech
+        "Kapitola \\d+", // Slovak
+      ];
+      const classicalTitles = ["Opus \\d+", "Op. \\d+", "Op \\d+"];
 
       const addedSongsDiv = document.getElementById("added-songs");
       const consoleDiv = document.getElementById("console-div");
@@ -177,6 +207,19 @@
                 track: track,
               };
               allQueriesAndTracks.push(queryDetails);
+
+              // Check if the track should be excluded
+              if (
+                trackTitleStringsToExclude.some((titleString) =>
+                  track.name.toLowerCase().includes(titleString)
+                )
+              ) {
+                logToConsole(
+                  `Track excluded for search: ${searchQuery}. Skipping.`
+                );
+                return null;
+              }
+
               // Check if the track has already been added during runtime
               if (addedDuringRuntime.includes(trackUri)) {
                 logToConsole(
@@ -564,8 +607,18 @@
         document.getElementById(
           "createPlaylistAndAddTracksButton"
         ).disabled = true;
+
+        const audiobooksCheckbox =
+          document.getElementById("audiobooksCheckbox");
+        const classicalCheckbox = document.getElementById("classicalCheckbox");
+
+        audiobooksCheckbox.disabled = true;
+        classicalCheckbox.disabled = true;
+        compileExclusions();
+
         const copyResultsButton = document.getElementById("copyResultsButton");
         copyResultsButton.innerText = "Finding/creating playlist...";
+
         try {
           const playlist = await searchPlaylist(
             accessToken,
@@ -590,10 +643,12 @@
           document.getElementById("copyResultsButton").innerText =
             "Error occurred. Please try again.";
         } finally {
-          // Enable the button
+          // Enable the button and checkboxes
           document.getElementById(
             "createPlaylistAndAddTracksButton"
           ).disabled = false;
+          audiobooksCheckbox.disabled = false;
+          classicalCheckbox.disabled = false;
         }
       };
 
@@ -640,6 +695,17 @@
           'Button with id "createPlaylistAndAddTracksButton" not found.'
         );
       }
+
+      //Function to see which checkboxes are checked and update exclusions accordingly
+      const compileExclusions = () => {
+        if (audiobooksCheckbox.checked) {
+          trackTitleStringsToExclude.push(bookTitles);
+        }
+        if (classicalCheckbox.checked) {
+          trackTitleStringsToExclude.push(classicalTitles);
+        }
+        return;
+      };
 
       const logToConsole = (message) => {
         console.log(message); // Log to the browser console
