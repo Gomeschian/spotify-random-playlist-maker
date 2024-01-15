@@ -11,10 +11,26 @@
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
     />
+    <script
+      src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js"
+      defer
+    ></script>
   </head>
 
   <body class="font-sans bg-black text-white p-4 md:p-10">
-    <div id="app" class="flex flex-col items-center justify-center text-center">
+    <div
+      id="app"
+      x-data="{
+        progress: 0,
+        setProgress(value) {
+          this.progress = value;
+        },
+        resetProgress() {
+          this.progress = 0;
+        }
+      }"
+      class="flex flex-col items-center justify-center text-center"
+    >
       <h1 class="mb-4 sm:mb-6 text-2xl sm:text-4xl font-bold text-green-400">
         Spotify Random Track Playlist
       </h1>
@@ -47,6 +63,7 @@
         <div id="buttons-container" class="hidden">
           <button
             id="createPlaylistAndAddTracksButton"
+            x-on:click="resetProgress; $nextTick(() => $el.blur())"
             class="mb-4 px-4 py-2 bg-purple-600 text-white rounded cursor-pointer text-base sm:text-lg hover:bg-purple-700"
           >
             Create Playlist and/or Add Tracks
@@ -71,7 +88,8 @@
           id="console-div"
           class="mt-4 max-w-screen-md text-sm sm:text-lg p-2 border border-gray-300 max-h-52 overflow-y-auto"
         >
-          Progress
+          Progress: <span x-text="progress + '%'"></span>
+          <div class="progress-bar" :style="'width:' + progress + '%'"></div>
         </div>
       </div>
     </div>
