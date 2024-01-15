@@ -57,7 +57,7 @@
 
           <button
             id="copyResultsButton"
-            class="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer text-sm sm:text-lg hover:bg-blue-600"
+            class="mt-4 p-4 border rounded bg-gray-100 max-h-48 overflow-y-auto"
           >
             Results (click to copy to clipboard)
           </button>
@@ -401,8 +401,8 @@
           addedSongsDiv.innerHTML += `<p>${song.artist} - ${song.name} | ${song.album}, ${song.year}  (${song.uri})</p>`;
         });
 
-        // Scroll to the bottom to show the latest added songs
-        addedSongsDiv.scrollTop = addedSongsDiv.scrollHeight;
+        // Scroll to the top to show the latest added songs
+        addedSongsDiv.scrollTop = 0;
       };
 
       const getPlaylistTracks = async (accessToken, playlistTracksUrl) => {
