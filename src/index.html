@@ -357,7 +357,7 @@
           Math.floor(Math.random() * (randomRange.max - randomRange.min + 1)) +
           randomRange.min;
 
-        return encodeURIComponent(String.fromCodePoint(randomCodePoint));
+        return String.fromCodePoint(randomCodePoint);
       };
 
       const searchTrackAndAddToPlaylist = async (
