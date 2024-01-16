@@ -483,8 +483,8 @@
             randomLimit,
           };
         } else if (scenario === "yearWithCriteria") {
-          // Scenario A: Include a random year plus one or two additional criteria
-          const randomFieldsCount = getRandomNumberInRange(1, 2); // Choose 1 or 2 additional fields
+          // Scenario A: Include a random year plus additional criteria
+          const randomFieldsCount = getRandomNumberInRange(1, 1); // Choose additional fields
           const randomFields = ["year", ...getRandomFields(randomFieldsCount)];
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
@@ -505,8 +505,8 @@
             randomLimit,
           };
         } else {
-          // Scenario B: Exclude the year and choose one or two criteria randomly
-          const randomFieldsCount = getRandomNumberInRange(1, 2); // Choose 1 or 2 fields without the year
+          // Scenario B: Exclude the year and choose criteria randomly
+          const randomFieldsCount = getRandomNumberInRange(1, 1); // Choose fields without the year
           const randomFields = getRandomFields(randomFieldsCount);
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
