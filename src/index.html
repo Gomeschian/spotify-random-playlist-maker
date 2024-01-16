@@ -198,11 +198,11 @@
 
         let queryString = Object.entries(randomFields)
           .map(([key, value]) => `${key}:${value}`)
-          .join("&");
+          .join(" & ");
 
-        const searchQuery = `q=${queryString}&offset=${randomOffset}&limit=${randomLimit}`;
+        const searchQuery = `q=${queryString}&type=track&limit=${randomLimit}&offset=${randomOffset}`;
 
-        const searchUrl = `https://api.spotify.com/v1/search?type=track&${searchQuery}`;
+        const searchUrl = `https://api.spotify.com/v1/search?${searchQuery}`;
 
         try {
           await new Promise((resolve) => setTimeout(resolve, searchDelay));
