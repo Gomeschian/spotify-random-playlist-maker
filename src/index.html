@@ -169,7 +169,14 @@
       };
 
       const getRandomOffset = () => {
-        return Math.floor(Math.random() * 1001);
+        const randomNumber = Math.random();
+        if (randomNumber < 0.8) {
+          return 0;
+        } else if (randomNumber < 0.9) {
+          return Math.floor(Math.random() * 49) + 1;
+        } else {
+          return Math.floor(Math.random() * 951) + 50;
+        }
       };
 
       const getRandomLimit = () => {
@@ -637,8 +644,6 @@
         }
       };
       const displayAddedSongsInfo = (addedSongs) => {
-        
-
         addedSongsDiv.innerHTML += `<p><strong>Added Songs:</strong></p>`;
 
         addedSongs.forEach((song) => {
