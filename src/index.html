@@ -101,12 +101,10 @@
       const NUMBER_OF_SONGS = 50;
       const BATCH_SIZE = 100; // 100 is the max songs that can be added at once per Spotify's Web API
       let earliestReleaseYear = 1860;
+      
 
       const searchDelay = 200;
-      let playlistTracks = [];
-      let addedDuringRuntime = [];
-      let allQueriesAndTracks = [];
-      let songsFound = 0;
+      
       const trackTitleStringsToExclude = [];
       const bookTitles = [
         "Chapter \\d+", // English
@@ -259,10 +257,14 @@
                 return null;
               }
 
-              // Check if the track is already in the playlist
-              const trackInPlaylist = playlistTracks.some(
-                (playlistTrack) =>
-                  playlistTrack.track && playlistTrack.track.uri === trackUri
+              // Check if the track is already in the playlist from before running
+              const trackInPlaylist = existingPlaylistTracks.some(
+                (playlistTrack) => {
+                  console.log("Existing trackUri:", playlistTrack.track.uri);
+                  console.log("New uri:", trackUri);
+                  
+                  return playlistTrack.track && playlistTrack.track.uri === trackUri;
+                }
               );
 
               if (trackInPlaylist) {
@@ -461,7 +463,9 @@
 
               // Increment the retry count and introduce a delay before the next retry
               retryCount++;
-              await new Promise((resolve) => setTimeout(resolve, searchDelay * 2)); 
+              await new Promise((resolve) =>
+                setTimeout(resolve, searchDelay * 2)
+              );
             }
           }
 
@@ -497,7 +501,6 @@
 
       const getPlaylistTracks = async (accessToken, playlistTracksUrl) => {
         const tracksPerPage = 100; // Spotify API returns up to 100 tracks per request
-        let allPlaylistTracks = [];
         copyResultsButton.innerText = `Reading playlist tracks...`;
         logToConsole("Reading playlist tracks...");
         try {
@@ -521,27 +524,18 @@
             }
 
             const data = await response.json();
-            const currentTracks = data.items.map((item) => item.track);
+            const readTracks = data.items.map((item) => item.track);
 
-            if (currentTracks.length > 0) {
-              allPlaylistTracks = allPlaylistTracks.concat(currentTracks);
+            if (readTracks.length > 0) {
+              existingPlaylistTracks.push(...readTracks);
               offset += tracksPerPage;
             } else {
               hasNextPage = false;
             }
           }
 
-          // Update the global playlistTracks array with a single array
-          playlistTracks = allPlaylistTracks;
-
-          // Add playlist track URIs to the array of tracks added during runtime
-          addedDuringRuntime = addedDuringRuntime.concat(
-            allPlaylistTracks.map((playlistTrack) => playlistTrack.uri)
-          );
-
-          console.log("Updated playlistTracks:", playlistTracks);
-
-          return allPlaylistTracks;
+          console.log("Existing playlistTracks:", existingPlaylistTracks);
+          return;
         } catch (error) {
           console.error("Error fetching all playlist tracks:", error);
           throw error;
@@ -598,10 +592,7 @@
 
           if (playlist) {
             // Fetch and store the playlist tracks once
-            playlistTracks = await getPlaylistTracks(
-              accessToken,
-              playlist.tracks.href
-            );
+            getPlaylistTracks(accessToken, playlist.tracks.href);
           }
 
           console.log("Found playlist:", playlist);
@@ -666,7 +657,11 @@
 
         compileExclusions();
 
-        songsFound = 0;
+        let songsFound = 0;
+        const allQueriesAndTracks = [];
+        const existingPlaylistTracks = [];
+        const addedDuringRuntime = [];
+        
         const copyResultsButton = document.getElementById("copyResultsButton");
         copyResultsButton.innerText = "Finding/creating playlist...";
 
