@@ -129,8 +129,17 @@
         "Kapitola \\d+", // Slovak
       ];
       const classicalTitles = [
-          /\b(?:k[mz]|öchel|catalog(?:ue)?|bwv|hwv|d(?:\.)?)\s*\d+/i,
-          // Mozart (K, KV, K. or Köchel), Op. or Opus, Bach (BWV), HWV, D.
+        "Opus \\d+",
+        "Op. \\d+",
+        "Op \\d+",
+        "K. \\d+",
+        "K \\d+",
+        "KV \\d+",
+        "BWV \\d+",
+        "Köchel \\d+",
+        "HWV \\d+",
+        "D. \\d+",
+        "D \\d+",
       ];
 
       const addedSongsDiv = document.getElementById("added-songs");
