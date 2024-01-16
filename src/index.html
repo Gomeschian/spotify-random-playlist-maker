@@ -197,7 +197,7 @@
           searchCriteria;
 
         let queryString = Object.entries(randomFields)
-          .map(([key, value]) => `${key}:${encodeURIComponent(value)}`)
+          .map(([key, value]) => `${key}:${value}`)
           .join("&");
 
         const searchQuery = `q=${queryString}&offset=${randomOffset}&limit=${randomLimit}`;
