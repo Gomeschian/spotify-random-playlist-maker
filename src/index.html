@@ -406,6 +406,8 @@
           if (tracks.length > 0) {
             const randomIndex = Math.floor(Math.random() * tracks.length);
             const track = tracks[randomIndex];
+            const trackUri = track.uri;
+            const trackName = track.name;
 
             // Log details of the query and the track
             const queryDetails = {
