@@ -182,19 +182,20 @@
         return characters[Math.floor(Math.random() * characters.length)];
       };
 
+      let lock = false;
+
       const searchTrackAndAddToPlaylist = async (
         accessToken,
         playlistUrl,
         addedSongs
       ) => {
-        const maxRetries = 1000;
-        let retryCount = 0;
-        let success = false;
-        const addedTrackUris = [];
-        let trackUri;
-        let trackName;
+        if (lock) {
+          return null;
+        }
 
-        while (!success && retryCount < maxRetries) {
+        lock = true;
+
+        try {
           const searchCriteria = generateSearchCriteria(); // Generate search criteria for each search
           const { includeYear, randomFields, randomOffset, randomLimit } =
             searchCriteria;
@@ -218,7 +219,7 @@
 
             if (response.status === 429) {
               console.error("Too Many Requests: Please try again later.");
-              return; // Stop the function execution
+              return null; // Stop the function execution
             }
             if (!response.ok) {
               throw new Error(`Invalid search query: ${response.statusText}`);
@@ -229,61 +230,72 @@
 
             if (tracks.length > 0) {
               const track = tracks[0];
-              trackUri = track.uri;
-              trackName = track.name;
-              // Log details of the query and the track
-              const queryDetails = {
-                query: searchQuery,
-                track: track,
-              };
-              allQueriesAndTracks.push(queryDetails);
+              const trackUri = track.uri;
+              const trackName = track.name;
 
-              // Check if the track should be excluded using regular expressions
-              const isExcluded = trackTitleStringsToExclude.some((titleRegex) =>
-                titleRegex.test(trackName)
-              );
+              if (tracks.length > 0) {
+                const track = tracks[0];
+                const trackUri = track.uri;
+                const trackName = track.name;
 
-              if (isExcluded) {
-                logToConsole(
-                  `Track excluded for search: ${searchQuery}. Skipping.`
+                // Log details of the query and the track
+                const queryDetails = {
+                  query: searchQuery,
+                  track: track,
+                };
+                allQueriesAndTracks.push(queryDetails);
+
+                // Check if the track should be excluded using regular expressions
+                const isExcluded = trackTitleStringsToExclude.some(
+                  (titleRegex) => titleRegex.test(trackName)
                 );
+
+                if (isExcluded) {
+                  logToConsole(
+                    `Track excluded for search: ${searchQuery}. Skipping.`
+                  );
+                  return null;
+                }
+
+                // Check if the track has already been added during runtime
+                if (addedDuringRuntime.includes(trackUri)) {
+                  logToConsole(
+                    `Duplicate track found for search: ${searchQuery}. Skipping.`
+                  );
+                  return null;
+                }
+
+                // Check if the track is already in the playlist
+                const trackInPlaylist = playlistTracks.some(
+                  (playlistTrack) =>
+                    playlistTrack.track && playlistTrack.track.uri === trackUri
+                );
+
+                if (trackInPlaylist) {
+                  logToConsole(
+                    `Duplicate track found in playlist for search: ${searchQuery}. Skipping.`
+                  );
+                  return null;
+                }
+
+                addedSongs.push({
+                  year: track.album.release_date.slice(0, 4),
+                  album: track.album.name,
+                  name: track.name,
+                  artist: track.artists.map((artist) => artist.name).join(", "),
+                  uri: trackUri,
+                });
+
+                logToConsole(`Track found for search: ${searchQuery}`);
+                songsFound++;
+                copyResultsButton.innerText = `Finding random tracks...${songsFound}/${NUMBER_OF_SONGS}`;
+                return trackUri;
+              } else {
+                const errorMessage = `No track found for search: ${searchQuery}`;
+                console.error(errorMessage);
                 return null;
               }
 
-              // Check if the track has already been added during runtime
-              if (addedDuringRuntime.includes(trackUri)) {
-                logToConsole(
-                  `Duplicate track found for search: ${searchQuery}. Skipping.`
-                );
-
-                return null;
-              }
-
-              // Check if the track is already in the playlist
-              const trackInPlaylist = playlistTracks.some(
-                (playlistTrack) =>
-                  playlistTrack.track && playlistTrack.track.uri === trackUri
-              );
-
-              if (trackInPlaylist) {
-                logToConsole(
-                  `Duplicate track found in playlist for search: ${searchQuery}. Skipping.`
-                );
-
-                return null;
-              }
-
-              addedSongs.push({
-                year: track.album.release_date.slice(0, 4),
-                album: track.album.name,
-                name: track.name,
-                artist: track.artists.map((artist) => artist.name).join(", "),
-                uri: trackUri,
-              });
-
-              logToConsole(`Track found for search: ${searchQuery}`);
-              songsFound++;
-              copyResultsButton.innerText = `Finding random tracks...${songsFound}/${NUMBER_OF_SONGS}`;
               return trackUri;
             } else {
               const errorMessage = `No track found for search: ${searchQuery}`;
@@ -295,16 +307,11 @@
             console.error(errorMessage);
           }
 
-          if (!success) {
-            addedTrackUris.push(trackUri);
-            retryCount++;
-            // Introduce a delay (e.g., 2 seconds) between retries
-            await new Promise((resolve) => setTimeout(resolve, searchDelay));
-          }
+          // After successfully adding a track, update the list of tracks added during runtime
+          addedDuringRuntime.push(trackUri);
+        } finally {
+          lock = false;
         }
-
-        // After successfully adding a track, update the list of tracks added during runtime
-        addedDuringRuntime.push(trackUri);
       };
       const generateSearchCriteria = () => {
         const scenario = getRandomScenario();
@@ -461,7 +468,9 @@
 
               // Increment the retry count and introduce a delay before the next retry
               retryCount++;
-              await new Promise((resolve) => setTimeout(resolve, searchDelay * 2)); 
+              await new Promise((resolve) =>
+                setTimeout(resolve, searchDelay * 2)
+              );
             }
           }
 
