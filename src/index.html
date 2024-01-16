@@ -177,12 +177,13 @@
         return Math.floor(Math.random() * 50) + 1;
       };
 
+      // Generates a random character from the Unicode character set.
       const getRandomCharacter = () => {
-        const min = 0;
-        const max = 1114111;
-        const randomCodePoint = Math.floor(
-          Math.random() * (max - min + 1) + min
-        );
+        const minCharCode = 32;
+        const maxCharCode = 65535;
+        const randomCodePoint =
+          Math.floor(Math.random() * (maxCharCode - minCharCode + 1)) +
+          minCharCode;
         return String.fromCodePoint(randomCodePoint);
       };
 
