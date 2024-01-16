@@ -529,11 +529,6 @@
             } else {
               hasNextPage = false;
             }
-
-            // Introduce a delay between requests
-            await new Promise((resolve) =>
-              setTimeout(resolve, searchDelay / 2)
-            );
           }
 
           // Update the global playlistTracks array with a single array
