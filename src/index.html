@@ -26,14 +26,13 @@
 
       <p class="mb-4 sm:mb-6 text-xs sm:text-lg text-left">
         Searches a random year between 1860 (oldest known recording) and the
-        current year, and/or a random character each on a random combination of
-        fields from track title, artist, album, ISRC, and/or genre. Will find
-        anything Spotify considers a track, so not necessarily songs but
-        possibly noise or spoken word, but no podcast episodes. If an API limit
-        is hit during running then fewer songs than requested may actually be
-        added - unexplained errors are probably due to hitting API limits (Code
-        429), check console for details and/or wait a little before trying
-        again. Leave this page open - may take a minute.
+        current year, and/or a random character each on track title and/or
+        artist. Will find anything Spotify considers a track, so not necessarily
+        songs but possibly noise or spoken word, but no podcast episodes. If an
+        API limit is hit during running then fewer songs than requested may
+        actually be added - unexplained errors are probably due to hitting API
+        limits (Code 429), check console for details and/or wait a little before
+        trying again. Leave this page open - may take a minute.
       </p>
 
       <div class="flex flex-col items-center justify-center">
@@ -484,7 +483,7 @@
           };
         } else if (scenario === "yearWithCriteria") {
           // Scenario A: Include a random year plus additional criteria
-          const randomFieldsCount = getRandomNumberInRange(1, 1); // Choose additional fields
+          const randomFieldsCount = getRandomNumberInRange(1, 2); // Choose additional fields
           const randomFields = ["year", ...getRandomFields(randomFieldsCount)];
           const randomOffset = getRandomOffset();
           const randomLimit = getRandomLimit();
@@ -538,7 +537,7 @@
         return Math.floor(Math.random() * (max - min + 1)) + min;
       };
       const getRandomFields = (count) => {
-        const fields = ["track", "artist", "album", "genre", "isrc"];
+        const fields = ["track", "artist"];
         const randomFields = [];
 
         for (let i = 0; i < count; i++) {
