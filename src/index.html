@@ -435,30 +435,44 @@
       ) => {
         copyResultsButton.innerText = `Adding tracks to playlist...`;
         try {
-          const addResponse = await fetch(playlistUrl, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              uris: trackBatch,
-            }),
-          });
+          let retryCount = 0;
+          const maxRetries = 3; // Replace with the desired maximum number of retries
 
-          if (addResponse.ok) {
-            console.log(
-              `${trackBatch.length} tracks added to the playlist successfully`
-            );
-          } else {
-            const errorMessage = `Error adding batch to the playlist: ${addResponse.statusText}`;
-            console.error(errorMessage);
-            // Run an alert if batch adding fails
+          while (retryCount < maxRetries) {
+            const addResponse = await fetch(playlistUrl, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                uris: trackBatch,
+              }),
+            });
+
+            if (addResponse.ok) {
+              console.log(
+                `${trackBatch.length} tracks added to the playlist successfully`
+              );
+              return; // Exit the function if successful
+            } else {
+              const errorMessage = `Error adding batch to the playlist: ${addResponse.statusText}`;
+              console.error(errorMessage);
+
+              // Increment the retry count and introduce a delay before the next retry
+              retryCount++;
+              await new Promise((resolve) => setTimeout(resolve, searchDelay * 2)); 
+            }
           }
+
+          console.error(
+            `Max retries exceeded. Failed to add batch to the playlist`
+          );
+          // Run an alert or handle the failure case if maximum retries exceeded
         } catch (error) {
           const errorMessage = `Error adding batch to the playlist: ${error.message}`;
           console.error(errorMessage);
-          // Run an alert if batch adding fails
+          // Run an alert or handle the failure case if an error occurs
         }
       };
       const displayAddedSongsInfo = (addedSongs) => {
