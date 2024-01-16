@@ -355,15 +355,33 @@
           { min: 65520, max: 65535 }, // Specials
         ];
 
-        // Randomly select a range
-        const randomRange = ranges[Math.floor(Math.random() * ranges.length)];
+        // 50% chance to select from all sets
+        if (Math.random() < 0.5) {
+          // Combine all ranges into a single array
+          const allRanges = ranges.reduce((acc, range) => {
+            for (let i = range.min; i <= range.max; i++) {
+              acc.push(i);
+            }
+            return acc;
+          }, []);
 
-        // Randomly select a character code within the chosen range
-        const randomCodePoint =
-          Math.floor(Math.random() * (randomRange.max - randomRange.min + 1)) +
-          randomRange.min;
+          // Randomly select a character code from all sets
+          const randomCodePoint =
+            allRanges[Math.floor(Math.random() * allRanges.length)];
 
-        return String.fromCodePoint(randomCodePoint);
+          return String.fromCodePoint(randomCodePoint);
+        } else {
+          // Randomly select a range
+          const randomRange = ranges[Math.floor(Math.random() * ranges.length)];
+
+          // Randomly select a character code within the chosen range
+          const randomCodePoint =
+            Math.floor(
+              Math.random() * (randomRange.max - randomRange.min + 1)
+            ) + randomRange.min;
+
+          return String.fromCodePoint(randomCodePoint);
+        }
       };
 
       const searchTrackAndAddToPlaylist = async (
