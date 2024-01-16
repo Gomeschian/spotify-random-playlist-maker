@@ -637,18 +637,11 @@
         }
       };
       const displayAddedSongsInfo = (addedSongs) => {
-        const uniqueAddedSongs = [];
-        const uniqueUris = new Set();
-        addedSongs.forEach((song) => {
-          if (!uniqueUris.has(song.uri)) {
-            uniqueUris.add(song.uri);
-            uniqueAddedSongs.push(song);
-          }
-        });
+        
 
         addedSongsDiv.innerHTML += `<p><strong>Added Songs:</strong></p>`;
 
-        uniqueAddedSongs.forEach((song) => {
+        addedSongs.forEach((song) => {
           addedSongsDiv.innerHTML += `<p>${song.artist} - ${song.name} | ${song.album}, ${song.year}  (${song.uri})</p>`;
         });
 
