@@ -33,8 +33,7 @@
         API limit is hit during running then fewer songs than requested may
         actually be added - unexplained errors are probably due to hitting API
         limits (Code 429), check console for details and/or wait a little before
-        trying again. Otherwise just leave this page open - this may take a
-        minute.
+        trying again. Leave this page open - may take a minute.
       </p>
 
       <div class="flex flex-col items-center justify-center">
@@ -514,7 +513,9 @@
             }
 
             // Introduce a delay between requests
-            await new Promise((resolve) => setTimeout(resolve, searchDelay));
+            await new Promise((resolve) =>
+              setTimeout(resolve, searchDelay / 2)
+            );
           }
 
           // Update the global playlistTracks array with a single array
@@ -570,7 +571,9 @@
 
             if (!playlist && data.next) {
               offset += 50;
-              await new Promise((resolve) => setTimeout(resolve, searchDelay));
+              await new Promise((resolve) =>
+                setTimeout(resolve, searchDelay / 2)
+              );
             } else if (!playlist) {
               // If playlist is still not found and there are no more results
               playlist = await createPlaylist(accessToken, playlistName);
