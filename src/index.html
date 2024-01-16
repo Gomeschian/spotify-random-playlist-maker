@@ -126,6 +126,8 @@
         "Fejezet \\d+", // Hungarian
         "Kapitola \\d+", // Czech
         "Kapitola \\d+", // Slovak
+        "del\\d+",
+        "Часть \\d+",
       ];
       const classicalTitles = [
         "Opus \\d+",
@@ -177,9 +179,12 @@
       };
 
       const getRandomCharacter = () => {
-        const characters =
-          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
-        return characters[Math.floor(Math.random() * characters.length)];
+        const min = 0;
+        const max = 1114111;
+        const randomCodePoint = Math.floor(
+          Math.random() * (max - min + 1) + min
+        );
+        return String.fromCodePoint(randomCodePoint);
       };
 
       const searchTrackAndAddToPlaylist = async (
