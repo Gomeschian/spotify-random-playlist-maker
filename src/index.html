@@ -473,9 +473,6 @@
         uniqueAddedSongs.forEach((song) => {
           addedSongsDiv.innerHTML += `<p>${song.artist} - ${song.name} | ${song.album}, ${song.year}  (${song.uri})</p>`;
         });
-
-        // Scroll to the top to show the latest added songs
-        addedSongsDiv.scrollTop = 0;
       };
 
       const getPlaylistTracks = async (accessToken, playlistTracksUrl) => {
