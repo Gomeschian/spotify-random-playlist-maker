@@ -172,7 +172,7 @@
         const randomNumber = Math.random();
         if (randomNumber < 0.8) {
           return 0;
-        } else if (randomNumber < 0.9) {
+        } else if (randomNumber < 0.95) {
           return Math.floor(Math.random() * 49) + 1;
         } else {
           return Math.floor(Math.random() * 951) + 50;
@@ -404,9 +404,8 @@
           const tracks = data.tracks.items;
 
           if (tracks.length > 0) {
-            const track = tracks[0];
-            const trackUri = track.uri;
-            const trackName = track.name;
+            const randomIndex = Math.floor(Math.random() * tracks.length);
+            const track = tracks[randomIndex];
 
             // Log details of the query and the track
             const queryDetails = {
