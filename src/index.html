@@ -424,7 +424,7 @@
 
           if (tracks.length > 0) {
             const randomIndex = Math.floor(Math.random() * tracks.length);
-            
+
             const track = tracks[randomIndex];
             const trackUri = track.uri;
             const trackName = track.name;
@@ -487,10 +487,16 @@
               return null;
             }
             logToConsole(`Track found for search: ${searchQuery}`);
-            
+
             //Push the track to addedSongs array
 
-            addedSongs.push(track);
+            addedSongs.push({
+              year: track.album.release_date.slice(0, 4),
+              album: track.album.name,
+              name: track.name,
+              artist: track.artists.map((artist) => artist.name).join(", "),
+              uri: trackUri,
+            });
 
             console.log("Added:", addedSongs);
             addedDuringRuntime.push(...addedSongs);
