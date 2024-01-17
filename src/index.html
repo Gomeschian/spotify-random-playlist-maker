@@ -711,7 +711,6 @@
             }
 
             const data = await response.json();
-            console.log("Received JSON data:", data);
             const currentTracks = data.items.map((item) => ({
               name: item.track.name,
               album: item.track.album.name,
