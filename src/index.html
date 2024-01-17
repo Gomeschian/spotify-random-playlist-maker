@@ -168,14 +168,15 @@
         );
       };
 
+      //80% chance of offset being 0. 15% chance of offset being 1. 5% chance of offset being greater.
       const getRandomOffset = () => {
         const randomNumber = Math.random();
         if (randomNumber < 0.8) {
           return 0;
         } else if (randomNumber < 0.95) {
-          return Math.floor(Math.random() * 49) + 1;
+          return 1;
         } else {
-          return Math.floor(Math.random() * 951) + 50;
+          return Math.floor(Math.random() * 999) + 2;
         }
       };
 
