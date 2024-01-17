@@ -475,19 +475,30 @@
 
             //Check if the track has already been added during runtime by name, album, and artist
             const addedDuringRuntimeNames = addedDuringRuntime.map((track) =>
-              track.name.toLowerCase().Trim()
+              track.name
             );
             const addedDuringRuntimeAlbums = addedDuringRuntime.map((track) =>
-              track.album.toLowerCase().Trim()
+              track.album
             );
             const addedDuringRuntimeArtists = addedDuringRuntime.map((track) =>
-              track.artist.split(", ")[0].toLowerCase().Trim()
+              track.artist.split(", ")[0]
+            );
+
+            //Normalize added during runtime fields to lowercase, trimmed
+            addedDuringRuntimeNames = addedDuringRuntimeNames.map((name) =>
+              name.toLowerCase().trim()
+            );
+            addedDuringRuntimeAlbums = addedDuringRuntimeAlbums.map((album) =>
+              album.toLowerCase().trim()
+            );
+            addedDuringRuntimeArtists = addedDuringRuntimeArtists.map((artist) =>
+              artist.toLowerCase().trim()
             );
 
             if (
-              addedDuringRuntimeNames.includes(trackName) &&
-              addedDuringRuntimeAlbums.includes(trackAlbum) &&
-              addedDuringRuntimeArtists.includes(trackArtist)
+              addedDuringRuntimeNames.includes(trackName.toLowerCase().trim()) &&
+              addedDuringRuntimeAlbums.includes(trackAlbum.toLowerCase().trim()) &&
+              addedDuringRuntimeArtists.includes(trackArtist.toLowerCase().trim())
             ) {
               logToConsole(
                 `Duplicate track found for search: ${searchQuery}. Skipping.`
