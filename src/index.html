@@ -431,7 +431,6 @@
             const trackAlbum = track.album.name;
             const trackArtist = track.artists[0].name;
 
-            console.log("Track selected:", track);
             console.log(
               "Checking: ",
               trackUri,
@@ -463,7 +462,6 @@
             const addedDuringRuntimeURIs = addedDuringRuntime.map(
               (track) => track.uri
             );
-            console.log("Added during runtime uris:", addedDuringRuntimeURIs);
 
             if (addedDuringRuntimeURIs.includes(trackUri)) {
               logToConsole(
@@ -548,7 +546,6 @@
               uri: trackUri,
             });
 
-            console.log("Added:", addedSongs);
             addedDuringRuntime.push(...addedSongs);
             songsFound++;
 
@@ -785,7 +782,7 @@
           }
 
           console.log(
-            "Initialized Existing Playlist Tracks:",
+            "Existing Playlist Tracks:",
             existingPlaylistTracks
           );
 
