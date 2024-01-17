@@ -355,8 +355,8 @@
           { min: 65520, max: 65535 }, // Specials
         ];
 
-        // 50% chance to select from all sets
-        if (Math.random() < 0.5) {
+        // 5% chance to select from all sets
+        if (Math.random() < 0.05) {
           // Combine all ranges into a single array
           const allRanges = ranges.reduce((acc, range) => {
             for (let i = range.min; i <= range.max; i++) {
