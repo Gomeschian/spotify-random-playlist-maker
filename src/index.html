@@ -484,15 +484,15 @@
               track.artist.split(", ")[0]
             );
 
-            //Normalize added during runtime fields to lowercase, trimmed
-            addedDuringRuntimeNames = addedDuringRuntimeNames.map((name) =>
-              name.toLowerCase().trim()
+            //Normalize added during runtime fields arrays to lowercase, trimmed
+            addedDuringRuntimeNames.map(
+              (name) => name.toLowerCase().trim()
             );
-            addedDuringRuntimeAlbums = addedDuringRuntimeAlbums.map((album) =>
-              album.toLowerCase().trim()
+            addedDuringRuntimeAlbums.map(
+              (album) => album.toLowerCase().trim()
             );
-            addedDuringRuntimeArtists = addedDuringRuntimeArtists.map((artist) =>
-              artist.toLowerCase().trim()
+            addedDuringRuntimeArtists.map(
+              (artist) => artist.toLowerCase().trim()
             );
 
             if (
