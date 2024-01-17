@@ -104,8 +104,6 @@
       let earliestReleaseYear = 1860;
 
       const searchDelay = 200;
-      let playlistTracks = [];
-      let addedDuringRuntime = [];
       let allQueriesAndTracks = [];
       let songsFound = 0;
       const trackTitleStringsToExclude = [];
@@ -390,7 +388,8 @@
       const searchTrackAndAddToPlaylist = async (
         accessToken,
         playlistUrl,
-        addedSongs
+        addedSongs,
+        addedDuringRuntime
       ) => {
         const searchCriteria = generateSearchCriteria(); // Generate search criteria for each search
         const { includeYear, randomFields, randomOffset, randomLimit } =
@@ -480,6 +479,8 @@
               uri: trackUri,
             });
 
+            addedDuringRuntime.push(...addedSongs);
+            
             logToConsole(`Track found for search: ${searchQuery}`);
             songsFound++;
             copyResultsButton.innerText = `Finding random tracks...${songsFound}/${NUMBER_OF_SONGS}`;
@@ -583,6 +584,7 @@
       ) => {
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
         const addedSongs = [];
+        const addedDuringRuntime = [];
         while (addedSongs.length < numberOfSongs) {
           const remainingSongs = numberOfSongs - addedSongs.length;
           const tracksToAdd = Math.min(remainingSongs, BATCH_SIZE);
@@ -597,7 +599,8 @@
               trackUri = await searchTrackAndAddToPlaylist(
                 accessToken,
                 playlistUrl,
-                addedSongs
+                addedSongs,
+                addedDuringRuntime
               );
             }
 
@@ -679,7 +682,7 @@
 
       const getPlaylistTracks = async (accessToken, playlistTracksUrl) => {
         const tracksPerPage = 100; // Spotify API returns up to 100 tracks per request
-        let allPlaylistTracks = [];
+        const existingPlaylistTracks = [];
         copyResultsButton.innerText = `Reading playlist tracks...`;
         logToConsole("Reading playlist tracks...");
         try {
@@ -706,33 +709,24 @@
             const currentTracks = data.items.map((item) => item.track);
 
             if (currentTracks.length > 0) {
-              allPlaylistTracks = allPlaylistTracks.concat(currentTracks);
+              existingPlaylistTracks.push(...currentTracks);
               offset += tracksPerPage;
             } else {
               hasNextPage = false;
             }
           }
 
-          // Update the global playlistTracks array with a single array
-          playlistTracks = allPlaylistTracks;
+          console.log("Existing Playlist Tracks:", existingPlaylistTracks);
 
-          // Add playlist track URIs to the array of tracks added during runtime
-          addedDuringRuntime = addedDuringRuntime.concat(
-            allPlaylistTracks.map((playlistTrack) => playlistTrack.uri)
-          );
-
-          console.log("Updated playlistTracks:", playlistTracks);
-
-          return allPlaylistTracks;
+          return existingPlaylistTracks;
         } catch (error) {
-          console.error("Error fetching all playlist tracks:", error);
+          console.error("Error fetching existing playlist tracks:", error);
           throw error;
         }
       };
 
       const searchPlaylist = async (accessToken, playlistName) => {
         let offset = 0;
-        let playlist = null;
         logToConsole("Getting playlist...");
         try {
           while (!playlist) {
@@ -780,14 +774,10 @@
 
           if (playlist) {
             // Fetch and store the playlist tracks once
-            playlistTracks = await getPlaylistTracks(
-              accessToken,
-              playlist.tracks.href
-            );
+            console.log("Found playlist:", playlist);
+            logToConsole("Adding songs");
+            await getPlaylistTracks(accessToken, playlist.tracks.href);
           }
-
-          console.log("Found playlist:", playlist);
-          logToConsole("Adding songs");
 
           return playlist;
         } catch (error) {
