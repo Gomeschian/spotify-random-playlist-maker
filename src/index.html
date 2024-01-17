@@ -431,13 +431,7 @@
             const trackAlbum = track.album.name;
             const trackArtist = track.artists[0].name;
 
-            console.log(
-              "Checking: ",
-              trackUri,
-              trackName,
-              trackAlbum,
-              trackArtist
-            );
+       
 
             // Log details of the query and the track
             const queryDetails = {
@@ -648,6 +642,7 @@
         playlistId,
         numberOfSongs
       ) => {
+        logToConsole("Adding songs");
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
         while (addedSongs.length < numberOfSongs) {
           const remainingSongs = numberOfSongs - addedSongs.length;
@@ -844,7 +839,6 @@
           if (playlist) {
             // Fetch and store the playlist tracks once
             console.log("Found playlist:", playlist);
-            logToConsole("Adding songs");
             await getPlaylistTracks(accessToken, playlist.tracks.href);
           }
 
