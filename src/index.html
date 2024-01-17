@@ -489,7 +489,7 @@
               artist: track.artists.map((artist) => artist.name).join(", "),
               uri: trackUri,
             });
-
+            console.log("Added:", addedSongs);
             addedDuringRuntime.push(...addedSongs);
 
             logToConsole(`Track found for search: ${searchQuery}`);
@@ -712,6 +712,7 @@
             }
 
             const data = await response.json();
+            console.log("Received JSON data:", data);
             const currentTracks = data.items.map((item) => ({
               name: item.track.name,
               album: item.track.album.name,
@@ -728,7 +729,7 @@
           }
 
           console.log(
-            "Initial Fetch of Existing Playlist Tracks:",
+            "Initialized Existing Playlist Tracks:",
             existingPlaylistTracks
           );
 
