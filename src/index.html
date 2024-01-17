@@ -715,7 +715,7 @@
             const currentTracks = data.items.map((item) => item.track);
 
             if (currentTracks.length > 0) {
-              existingPlaylistTracks.push(...currentTracks);
+              existingPlaylistTracks.push(currentTracks);
               offset += tracksPerPage;
             } else {
               hasNextPage = false;
