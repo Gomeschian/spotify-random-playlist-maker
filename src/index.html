@@ -458,8 +458,12 @@
             }
 
             // Check if the track has already been added during runtime
-            console.log("Added during runtime:", addedDuringRuntime);
-            if (addedDuringRuntime.includes(trackUri)) {
+            const addedDuringRuntimeURIs = addedDuringRuntime.map(
+              (track) => track.uri
+            );
+            console.log("Added during runtime uris:", addedDuringRuntime);
+
+            if (addedDuringRuntimeURIs.includes(trackUri)) {
               logToConsole(
                 `Duplicate track found for search: ${searchQuery}. Skipping.`
               );
