@@ -489,7 +489,7 @@
             //Push the track to addedSongs array
             addedSongs.push(track);
             console.log("Added:", addedSongs);
-            addedDuringRuntime.push(...addedSongs);
+            addedDuringRuntime.push(addedSongs[addedSongs.length - 1]);
             songsFound++;
 
             copyResultsButton.innerText = `Finding random tracks...${songsFound}/${NUMBER_OF_SONGS}`;
