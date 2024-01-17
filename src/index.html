@@ -488,8 +488,11 @@
             logToConsole(`Track found for search: ${searchQuery}`);
             //Push the track to addedSongs array
             addedSongs.push(track);
+         
+            addedSongs.splice(0, addedSongs.length - 1);   
+
             console.log("Added:", addedSongs);
-            addedDuringRuntime.push(addedSongs[addedSongs.length - 1]);
+            addedDuringRuntime.push(addedSongs);
             songsFound++;
 
             copyResultsButton.innerText = `Finding random tracks...${songsFound}/${NUMBER_OF_SONGS}`;
