@@ -484,7 +484,7 @@
 
               return null;
             }
-
+            logToConsole(`Track found for search: ${searchQuery}`);
             addedSongs.push({
               year: track.album.release_date.slice(0, 4),
               album: track.album.name,
@@ -494,9 +494,8 @@
             });
             console.log("Added:", addedSongs);
             addedDuringRuntime.push(...addedSongs);
-
-            logToConsole(`Track found for search: ${searchQuery}`);
             songsFound++;
+
             copyResultsButton.innerText = `Finding random tracks...${songsFound}/${NUMBER_OF_SONGS}`;
             return trackUri;
           } else {
