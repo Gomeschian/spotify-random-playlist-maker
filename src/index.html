@@ -458,7 +458,7 @@
             }
 
             // Check if the track is already in the playlist
-            const trackInPlaylist = existingPlaylistTracks.some(
+            const trackInPlaylist = playlistTracks.some(
               (playlistTrack) =>
                 playlistTrack.track && playlistTrack.track.uri === trackUri
             );
@@ -480,7 +480,7 @@
             });
 
             addedDuringRuntime.push(...addedSongs);
-
+            
             logToConsole(`Track found for search: ${searchQuery}`);
             songsFound++;
             copyResultsButton.innerText = `Finding random tracks...${songsFound}/${NUMBER_OF_SONGS}`;
@@ -682,6 +682,7 @@
 
       const getPlaylistTracks = async (accessToken, playlistTracksUrl) => {
         const tracksPerPage = 100; // Spotify API returns up to 100 tracks per request
+        const existingPlaylistTracks = [];
         copyResultsButton.innerText = `Reading playlist tracks...`;
         logToConsole("Reading playlist tracks...");
         try {
@@ -813,7 +814,6 @@
           redirectToAuthorization();
           return;
         }
-        const existingPlaylistTracks = [];
 
         const params = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = params.get("access_token");
