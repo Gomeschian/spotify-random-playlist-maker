@@ -104,6 +104,7 @@
       let earliestReleaseYear = 1860;
 
       const searchDelay = 200;
+      const existingPlaylistTracks = [];
       let allQueriesAndTracks = [];
       let songsFound = 0;
       const trackTitleStringsToExclude = [];
@@ -458,7 +459,7 @@
             }
 
             // Check if the track is already in the playlist
-            const trackInPlaylist = playlistTracks.some(
+            const trackInPlaylist = existingPlaylistTracks.some(
               (playlistTrack) =>
                 playlistTrack.track && playlistTrack.track.uri === trackUri
             );
@@ -480,7 +481,7 @@
             });
 
             addedDuringRuntime.push(...addedSongs);
-            
+
             logToConsole(`Track found for search: ${searchQuery}`);
             songsFound++;
             copyResultsButton.innerText = `Finding random tracks...${songsFound}/${NUMBER_OF_SONGS}`;
@@ -682,7 +683,6 @@
 
       const getPlaylistTracks = async (accessToken, playlistTracksUrl) => {
         const tracksPerPage = 100; // Spotify API returns up to 100 tracks per request
-        const existingPlaylistTracks = [];
         copyResultsButton.innerText = `Reading playlist tracks...`;
         logToConsole("Reading playlist tracks...");
         try {
