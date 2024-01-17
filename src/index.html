@@ -461,7 +461,7 @@
             const addedDuringRuntimeURIs = addedDuringRuntime.map(
               (track) => track.uri
             );
-            console.log("Added during runtime uris:", addedDuringRuntime);
+            console.log("Added during runtime uris:", addedDuringRuntimeURIs);
 
             if (addedDuringRuntimeURIs.includes(trackUri)) {
               logToConsole(
@@ -826,6 +826,11 @@
       };
 
       const createPlaylistAndAddTracks = async () => {
+        //clear existing track tracking arrays
+        existingPlaylistTracks.splice(0, existingPlaylistTracks.length);
+        addedDuringRuntime.splice(0, addedDuringRuntime.length);
+        addedSongs.splice(0, addedSongs.length);
+
         if (!isAuthenticated()) {
           redirectToAuthorization();
           return;
@@ -889,10 +894,6 @@
           classicalCheckbox.disabled = false;
           eighteenHundredsCheckbox.disabled = false;
           nineteenHundredsCheckbox.disabled = false;
-          //clear existing track tracking arrays
-          existingPlaylistTracks.splice(0, existingPlaylistTracks.length);
-          addedDuringRuntime.splice(0, addedDuringRuntime.length);
-          addedSongs.splice(0, addedSongs.length);
         }
       };
 
