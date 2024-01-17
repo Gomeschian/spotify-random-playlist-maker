@@ -486,11 +486,13 @@
               return null;
             }
             logToConsole(`Track found for search: ${searchQuery}`);
-            //Push the track to addedSongs array
-            addedSongs.push(track);
-         
-            addedSongs.splice(1);
             
+            //Push the track to addedSongs array
+
+            const trackHolder = []; //Intermediate array because for some reason multiple tracks are pushed
+            trackHolder.push[track];
+            addedSongs.push(trackHolder[0]); // Add just the first index of the holder
+
             console.log("Added:", addedSongs);
             addedDuringRuntime.push(...addedSongs);
             songsFound++;
