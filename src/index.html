@@ -430,6 +430,14 @@
             const trackAlbum = track.album.name;
             const trackArtist = track.artists[0].name;
 
+            console.log(
+              "Checking: ",
+              trackUri,
+              trackName,
+              trackAlbum,
+              trackArtist
+            );
+
             // Log details of the query and the track
             const queryDetails = {
               query: searchQuery,
@@ -450,6 +458,7 @@
             }
 
             // Check if the track has already been added during runtime
+            console.log("Added during runtime:", addedDuringRuntime);
             if (addedDuringRuntime.includes(trackUri)) {
               logToConsole(
                 `Duplicate track found for search: ${searchQuery}. Skipping.`
@@ -459,6 +468,7 @@
             }
 
             // Check if the track is already in the playlist
+            console.log("Existing playlist tracks:", existingPlaylistTracks);
             const trackInPlaylist = existingPlaylistTracks.some(
               (playlistTrack) =>
                 playlistTrack.track && playlistTrack.track.uri === trackUri
