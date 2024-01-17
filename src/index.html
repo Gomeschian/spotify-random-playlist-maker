@@ -665,8 +665,9 @@
       const displayAddedSongsInfo = (addedSongs) => {
         addedSongsDiv.innerHTML += `<p><strong>Added Songs:</strong></p>`;
 
-        addedSongs.forEach((song) => {
-          addedSongsDiv.innerHTML += `<p>${song.artist} - ${song.name} | ${song.album}, ${song.year}  (${song.uri})</p>`;
+        addedSongs.forEach((song, index) => {
+          const songNumber = index + 1;
+          addedSongsDiv.innerHTML += `<p>${songNumber}. ${song.artist} - ${song.name} | ${song.album}, ${song.year}  (${song.uri})</p>`;
         });
 
         // Scroll to the bottom to show the latest added songs
