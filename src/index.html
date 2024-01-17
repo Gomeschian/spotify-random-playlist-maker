@@ -105,6 +105,9 @@
 
       const searchDelay = 200;
       const existingPlaylistTracks = [];
+      const addedDuringRuntime = [];
+      const addedSongs = [];
+
       let allQueriesAndTracks = [];
       let songsFound = 0;
       const trackTitleStringsToExclude = [];
@@ -386,12 +389,7 @@
         }
       };
 
-      const searchTrackAndAddToPlaylist = async (
-        accessToken,
-        playlistUrl,
-        addedSongs,
-        addedDuringRuntime
-      ) => {
+      const searchTrackAndAddToPlaylist = async (accessToken, playlistUrl) => {
         const searchCriteria = generateSearchCriteria(); // Generate search criteria for each search
         const { includeYear, randomFields, randomOffset, randomLimit } =
           searchCriteria;
@@ -429,6 +427,8 @@
             const track = tracks[randomIndex];
             const trackUri = track.uri;
             const trackName = track.name;
+            const trackAlbum = track.album.name;
+            const trackArtist = track.artists[0].name;
 
             // Log details of the query and the track
             const queryDetails = {
@@ -584,8 +584,6 @@
         numberOfSongs
       ) => {
         const playlistUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
-        const addedSongs = [];
-        const addedDuringRuntime = [];
         while (addedSongs.length < numberOfSongs) {
           const remainingSongs = numberOfSongs - addedSongs.length;
           const tracksToAdd = Math.min(remainingSongs, BATCH_SIZE);
@@ -599,9 +597,7 @@
               const randomYear = getRandomYear();
               trackUri = await searchTrackAndAddToPlaylist(
                 accessToken,
-                playlistUrl,
-                addedSongs,
-                addedDuringRuntime
+                playlistUrl
               );
             }
 
@@ -873,8 +869,10 @@
           classicalCheckbox.disabled = false;
           eighteenHundredsCheckbox.disabled = false;
           nineteenHundredsCheckbox.disabled = false;
-          //clear existing playlist tracks
+          //clear existing track tracking arrays
           existingPlaylistTracks.splice(0, existingPlaylistTracks.length);
+          addedDuringRuntime.splice(0, addedDuringRuntime.length);
+          addedSongs.splice(0, addedSongs.length);
         }
       };
 
