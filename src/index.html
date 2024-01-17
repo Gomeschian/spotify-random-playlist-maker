@@ -20,21 +20,22 @@
       </h1>
 
       <p class="font-bold mb-4 sm:mb-6 text-sm sm:text-xl text-left">
-        Adds 25 random, non-duplicate tracks to a playlist called "Random Songs
-        from All of Spotify" (will be created if it doesn't exist).
+        Adds 25 random tracks to a playlist called "Random Songs from All of
+        Spotify" (will be created if it doesn't exist).
       </p>
-      <p class="mb-4 sm:mb-6 text-xs sm:text-lg text-left">
-        Leave this page open while running - may take a minute.
+      <p class="mb-4 sm:mb-6 text-xs sm:text-lg text-center">
+        Leave this page open while running - may take a minute. If an API limit
+        is hit during running then fewer songs than requested may actually be
+        added - unexplained errors are probably due to hitting API limits (Code
+        429), check console for details and/or wait a little before trying
+        again.
       </p>
-      <p class="mb-4 sm:mb-6 text-xs sm:text-lg text-left">
+      <p class="mb-4 sm:mb-6 text-xs sm:text-lg text-center">
         Searches a random year between 1860 (oldest known recording) and the
         current year, and/or a random character each on track title and/or
         artist. Will find anything Spotify considers a track, so not necessarily
-        songs but possibly noise or spoken word, but no podcast episodes. If an
-        API limit is hit during running then fewer songs than requested may
-        actually be added - unexplained errors are probably due to hitting API
-        limits (Code 429), check console for details and/or wait a little before
-        trying again.
+        songs but possibly noise or spoken word, but no podcast episodes. Has
+        some duplicate protection but it's not perfect.
       </p>
 
       <div class="flex flex-col items-center justify-center">
@@ -431,8 +432,6 @@
             const trackAlbum = track.album.name;
             const trackArtist = track.artists[0].name;
 
-       
-
             // Log details of the query and the track
             const queryDetails = {
               query: searchQuery,
@@ -466,31 +465,33 @@
             }
 
             //Check if the track has already been added during runtime by name, album, and artist
-            const addedDuringRuntimeNames = addedDuringRuntime.map((track) =>
-              track.name
+            const addedDuringRuntimeNames = addedDuringRuntime.map(
+              (track) => track.name
             );
-            const addedDuringRuntimeAlbums = addedDuringRuntime.map((track) =>
-              track.album
+            const addedDuringRuntimeAlbums = addedDuringRuntime.map(
+              (track) => track.album
             );
-            const addedDuringRuntimeArtists = addedDuringRuntime.map((track) =>
-              track.artist.split(", ")[0]
+            const addedDuringRuntimeArtists = addedDuringRuntime.map(
+              (track) => track.artist.split(", ")[0]
             );
 
             //Normalize added during runtime fields arrays to lowercase, trimmed
-            addedDuringRuntimeNames.map(
-              (name) => name.toLowerCase().trim()
-            );
-            addedDuringRuntimeAlbums.map(
-              (album) => album.toLowerCase().trim()
-            );
-            addedDuringRuntimeArtists.map(
-              (artist) => artist.toLowerCase().trim()
+            addedDuringRuntimeNames.map((name) => name.toLowerCase().trim());
+            addedDuringRuntimeAlbums.map((album) => album.toLowerCase().trim());
+            addedDuringRuntimeArtists.map((artist) =>
+              artist.toLowerCase().trim()
             );
 
             if (
-              addedDuringRuntimeNames.includes(trackName.toLowerCase().trim()) &&
-              addedDuringRuntimeAlbums.includes(trackAlbum.toLowerCase().trim()) &&
-              addedDuringRuntimeArtists.includes(trackArtist.toLowerCase().trim())
+              addedDuringRuntimeNames.includes(
+                trackName.toLowerCase().trim()
+              ) &&
+              addedDuringRuntimeAlbums.includes(
+                trackAlbum.toLowerCase().trim()
+              ) &&
+              addedDuringRuntimeArtists.includes(
+                trackArtist.toLowerCase().trim()
+              )
             ) {
               logToConsole(
                 `Duplicate track found for search: ${searchQuery}. Skipping.`
@@ -517,14 +518,14 @@
 
             if (trackURInPlaylist) {
               logToConsole(
-                `Track already in playlist for search: ${searchQuery}. Skipping.`
+                `Duplicate track (already in playlist) for search: ${searchQuery}. Skipping.`
               );
               return null;
             }
 
             if (trackMatchInPlaylist) {
               logToConsole(
-                `Track already in playlist for search: ${searchQuery}. Skipping.`
+                `Duplicate Track (already in playlist) for search: ${searchQuery}. Skipping.`
               );
               return null;
             }
@@ -776,10 +777,7 @@
             }
           }
 
-          console.log(
-            "Existing Playlist Tracks:",
-            existingPlaylistTracks
-          );
+          console.log("Existing Playlist Tracks:", existingPlaylistTracks);
 
           return existingPlaylistTracks;
         } catch (error) {
