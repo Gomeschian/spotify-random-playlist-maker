@@ -431,6 +431,7 @@
             const trackAlbum = track.album.name;
             const trackArtist = track.artists[0].name;
 
+            console.log("Track selected:", track);
             console.log(
               "Checking: ",
               trackUri,
@@ -489,9 +490,7 @@
             
             //Push the track to addedSongs array
 
-            const trackHolder = []; //Intermediate array because for some reason multiple tracks are pushed
-            trackHolder.push(track);
-            addedSongs.push(trackHolder[0]); // Add just the first index of the holder
+            addedSongs.push(track);
 
             console.log("Added:", addedSongs);
             addedDuringRuntime.push(...addedSongs);
