@@ -123,6 +123,8 @@
 
       const BATCH_SIZE = 100; // 100 is the max songs that can be added at once per Spotify's Web API
       let numberOfSongs;
+      let minimumSongs;
+      let maximumSongs;
       let earliestReleaseYear = 1860;
 
       const searchDelay = 200;
@@ -898,13 +900,15 @@
           redirectToAuthorization();
           return;
         }
-        const numberOfSongsBox = document.getElementById("numberOfSongsBox");
 
-        //Run alert and exit if number of songs is not within the allowed range
-        if (
-          numberOfSongsBox.value < numberOfSongsBox.min ||
-          numberOfSongsBox.value > numberOfSongsBox.max
-        ) {
+        //Set number of songs to get
+        const numberOfSongsBox = document.getElementById("numberOfSongsBox");
+        numberOfSongs = numberOfSongsBox.value;
+        minimumSongs = numberOfSongsBox.min;
+        maximumSongs = numberOfSongsBox.max;
+
+        //Run alert and exit if number of songs desired is not within the allowed range
+        if (numberOfSongs < minimumSongs || numberOfSongs > maximumSongs) {
           alert(
             `Please enter a number between ${numberOfSongsBox.min} and ${numberOfSongsBox.max}`
           );
@@ -949,8 +953,6 @@
 
         compileExclusions();
 
-        //Set number of songs to get
-        numberOfSongs = numberOfSongsBox.value;
         songsFound = 0;
         const copyResultsButton = document.getElementById("copyResultsButton");
         copyResultsButton.innerText = "Finding/creating playlist...";
