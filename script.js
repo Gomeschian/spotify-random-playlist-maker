@@ -216,7 +216,7 @@ const searchTrackAndAddToPlaylist = async (accessToken, playlistUrl) => {
       for (let i = 0; i < existingPlaylistTracks.length; i++) {
         const playlistTrack = existingPlaylistTracks[i];
         console.log("In URI check Loop - Existing playlist track:", playlistTrack);
-        console.log("In URI check Loop - Existing playlist track URI:", playlistTrack.track.uri)
+        console.log("In URI check Loop - Existing playlist track URI:", playlistTrack.uri)
         if (playlistTrack.track && playlistTrack.track.uri === trackUri) {
           trackURInPlaylist = true;
           break;
