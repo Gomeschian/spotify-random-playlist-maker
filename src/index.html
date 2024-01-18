@@ -68,9 +68,9 @@
           <div class="exclusions">
             Optional filters - not comprehensive and will marginally limit other
             tracks as well:<br />
-            <input type="checkbox" id="audiobooksCheckbox" />
-            <label for="audiobooksCheckbox">Fewer audiobook chapters </label>
-            <input type="checkbox" id="happyBirthdayCheckbox" />
+            <input type="checkbox" id="audiobooksCheckbox" checked />
+            <label for="audiobooksCheckbox">Fewer audiobook chapters</label>
+            <input type="checkbox" id="happyBirthdayCheckbox" checked />
             <label for="happyBirthdayCheckbox"
               >Fewer Birthday Song variations ("Happy Birthday To X")</label
             >
@@ -908,9 +908,14 @@
         maximumSongs = parseInt(numberOfSongsBox.max);
 
         //Run alert and exit if number of songs desired is not within the allowed range
-        if ((numberOfSongs < minimumSongs) || (numberOfSongs > maximumSongs)) {
-          alert("Please choose a number of songs between " + minimumSongs + " and " + maximumSongs);
-          return; 
+        if (numberOfSongs < minimumSongs || numberOfSongs > maximumSongs) {
+          alert(
+            "Please choose a number of songs between " +
+              minimumSongs +
+              " and " +
+              maximumSongs
+          );
+          return;
         }
 
         const params = new URLSearchParams(window.location.hash.substring(1));
