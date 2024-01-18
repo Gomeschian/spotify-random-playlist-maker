@@ -5,6 +5,8 @@ import {
   happyBirthdayTitles,
 } from "./lists.js";
 
+import { fetchScrobbles } from "./lastfm.js";
+
 const CLIENT_ID = "a34e83c02f6e439a891f4c2f6ba197fe";
 const REDIRECT_URI =
   "https://gomeschian.github.io/spotify-random-playlist-maker/";
