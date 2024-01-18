@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>Spotify Random Song Playlist</title>
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
@@ -10,24 +13,24 @@
     />
   </head>
 
-  <body class="font-sans bg-black text-white p-2 md:p-4">
+  <body class="font-sans bg-black text-white p-4 md:p-10">
     <div id="app" class="flex flex-col items-center justify-center text-center">
-      <h1 class="mb-2 sm:mb-4 text-xl sm:text-2xl font-bold text-green-400">
+      <h1 class="mb-4 sm:mb-6 text-2xl sm:text-4xl font-bold text-green-400">
         Spotify Random Track Playlist
       </h1>
 
-      <p class="font-bold mb-2 sm:mb-4 text-sm sm:text-base text-left">
+      <p class="font-bold mb-4 sm:mb-6 text-sm sm:text-xl text-left">
         Adds random tracks to a playlist called "Random Songs from All of
         Spotify" (will be created if it doesn't exist).
       </p>
-      <p class="mb-2 sm:mb-4 text-xs sm:text-sm text-center">
+      <p class="mb-4 sm:mb-6 text-xs sm:text-lg text-center">
         Leave this page open while running - choose a small number of tracks or
         it may take a while. If an API limit is hit during running then fewer
         songs than requested may actually be added - unexplained errors are
         probably due to hitting API limits (Code 429), check console for details
         and/or wait a little before trying again.
       </p>
-      <p class="mb-2 sm:mb-4 text-xs sm:text-sm text-center">
+      <p class="mb-4 sm:mb-6 text-xs sm:text-lg text-center">
         Searches a random year between 1860 (oldest known recording) and the
         current year, and/or a random character each on track title and/or
         artist. Will find anything Spotify considers a track, so not necessarily
@@ -38,7 +41,7 @@
       <div class="flex flex-col items-center justify-center">
         <button
           id="loginButton"
-          class="px-4 py-2 mb-2 bg-green-400 text-white rounded cursor-pointer text-sm sm:text-base hover:bg-green-600"
+          class="px-4 py-2 mb-4 bg-green-400 text-white rounded cursor-pointer text-base sm:text-lg hover:bg-green-600"
         >
           Log In to Spotify
         </button>
@@ -47,7 +50,7 @@
           id="buttons-container"
           class="hidden flex flex-col items-center justify-center"
         >
-          <div class="mb-2">
+          <div class="mb-4">
             <label for="numberOfSongsBox"
               >Enter number of tracks to get (max 2,500):</label
             >
@@ -76,23 +79,23 @@
 
             <input type="checkbox" id="nineteenHundredsCheckbox" />
             <label for="nineteenHundredsCheckbox"
-              >Fewer pre-2000 releases</label
-            >
+              >Fewer pre-2000 releases
+            </label>
             <input type="checkbox" id="eighteenHundredsCheckbox" />
             <label for="eighteenHundredsCheckbox"
-              >Fewer pre-1900 releases</label
-            >
+              >Fewer pre-1900 releases
+            </label>
           </div>
           <button
             id="createPlaylistAndAddTracksButton"
-            class="mt-2 mb-2 px-4 py-2 bg-purple-600 text-white rounded cursor-pointer text-sm sm:text-base hover:bg-purple-700"
+            class="mt-4 mb-4 px-4 py-2 bg-purple-600 text-white rounded cursor-pointer text-base sm:text-lg hover:bg-purple-700"
           >
             Create Playlist and/or Add Tracks
           </button>
 
           <button
             id="copyResultsButton"
-            class="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer text-xs sm:text-sm hover:bg-blue-600"
+            class="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer text-sm sm:text-lg hover:bg-blue-600"
           >
             Results (click to copy to clipboard)
           </button>
@@ -100,12 +103,13 @@
 
         <div
           id="added-songs"
-          class="hidden mt-2 max-w-screen-md text-xs sm:text-sm p-2 border border-gray-300 max-h-40 overflow-y-auto"
+          class="hidden mt-4 max-w-screen-md text-sm sm:text-lg p-2 border border-gray-300 max-h-52 overflow-y-auto"
         ></div>
 
+        <!-- This div element mirrors some of the console output. Hidden by default. -->
         <div
           id="console-div"
-          class="hidden mt-2 max-w-screen-md text-xs sm:text-sm p-2 border border-gray-300 max-h-40 overflow-y-auto"
+          class="hidden mt-4 max-w-screen-md text-sm sm:text-lg p-2 border border-gray-300 max-h-52 overflow-y-auto"
         >
           Progress
         </div>
