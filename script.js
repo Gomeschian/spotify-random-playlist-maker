@@ -1,4 +1,9 @@
-import { ranges, bookTitles, classicalTitles, happyBirthdayTitles } from "./lists.js";
+import {
+  ranges,
+  bookTitles,
+  classicalTitles,
+  happyBirthdayTitles,
+} from "./lists.js";
 
 const CLIENT_ID = "a34e83c02f6e439a891f4c2f6ba197fe";
 const REDIRECT_URI =
@@ -26,18 +31,16 @@ const consoleDiv = document.getElementById("console-div");
 
 const audiobooksCheckbox = document.getElementById("audiobooksCheckbox");
 
-  const happyBirthdayCheckbox = document.getElementById(
-    "happyBirthdayCheckbox"
-  );
+const happyBirthdayCheckbox = document.getElementById("happyBirthdayCheckbox");
 
-  const classicalCheckbox = document.getElementById("classicalCheckbox");
+const classicalCheckbox = document.getElementById("classicalCheckbox");
 
-  const eighteenHundredsCheckbox = document.getElementById(
-    "eighteenHundredsCheckbox"
-  );
-  const nineteenHundredsCheckbox = document.getElementById(
-    "nineteenHundredsCheckbox"
-  );
+const eighteenHundredsCheckbox = document.getElementById(
+  "eighteenHundredsCheckbox"
+);
+const nineteenHundredsCheckbox = document.getElementById(
+  "nineteenHundredsCheckbox"
+);
 
 const isAuthenticated = () => {
   const params = new URLSearchParams(window.location.hash.substring(1));
@@ -209,7 +212,9 @@ const searchTrackAndAddToPlaylist = async (accessToken, playlistUrl) => {
         (playlistTrack) =>
           playlistTrack.track && playlistTrack.track.uri === trackUri
       );
-
+      console.log("Existing playlist tracks:", existingPlaylistTracks);
+      console.log("Current searched track:", track);
+      console.log("Current searched track URI:", trackUri);
       const trackMatchInPlaylist = existingPlaylistTracks.some(
         (playlistTrack) =>
           playlistTrack.track &&
@@ -586,8 +591,6 @@ const createPlaylistAndAddTracks = async () => {
   addedSongs.splice(0, addedSongs.length);
 
   document.getElementById("createPlaylistAndAddTracksButton").disabled = true;
-
-  
 
   // Disable the boxes
   numberOfSongsBox.disabled = true;
