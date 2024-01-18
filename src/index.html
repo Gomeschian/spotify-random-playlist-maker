@@ -908,11 +908,9 @@
         maximumSongs = numberOfSongsBox.max;
 
         //Run alert and exit if number of songs desired is not within the allowed range
-        if (numberOfSongs < minimumSongs || numberOfSongs > maximumSongs) {
-          alert(
-            `Please enter a number between ${numberOfSongsBox.min} and ${numberOfSongsBox.max}`
-          );
-          return;
+        if ((numberOfSongs < minimumSongs) || (numberOfSongs > maximumSongs)) {
+          alert("Number of songs desired is not within the allowed range");
+          return; 
         }
 
         const params = new URLSearchParams(window.location.hash.substring(1));
