@@ -206,17 +206,31 @@ const searchTrackAndAddToPlaylist = async (accessToken, playlistUrl) => {
         );
         return null;
       }
-
-      // Check if the track is already in the playlist
-      const trackURInPlaylist = existingPlaylistTracks.some(
-        (playlistTrack) =>
-          playlistTrack.track && playlistTrack.track.uri === trackUri
-      );
       console.log("Existing playlist tracks:", existingPlaylistTracks);
       console.log("Current searched track:", track);
       console.log("Current searched track URI:", trackUri);
-      const trackMatchInPlaylist = existingPlaylistTracks.some(
-        (playlistTrack) =>
+
+      // Check if the track is already in the playlist
+      let trackURInPlaylist = false;
+
+      for (let i = 0; i < existingPlaylistTracks.length; i++) {
+        const playlistTrack = existingPlaylistTracks[i];
+        console.log("In URI check Loop - Existing playlist track:", playlistTrack);
+        console.log("In URI check Loop - Existing playlist track URI:", playlistTrack.track.uri)
+        if (playlistTrack.track && playlistTrack.track.uri === trackUri) {
+          trackURInPlaylist = true;
+          break;
+        }
+      }
+
+ 
+
+      let trackMatchInPlaylist = false;
+
+      for (let i = 0; i < existingPlaylistTracks.length; i++) {
+        const playlistTrack = existingPlaylistTracks[i];
+
+        if (
           playlistTrack.track &&
           playlistTrack.track.name.toLowerCase().trim() ===
             trackName.toLowerCase().trim() &&
@@ -224,7 +238,11 @@ const searchTrackAndAddToPlaylist = async (accessToken, playlistUrl) => {
             trackAlbum.toLowerCase().trim() &&
           playlistTrack.track.artists[0].name.toLowerCase().trim() ===
             trackArtist.toLowerCase().trim()
-      );
+        ) {
+          trackMatchInPlaylist = true;
+          break;
+        }
+      }
 
       if (trackURInPlaylist) {
         logToConsole(
