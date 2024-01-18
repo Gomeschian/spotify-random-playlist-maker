@@ -210,36 +210,14 @@ const searchTrackAndAddToPlaylist = async (accessToken, playlistUrl) => {
       console.log("Current searched track:", track);
       console.log("Current searched track URI:", trackUri);
 
-      // Check if the track is already in the playlist
+      // Check if the track is already in the playlist by URI
       let trackURInPlaylist = false;
 
       for (let i = 0; i < existingPlaylistTracks.length; i++) {
         const playlistTrack = existingPlaylistTracks[i];
-        console.log("In URI check Loop - Existing playlist track:", playlistTrack);
-        console.log("In URI check Loop - Existing playlist track URI:", playlistTrack.uri)
-        if (playlistTrack.track && playlistTrack.track.uri === trackUri) {
+
+        if (playlistTrack && playlistTrack.uri === trackUri) {
           trackURInPlaylist = true;
-          break;
-        }
-      }
-
- 
-
-      let trackMatchInPlaylist = false;
-
-      for (let i = 0; i < existingPlaylistTracks.length; i++) {
-        const playlistTrack = existingPlaylistTracks[i];
-
-        if (
-          playlistTrack.track &&
-          playlistTrack.track.name.toLowerCase().trim() ===
-            trackName.toLowerCase().trim() &&
-          playlistTrack.track.album.name.toLowerCase().trim() ===
-            trackAlbum.toLowerCase().trim() &&
-          playlistTrack.track.artists[0].name.toLowerCase().trim() ===
-            trackArtist.toLowerCase().trim()
-        ) {
-          trackMatchInPlaylist = true;
           break;
         }
       }
@@ -249,6 +227,25 @@ const searchTrackAndAddToPlaylist = async (accessToken, playlistUrl) => {
           `Duplicate track (already in playlist) for search: ${searchQuery}. Skipping.`
         );
         return null;
+      }
+
+      // Check if the track is already in the playlist by name, album, and artist
+      let trackMatchInPlaylist = false;
+
+      for (let i = 0; i < existingPlaylistTracks.length; i++) {
+        const playlistTrack = existingPlaylistTracks[i];
+        if (
+          playlistTrack &&
+          playlistTrack.name.toLowerCase().trim() ===
+            trackName.toLowerCase().trim() &&
+          playlistTrack.album.toLowerCase().trim() ===
+            trackAlbum.toLowerCase().trim() &&
+          playlistTrack.artist.toLowerCase().trim() ===
+            trackArtist.toLowerCase().trim()
+        ) {
+          trackMatchInPlaylist = true;
+          break;
+        }
       }
 
       if (trackMatchInPlaylist) {
