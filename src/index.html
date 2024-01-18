@@ -892,25 +892,36 @@
         return data;
       };
 
+      //Main script
       const createPlaylistAndAddTracks = async () => {
-        //clear existing track tracking arrays
-        existingPlaylistTracks.splice(0, existingPlaylistTracks.length);
-        addedDuringRuntime.splice(0, addedDuringRuntime.length);
-        addedSongs.splice(0, addedSongs.length);
-
         if (!isAuthenticated()) {
           redirectToAuthorization();
+          return;
+        }
+        const numberOfSongsBox = document.getElementById("numberOfSongsBox");
+
+        //Run alert and exit if number of songs is not within the allowed range
+        if (
+          numberOfSongsBox.value < numberOfSongsBox.min ||
+          numberOfSongsBox.value > numberOfSongsBox.max
+        ) {
+          alert(
+            `Please enter a number between ${numberOfSongsBox.min} and ${numberOfSongsBox.max}`
+          );
           return;
         }
 
         const params = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = params.get("access_token");
 
+        //clear existing track tracking arrays
+        existingPlaylistTracks.splice(0, existingPlaylistTracks.length);
+        addedDuringRuntime.splice(0, addedDuringRuntime.length);
+        addedSongs.splice(0, addedSongs.length);
+
         document.getElementById(
           "createPlaylistAndAddTracksButton"
         ).disabled = true;
-
-        const numberOfSongsBox = document.getElementById("numberOfSongsBox");
 
         const audiobooksCheckbox =
           document.getElementById("audiobooksCheckbox");
