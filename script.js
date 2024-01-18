@@ -206,9 +206,7 @@ const searchTrackAndAddToPlaylist = async (accessToken, playlistUrl) => {
         );
         return null;
       }
-      console.log("Existing playlist tracks:", existingPlaylistTracks);
-      console.log("Current searched track:", track);
-      console.log("Current searched track URI:", trackUri);
+     
 
       // Check if the track is already in the playlist by URI
       let trackURInPlaylist = false;
