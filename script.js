@@ -24,6 +24,21 @@ const trackTitleStringsToExclude = [];
 const addedSongsDiv = document.getElementById("added-songs");
 const consoleDiv = document.getElementById("console-div");
 
+const audiobooksCheckbox = document.getElementById("audiobooksCheckbox");
+
+  const happyBirthdayCheckbox = document.getElementById(
+    "happyBirthdayCheckbox"
+  );
+
+  const classicalCheckbox = document.getElementById("classicalCheckbox");
+
+  const eighteenHundredsCheckbox = document.getElementById(
+    "eighteenHundredsCheckbox"
+  );
+  const nineteenHundredsCheckbox = document.getElementById(
+    "nineteenHundredsCheckbox"
+  );
+
 const isAuthenticated = () => {
   const params = new URLSearchParams(window.location.hash.substring(1));
   return params.has("access_token");
@@ -572,20 +587,7 @@ const createPlaylistAndAddTracks = async () => {
 
   document.getElementById("createPlaylistAndAddTracksButton").disabled = true;
 
-  const audiobooksCheckbox = document.getElementById("audiobooksCheckbox");
-
-  const happyBirthdayCheckbox = document.getElementById(
-    "happyBirthdayCheckbox"
-  );
-
-  const classicalCheckbox = document.getElementById("classicalCheckbox");
-
-  const eighteenHundredsCheckbox = document.getElementById(
-    "eighteenHundredsCheckbox"
-  );
-  const nineteenHundredsCheckbox = document.getElementById(
-    "nineteenHundredsCheckbox"
-  );
+  
 
   // Disable the boxes
   numberOfSongsBox.disabled = true;
@@ -595,7 +597,7 @@ const createPlaylistAndAddTracks = async () => {
   eighteenHundredsCheckbox.disabled = true;
   nineteenHundredsCheckbox.disabled = true;
 
-  compileExclusions();
+  await compileExclusions();
 
   songsFound = 0;
   const copyResultsButton = document.getElementById("copyResultsButton");
