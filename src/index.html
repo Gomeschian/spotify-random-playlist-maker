@@ -57,7 +57,7 @@
             <label for="audiobooksCheckbox">Fewer audiobook chapters </label>
             <input type="checkbox" id="classicalCheckbox" />
             <label for="happyBirthdayCheckbox"
-              >Fewer Birthday Song variations ("Happy Birthday To X")</label
+              >Fewer "Happy Birthday To X"</label
             >
             <input type="checkbox" id="happyBirthdayCheckbox" />
             <label for="classicalCheckbox">Less Classical </label>
@@ -892,12 +892,16 @@
         document.getElementById(
           "createPlaylistAndAddTracksButton"
         ).disabled = true;
+
         const audiobooksCheckbox =
           document.getElementById("audiobooksCheckbox");
+
         const happyBirthdayCheckbox = document.getElementById(
           "happyBirthdayCheckbox"
         );
+
         const classicalCheckbox = document.getElementById("classicalCheckbox");
+
         const eighteenHundredsCheckbox = document.getElementById(
           "eighteenHundredsCheckbox"
         );
