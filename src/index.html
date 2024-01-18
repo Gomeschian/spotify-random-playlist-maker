@@ -903,9 +903,9 @@
 
         //Set number of songs to get
         const numberOfSongsBox = document.getElementById("numberOfSongsBox");
-        numberOfSongs = numberOfSongsBox.value;
-        minimumSongs = numberOfSongsBox.min;
-        maximumSongs = numberOfSongsBox.max;
+        numberOfSongs = parseInt(numberOfSongsBox.value);
+        minimumSongs = parseInt(numberOfSongsBox.min);
+        maximumSongs = parseInt(numberOfSongsBox.max);
 
         //Run alert and exit if number of songs desired is not within the allowed range
         if ((numberOfSongs < minimumSongs) || (numberOfSongs > maximumSongs)) {
