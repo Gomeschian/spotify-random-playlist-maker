@@ -3,7 +3,7 @@ import {
   bookTitles,
   classicalTitles,
   happyBirthdayTitles,
-} from "src\script.js";
+} from "./lists";
 
 const CLIENT_ID = "a34e83c02f6e439a891f4c2f6ba197fe";
 const REDIRECT_URI = "https://spotify-topaz-nine.vercel.app/";
