@@ -17,7 +17,7 @@ let minimumSongs;
 let maximumSongs;
 let earliestReleaseYear = 1860;
 
-const searchDelay = 1;
+const searchDelay = 1; // Set to 200 if need delay for API rate limiting
 const existingPlaylistTracks = [];
 const addedDuringRuntime = [];
 const addedSongs = [];
