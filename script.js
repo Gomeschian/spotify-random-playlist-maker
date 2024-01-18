@@ -210,19 +210,19 @@ const searchTrackAndAddToPlaylist = async (accessToken, playlistUrl) => {
       // Check if the track is already in the playlist
       const trackURInPlaylist = existingPlaylistTracks.some(
         (playlistTrack) =>
-          playlistTrack.track && playlistTrack.track.uri === trackUri
+          playlistTrack && playlistTrack.uri === trackUri
       );
       console.log("Existing playlist tracks:", existingPlaylistTracks);
       console.log("Current searched track:", track);
       console.log("Current searched track URI:", trackUri);
       const trackMatchInPlaylist = existingPlaylistTracks.some(
         (playlistTrack) =>
-          playlistTrack.track &&
-          playlistTrack.track.name.toLowerCase().trim() ===
+          playlistTrack &&
+          playlistTrack.name.toLowerCase().trim() ===
             trackName.toLowerCase().trim() &&
-          playlistTrack.track.album.name.toLowerCase().trim() ===
+          playlistTrack.album.toLowerCase().trim() ===
             trackAlbum.toLowerCase().trim() &&
-          playlistTrack.track.artists[0].name.toLowerCase().trim() ===
+          playlistTrack.artists.toLowerCase().trim() ===
             trackArtist.toLowerCase().trim()
       );
 
