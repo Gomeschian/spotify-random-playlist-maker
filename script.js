@@ -1,12 +1,8 @@
-import {
-  ranges,
-  bookTitles,
-  classicalTitles,
-  happyBirthdayTitles,
-} from "./lists";
+import { ranges, bookTitles, classicalTitles, happyBirthdayTitles } from "./lists.js";
 
 const CLIENT_ID = "a34e83c02f6e439a891f4c2f6ba197fe";
-const REDIRECT_URI = "https://gomeschian.github.io/spotify-random-playlist-maker/";
+const REDIRECT_URI =
+  "https://gomeschian.github.io/spotify-random-playlist-maker/";
 const SCOPES =
   "user-read-private user-read-email user-library-read playlist-read-private playlist-modify-public playlist-modify-private";
 
