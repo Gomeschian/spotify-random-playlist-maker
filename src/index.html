@@ -20,15 +20,15 @@
       </h1>
 
       <p class="font-bold mb-4 sm:mb-6 text-sm sm:text-xl text-left">
-        Adds 1000 random tracks to a playlist called "Random Songs from All of
+        Adds random tracks to a playlist called "Random Songs from All of
         Spotify" (will be created if it doesn't exist).
       </p>
       <p class="mb-4 sm:mb-6 text-xs sm:text-lg text-center">
-        Leave this page open while running - may take a minute. If an API limit
-        is hit during running then fewer songs than requested may actually be
-        added - unexplained errors are probably due to hitting API limits (Code
-        429), check console for details and/or wait a little before trying
-        again.
+        Leave this page open while running - choose a small number of tracks or
+        it will take a while. If an API limit is hit during running then fewer
+        songs than requested may actually be added - unexplained errors are
+        probably due to hitting API limits (Code 429), check console for details
+        and/or wait a little before trying again.
       </p>
       <p class="mb-4 sm:mb-6 text-xs sm:text-lg text-center">
         Searches a random year between 1860 (oldest known recording) and the
@@ -50,6 +50,20 @@
           id="buttons-container"
           class="hidden flex flex-col items-center justify-center"
         >
+          <div>
+            <label for="numberInput"
+              >Enter number of tracks to get (max 2,500):</label
+            >
+            <input
+              type="number"
+              id="numberInput"
+              name="numberInput"
+              value="25"
+              min="1"
+              max="2500"
+            />
+          </div>
+
           <div class="exclusions">
             Optional filters - not comprehensive and will marginally limit other
             tracks as well:<br />
@@ -105,8 +119,9 @@
       const REDIRECT_URI = "https://spotify-topaz-nine.vercel.app/";
       const SCOPES =
         "user-read-private user-read-email user-library-read playlist-read-private playlist-modify-public playlist-modify-private";
-      const NUMBER_OF_SONGS = 1000;
+
       const BATCH_SIZE = 100; // 100 is the max songs that can be added at once per Spotify's Web API
+      let numberOfSongs;
       let earliestReleaseYear = 1860;
 
       const searchDelay = 200;
@@ -551,7 +566,7 @@
             addedDuringRuntime.push(...addedSongs);
             songsFound++;
 
-            copyResultsButton.innerText = `Finding random tracks...${songsFound}/${NUMBER_OF_SONGS}`;
+            copyResultsButton.innerText = `Finding random tracks...${songsFound}/${numberOfSongs}`;
             return trackUri;
           } else {
             const errorMessage = `No track found for search: ${searchQuery}`;
@@ -894,6 +909,8 @@
           "createPlaylistAndAddTracksButton"
         ).disabled = true;
 
+        const numberOfSongsBox = document.getElementById("numberOfSongsBox");
+
         const audiobooksCheckbox =
           document.getElementById("audiobooksCheckbox");
 
@@ -910,6 +927,8 @@
           "nineteenHundredsCheckbox"
         );
 
+        // Disable the boxes
+        numberOfSongsBox.disabled = true;
         audiobooksCheckbox.disabled = true;
         happyBirthdayCheckbox.disabled = true;
         classicalCheckbox.disabled = true;
@@ -918,6 +937,8 @@
 
         compileExclusions();
 
+        //Set number of songs to get
+        numberOfSongs = numberOfSongsBox.value;
         songsFound = 0;
         const copyResultsButton = document.getElementById("copyResultsButton");
         copyResultsButton.innerText = "Finding/creating playlist...";
@@ -931,7 +952,7 @@
             ? playlist.id
             : (await createPlaylist(accessToken)).id;
 
-          await addTracksToPlaylist(accessToken, playlistId, NUMBER_OF_SONGS);
+          await addTracksToPlaylist(accessToken, playlistId, numberOfSongs);
 
           // Success: Update HTML elements
           document.getElementById("copyResultsButton").innerText =
@@ -944,10 +965,11 @@
           document.getElementById("copyResultsButton").innerText =
             "Error occurred. Please try again.";
         } finally {
-          // Enable the button and checkboxes
+          // Enable the button and boxes
           document.getElementById(
             "createPlaylistAndAddTracksButton"
           ).disabled = false;
+          numberOfSongsBox.disabled = false;
           audiobooksCheckbox.disabled = false;
           happyBirthdayCheckbox.disabled = false;
           classicalCheckbox.disabled = false;
