@@ -416,7 +416,7 @@
       };
 
       const searchTrackAndAddToPlaylist = async (accessToken, playlistUrl) => {
-        const searchCriteria = generateSearchCriteria();
+        const searchCriteria = generateSearchCriteria(); // Generate search criteria for each search
         const { includeYear, randomFields, randomOffset, randomLimit } =
           searchCriteria;
 
@@ -457,12 +457,14 @@
             const trackAlbum = track.album.name;
             const trackArtist = track.artists[0].name;
 
+            // Log details of the query and the track
             const queryDetails = {
               query: searchQuery,
               track: track,
             };
             allQueriesAndTracks.push(queryDetails);
 
+            // Check if the track should be excluded using regular expressions
             const isExcluded = trackTitleStringsToExclude.some((titleRegex) =>
               titleRegex.test(trackName)
             );
@@ -474,6 +476,7 @@
               return null;
             }
 
+            // Check if the track has already been added during runtime by URI
             const addedDuringRuntimeURIs = addedDuringRuntime.map(
               (track) => track.uri
             );
@@ -482,9 +485,11 @@
               logToConsole(
                 `Duplicate track found for search: ${searchQuery}. Skipping.`
               );
+
               return null;
             }
 
+            //Check if the track has already been added during runtime by name, album, and artist
             const addedDuringRuntimeNames = addedDuringRuntime.map(
               (track) => track.name
             );
@@ -495,6 +500,7 @@
               (track) => track.artist.split(", ")[0]
             );
 
+            //Normalize added during runtime fields arrays to lowercase, trimmed
             addedDuringRuntimeNames.map((name) => name.toLowerCase().trim());
             addedDuringRuntimeAlbums.map((album) => album.toLowerCase().trim());
             addedDuringRuntimeArtists.map((artist) =>
@@ -518,6 +524,7 @@
               return null;
             }
 
+            // Check if the track is already in the playlist
             const trackURInPlaylist = existingPlaylistTracks.some(
               (playlistTrack) =>
                 playlistTrack.track && playlistTrack.track.uri === trackUri
@@ -548,6 +555,8 @@
               return null;
             }
             logToConsole(`Track found for search: ${searchQuery}`);
+
+            //Push the track to addedSongs array
 
             addedSongs.push({
               year: track.album.release_date.slice(0, 4),
