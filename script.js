@@ -565,7 +565,7 @@ const createPlaylist = async (accessToken) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      name: "Random Songs from All of Spotify",
+      name: "Random Tracks from All of Spotify",
       public: true,
     }),
   });
@@ -625,7 +625,7 @@ const createPlaylistAndAddTracks = async () => {
   try {
     const playlist = await searchPlaylist(
       accessToken,
-      "Random Songs from All of Spotify"
+      "Random Tracks from All of Spotify"
     );
     const playlistId = playlist
       ? playlist.id
