@@ -13,7 +13,7 @@ const REDIRECT_URI = isLocalHost
   ? "http://localhost:8080/"
   : "https://gomeschian.github.io/spotify-random-playlist-maker/";
 const SCOPES =
-  "user-read-private user-read-email user-library-read playlist-read-private playlist-modify-public playlist-modify-private";
+  "playlist-read-private playlist-modify-public playlist-modify-private";
 
 const BATCH_SIZE = 100; // 100 is the max songs that can be added at once per Spotify's Web API
 let numberOfSongs;
