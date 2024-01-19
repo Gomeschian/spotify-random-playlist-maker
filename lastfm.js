@@ -48,5 +48,3 @@ export const fetchScrobbles = async (page = 1, limit = 200, allScrobbles = []) =
     console.error("Error fetching scrobbles:", error);
   }
 };
-
-fetchScrobbles();
