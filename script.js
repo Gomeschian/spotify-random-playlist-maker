@@ -576,11 +576,6 @@ const createPlaylist = async (accessToken) => {
 
 //Main script
 const createPlaylistAndAddTracks = async () => {
-  if (!isAuthenticated()) {
-    redirectToAuthorization();
-    return;
-  }
-
   //Set number of songs to get
   const numberOfSongsBox = document.getElementById("numberOfSongsBox");
   numberOfSongs = parseInt(numberOfSongsBox.value);
@@ -657,22 +652,11 @@ const createPlaylistAndAddTracks = async () => {
   }
 };
 
-const updateLoginStatus = () => {
-  if (isAuthenticated()) {
-    // User is logged in
-    loginButton.innerText = "Logged In";
-    loginButton.disabled = true; // Optionally disable the button
-    buttonsContainer.classList.remove("hidden");
-  } else {
-    // User is not logged in
-    loginButton.innerText = "Log In to Spotify";
-    loginButton.disabled = false;
-    buttonsContainer.classList.add("hidden");
-  }
-};
-
 document.addEventListener("DOMContentLoaded", () => {
-  updateLoginStatus();
+  if (!isAuthenticated()) {
+    redirectToAuthorization();
+    return;
+  }
 });
 
 const button = document.getElementById("createPlaylistAndAddTracksButton");
