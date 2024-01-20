@@ -82,3 +82,6 @@ All references to track year use Spotify's release_Date field, which is actually
 <LI>Adding additional search fields like album or ISRC may or may not improve quality of results. Year seems the most reliable. Possibly different combinations of two or at most three fields would be good.</LI>
 <LI>When selecting random characters for the search query fields, it might be better to select the possible range(s) for ALL fields to be used in the particular query, instead of doing a different selection for each. Unclear if mixing and matching e.g. Kanji artist and Georgian track name will produce relevant results. </LI>
 </UL>
+![Screenshot](https://github.com/Gomeschian/spotify-random-playlist-maker/assets/97569105/c679afa8-f0b4-4911-bf61-75c802a96df2)
+
+
