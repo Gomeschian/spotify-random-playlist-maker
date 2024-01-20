@@ -657,38 +657,23 @@ const createPlaylistAndAddTracks = async () => {
   }
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-  const loginButton = document.getElementById("loginButton");
-
-  if (loginButton) {
-    loginButton.addEventListener("click", () => {
-      redirectToAuthorization();
-    });
-  } else {
-    console.error('Button with id "loginButton" not found.');
-  }
-});
-
 const updateLoginStatus = () => {
-  const loginButton = document.getElementById("loginButton");
-  const buttonsContainer = document.getElementById("buttons-container");
-
-  if (loginButton && buttonsContainer) {
-    if (isAuthenticated()) {
-      // User is logged in
-      loginButton.innerText = "Logged In";
-      loginButton.disabled = true; // Optionally disable the button
-      buttonsContainer.classList.remove("hidden");
-    } else {
-      // User is not logged in
-      loginButton.innerText = "Log In to Spotify";
-      loginButton.disabled = false;
-      buttonsContainer.classList.add("hidden");
-    }
+  if (isAuthenticated()) {
+    // User is logged in
+    loginButton.innerText = "Logged In";
+    loginButton.disabled = true; // Optionally disable the button
+    buttonsContainer.classList.remove("hidden");
+  } else {
+    // User is not logged in
+    loginButton.innerText = "Log In to Spotify";
+    loginButton.disabled = false;
+    buttonsContainer.classList.add("hidden");
   }
 };
 
-updateLoginStatus();
+document.addEventListener("DOMContentLoaded", () => {
+  updateLoginStatus();
+});
 
 const button = document.getElementById("createPlaylistAndAddTracksButton");
 if (button) {
