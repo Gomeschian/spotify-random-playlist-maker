@@ -655,8 +655,8 @@ const createPlaylistAndAddTracks = async () => {
 document.addEventListener("DOMContentLoaded", () => {
   if (!isAuthenticated()) {
     redirectToAuthorization();
-    return;
   }
+  createPlaylistAndAddTracks();
 });
 
 const button = document.getElementById("createPlaylistAndAddTracksButton");
