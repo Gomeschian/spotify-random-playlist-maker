@@ -4,7 +4,7 @@
 Creates or updates an eclectic Spotify playlist called "Random Tracks from All of Spotify" by trying random-ish search queries per the Spotify Web API's search endpoint ([Spotify API Search Documentation](https://developer.spotify.com/documentation/web-api/reference/search)).
 
 ## How to run
-1. Download or clone the repository.
+1. Download or clone the main branch.
 2. Sign up for a Spotify Developer account at [https://developer.spotify.com/](https://developer.spotify.com/) and create an app.
 3. Replace the `CLIENT_ID` and `REDIRECT_URI` in `index.html` with your own (if you run e.g. live-server (https://www.npmjs.com/package/live-server) on [http://localhost:8080/](http://localhost:8080/) no need to replace the `REDIRECT_URI` as it's set up for that address).
 
