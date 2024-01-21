@@ -1,7 +1,7 @@
 # Spotify Random Track Playlist Maker
 
 ## Overview
-Creates or updates an eclectic Spotify playlist by trying random-ish search queries per the Spotify Web API's search endpoint ([Spotify API Search Documentation](https://developer.spotify.com/documentation/web-api/reference/search)).
+Creates or updates an eclectic Spotify playlist called "Random Tracks from All of Spotify" by trying random-ish search queries per the Spotify Web API's search endpoint ([Spotify API Search Documentation](https://developer.spotify.com/documentation/web-api/reference/search)).
 
 ## How to run
 1. Download or clone the repository.
@@ -9,7 +9,7 @@ Creates or updates an eclectic Spotify playlist by trying random-ish search quer
 3. Replace the `CLIENT_ID` and `REDIRECT_URI` in `index.html` with your own (if you run e.g. live-server (https://www.npmjs.com/package/live-server) on [http://localhost:8080/](http://localhost:8080/) no need to replace the `REDIRECT_URI` as it's set up for that address).
 
 ## Process
-Searches all of the logged-in user's playlists, fifty playlists at a time, for a playlist called "Random Tracks From All of Spotify" (public or private). If not found, a public playlist with that name will be created.
+Searches all of the logged-in user's playlists, fifty playlists at a time, for a playlist called "Random Tracks from All of Spotify" (public or private). If not found, a public playlist with that name will be created.
 
 Random search queries will be generated and searched, and valid results will be checked against the selected exclusions and for duplication. Once a batch of one hundred tracks to be added has been found (or fewer if the user selected a smaller number of tracks to get), the batch is pushed to the playlist on Spotify. This repeats until the total number of tracks desired has been pushed.
 
