@@ -752,8 +752,19 @@ const logAllQueriesAndTracks = () => {
 };
 
 const updatePastAddedSongs = () => {
-  localStorage.setItem("pastAddedSongs", JSON.stringify(pastAddedSongs));
-  console.log("pastAddedSongs updated in localStorage", pastAddedSongs);
+  try {
+    // Attempt to store data in LocalStorage
+    localStorage.setItem(
+      "Updated Past Added Songs:",
+      JSON.stringify(pastAddedSongs)
+    );
+  } catch (e) {
+    // Handle the exception (QUOTA_EXCEEDED_ERR)
+    console.error("LocalStorage quota exceeded. Unable to store more data.");
+    alert(
+      "LocalStorage quota exceeded. Unable to add to the historic list of added tracks. Consider clearing pastAddedSongs in local storage."
+    );
+  }
 };
 
 // Copy results to clipboard when the button is clicked
