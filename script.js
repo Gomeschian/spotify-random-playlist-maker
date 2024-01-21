@@ -279,10 +279,6 @@ const searchTrackAndAddToPlaylist = async (accessToken, playlistUrl) => {
 
       //Push the track to pastAddedSongs array
       pastAddedSongs.push({
-        year: track.album.release_date.slice(0, 4),
-        album: track.album.name,
-        name: track.name,
-        artist: track.artists.map((artist) => artist.name).join(", "),
         uri: trackUri,
       });
 
