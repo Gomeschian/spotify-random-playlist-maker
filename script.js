@@ -7,6 +7,8 @@ import {
 
 import { fetchScrobbles } from "./lastfm.js";
 
+let pastAddedSongs = JSON.parse(localStorage.getItem("pastAddedSongs")) || [];
+
 const CLIENT_ID = "a34e83c02f6e439a891f4c2f6ba197fe";
 const isLocalHost = window.location.hostname === "localhost";
 const REDIRECT_URI = isLocalHost
@@ -161,6 +163,14 @@ const searchTrackAndAddToPlaylist = async (accessToken, playlistUrl) => {
       };
       allQueriesAndTracks.push(queryDetails);
 
+      //Check if the track is in past added tracks
+      if (pastAddedSongs.some((song) => song.uri === trackUri)) {
+        logToConsole(
+          `Track already added from a past run: ${trackName} by ${trackArtist}. Skipping.`
+        );
+        return null;
+      }
+
       // Check if the track should be excluded using regular expressions
       const isExcluded = trackTitleStringsToExclude.some((titleRegex) =>
         titleRegex.test(trackName)
@@ -260,6 +270,15 @@ const searchTrackAndAddToPlaylist = async (accessToken, playlistUrl) => {
       //Push the track to addedSongs array
 
       addedSongs.push({
+        year: track.album.release_date.slice(0, 4),
+        album: track.album.name,
+        name: track.name,
+        artist: track.artists.map((artist) => artist.name).join(", "),
+        uri: trackUri,
+      });
+
+      //Push the track to pastAddedSongs array
+      pastAddedSongs.push({
         year: track.album.release_date.slice(0, 4),
         album: track.album.name,
         name: track.name,
@@ -644,6 +663,7 @@ const createPlaylistAndAddTracks = async () => {
     document.getElementById("copyResultsButton").innerText =
       "Error occurred. Please try again.";
   } finally {
+    updatePastAddedSongs();
     // Enable the button and boxes
     document.getElementById(
       "createPlaylistAndAddTracksButton"
@@ -734,6 +754,12 @@ const logAllQueriesAndTracks = () => {
   // Convert allQueriesAndTracks to JSON format
   const jsonFormat = JSON.stringify(allQueriesAndTracks, null, 2);
 };
+
+const updatePastAddedSongs = () => {
+  localStorage.setItem("pastAddedSongs", JSON.stringify(pastAddedSongs));
+  console.log("pastAddedSongs updated in localStorage", pastAddedSongs);
+};
+
 // Copy results to clipboard when the button is clicked
 const copyResultsButton = document.getElementById("copyResultsButton");
 copyResultsButton.addEventListener("click", () => {
