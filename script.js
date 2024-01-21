@@ -400,7 +400,7 @@ const addBatchToPlaylist = async (accessToken, playlistUrl, trackBatch) => {
 
     while (retryCount < maxRetries) {
       const addResponse = await fetch(playlistUrl, {
-        method: "POST",
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
