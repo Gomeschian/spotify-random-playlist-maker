@@ -1,10 +1,11 @@
+
 name: Update playlist per automated branch
 
 on:
   workflow_dispatch:
 
 jobs:
-  run-script:
+  open-index-html:
     runs-on: ubuntu-latest
 
     steps:
@@ -13,11 +14,6 @@ jobs:
         with:
           ref: automated
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '14'
-
-      - name: Run script.js from automated branch
+      - name: Open Index.html
         run: |
-          node script.js  # Assuming script.js is in the root directory
+          xdg-open index.html
