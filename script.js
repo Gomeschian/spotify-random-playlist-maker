@@ -7,6 +7,8 @@ import {
 
 import { fetchScrobbles } from "./lastfm.js";
 
+let pastAddedSongs = JSON.parse(localStorage.getItem("pastAddedSongs")) || [];
+
 const CLIENT_ID = "a34e83c02f6e439a891f4c2f6ba197fe";
 const isLocalHost = window.location.hostname === "localhost";
 const REDIRECT_URI = isLocalHost
@@ -161,6 +163,14 @@ const searchTrackAndAddToPlaylist = async (accessToken, playlistUrl) => {
       };
       allQueriesAndTracks.push(queryDetails);
 
+      //Check if the track is in past added tracks
+      if (pastAddedSongs.some((song) => song.uri === trackUri)) {
+        logToConsole(
+          `Track already added from a past run: ${trackUri} from ${searchQuery}. Skipping.`
+        );
+        return null;
+      }
+
       // Check if the track should be excluded using regular expressions
       const isExcluded = trackTitleStringsToExclude.some((titleRegex) =>
         titleRegex.test(trackName)
@@ -264,6 +274,11 @@ const searchTrackAndAddToPlaylist = async (accessToken, playlistUrl) => {
         album: track.album.name,
         name: track.name,
         artist: track.artists.map((artist) => artist.name).join(", "),
+        uri: trackUri,
+      });
+
+      //Push the track to pastAddedSongs array
+      pastAddedSongs.push({
         uri: trackUri,
       });
 
@@ -434,7 +449,7 @@ const addBatchToPlaylist = async (accessToken, playlistUrl, trackBatch) => {
   }
 };
 const displayAddedSongsInfo = (addedSongs) => {
-  addedSongsDiv.innerHTML += `<p><strong>Added Songs:</strong></p>`;
+  addedSongsDiv.innerHTML += `<p><strong>Added Songs: ${new Date().toLocaleString()}</strong></p>`;
 
   addedSongs.forEach((song, index) => {
     const songNumber = index + 1;
@@ -637,6 +652,7 @@ const createPlaylistAndAddTracks = async () => {
     document.getElementById("copyResultsButton").innerText =
       "Error occurred. Please try again.";
   } finally {
+    updatePastAddedSongs();
     // Enable the button and boxes
     document.getElementById(
       "createPlaylistAndAddTracksButton"
@@ -701,6 +717,23 @@ const logAllQueriesAndTracks = () => {
   // Convert allQueriesAndTracks to JSON format
   const jsonFormat = JSON.stringify(allQueriesAndTracks, null, 2);
 };
+
+const updatePastAddedSongs = () => {
+  try {
+    // Attempt to store data in LocalStorage
+    localStorage.setItem(
+      "Updated Past Added Songs:",
+      JSON.stringify(pastAddedSongs)
+    );
+  } catch (e) {
+    // Handle the exception (QUOTA_EXCEEDED_ERR)
+    console.error("LocalStorage quota exceeded. Unable to store more data.");
+    alert(
+      "LocalStorage quota exceeded. Unable to add to the historic list of added tracks. Consider clearing pastAddedSongs in local storage."
+    );
+  }
+};
+
 // Copy results to clipboard when the button is clicked
 const copyResultsButton = document.getElementById("copyResultsButton");
 copyResultsButton.addEventListener("click", () => {

@@ -29,13 +29,13 @@ export const classicalTitles = [
   "Opus Num",
   "Op. Num",
   "Op Num",
-  // "K. \\d+",
+  // "K. \\d+", // Mozart
   // "K \\d+",
   // "KV \\d+",
-  // "BWV \\d+",
   // "Köchel \\d+",
-  // "HWV \\d+",
-  // "D. \\d+",
+  // "BWV \\d+", // Bach
+  // "HWV \\d+", // Handel
+  // "D. \\d+", // Schubert
   // "D \\d+",
 ];
 

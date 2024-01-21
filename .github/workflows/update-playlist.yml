@@ -1,0 +1,19 @@
+
+name: Update playlist per automated branch
+
+on:
+  workflow_dispatch:
+
+jobs:
+  open-index-html:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout automated branch
+        uses: actions/checkout@v4
+        with:
+          ref: automated
+
+      - name: Open Index.html
+        run: |
+          xdg-open index.html
