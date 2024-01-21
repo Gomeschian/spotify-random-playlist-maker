@@ -449,7 +449,7 @@ const addBatchToPlaylist = async (accessToken, playlistUrl, trackBatch) => {
   }
 };
 const displayAddedSongsInfo = (addedSongs) => {
-  addedSongsDiv.innerHTML += `<p><strong>Added Songs:</strong></p>`;
+  addedSongsDiv.innerHTML += `<p><strong>Added Songs: ${new Date().toLocaleString()}</strong></p>`;
 
   addedSongs.forEach((song, index) => {
     const songNumber = index + 1;
