@@ -548,7 +548,6 @@ const searchPlaylist = async (accessToken, playlistName) => {
     return playlist;
   } catch (error) {
     console.error("Error searching playlist:", error);
-    alert("An error occurred while searching for the playlist: " + error);
     logToConsole("An error occurred while searching for the playlist");
 
     throw error;
@@ -582,9 +581,9 @@ const createPlaylistAndAddTracks = async () => {
   minimumSongs = parseInt(numberOfSongsBox.min);
   maximumSongs = parseInt(numberOfSongsBox.max);
 
-  //Run alert and exit if number of songs desired is not within the allowed range
+  //Runexit if number of songs desired is not within the allowed range
   if (numberOfSongs < minimumSongs || numberOfSongs > maximumSongs) {
-    alert(
+    console.error(
       "Please choose a number of songs between " +
         minimumSongs +
         " and " +
@@ -633,7 +632,6 @@ const createPlaylistAndAddTracks = async () => {
       "Results (click to copy to clipboard)";
   } catch (error) {
     console.error("An error occurred:", error);
-    alert("An error occurred: " + error.message);
 
     // Error: Update HTML elements
     document.getElementById("copyResultsButton").innerText =
