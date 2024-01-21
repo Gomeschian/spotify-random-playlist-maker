@@ -166,7 +166,7 @@ const searchTrackAndAddToPlaylist = async (accessToken, playlistUrl) => {
       //Check if the track is in past added tracks
       if (pastAddedSongs.some((song) => song.uri === trackUri)) {
         logToConsole(
-          `Track already added from a past run: ${trackName} by ${trackArtist}. Skipping.`
+          `Track already added from a past run: ${trackUri} from ${searchQuery}. Skipping.`
         );
         return null;
       }
