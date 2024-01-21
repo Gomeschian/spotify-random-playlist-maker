@@ -1,0 +1,23 @@
+name: Update playlist per automated branch
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout automated branch
+        uses: actions/checkout@v4
+        with:
+          ref: automated
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '14'
+
+      - name: Run script.js from automated branch
+        run: |
+          node script.js  # Assuming script.js is in the root directory
