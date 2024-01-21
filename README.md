@@ -11,7 +11,9 @@ Creates or updates an eclectic Spotify playlist called "Random Tracks from All o
 ## Process
 Searches all of the logged-in user's playlists, fifty playlists at a time, for a playlist called "Random Tracks from All of Spotify" (public or private). If not found, a public playlist with that name will be created.
 
-Random search queries will be generated and searched, and valid results will be checked against the selected exclusions and for duplication. Once a batch of one hundred tracks to be added has been found (or fewer if the user selected a smaller number of tracks to get), the batch is pushed to the playlist on Spotify. This repeats until the total number of tracks desired has been pushed. After pushing, the list of added songs' URIs will be added to local storage and excluded during future searches (with local storage of 5 MB, about 62,500 URIs should be storeable).
+Random search queries will be generated and searched, and valid results will be checked against the selected exclusions and for duplication. Once a batch of one hundred tracks to be added has been found (or fewer if the user selected a smaller number of tracks to get), the batch is pushed to the playlist on Spotify. This repeats until the total number of tracks desired has been pushed.
+
+After pushing, the list of added songs' URIs will be added to local storage and excluded during future searches (with local storage of 5 MB, about 62,500 URIs should be storeable).
 
 ## Methodology
 Each search is randomly one of three types:
