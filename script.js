@@ -721,10 +721,8 @@ const logAllQueriesAndTracks = () => {
 const updatePastAddedSongs = () => {
   try {
     // Attempt to store data in LocalStorage
-    localStorage.setItem(
-      "Updated Past Added Songs:",
-      JSON.stringify(pastAddedSongs)
-    );
+    localStorage.setItem("pastAddedSongs", JSON.stringify(pastAddedSongs));
+    console.log("Updated past added songs #:", pastAddedSongs.length);
   } catch (e) {
     // Handle the exception (QUOTA_EXCEEDED_ERR)
     console.error("LocalStorage quota exceeded. Unable to store more data.");
