@@ -7,10 +7,14 @@ import {
 
 import { fetchScrobbles } from "./lastfm.js";
 
+import { LOCAL_CLIENT_ID } from "./keys.js";
+
 let pastAddedSongs = JSON.parse(localStorage.getItem("pastAddedSongs")) || [];
 
-const CLIENT_ID = "a34e83c02f6e439a891f4c2f6ba197fe";
 const isLocalHost = window.location.hostname === "localhost";
+
+const CLIENT_ID = isLocalHost ? LOCAL_CLIENT_ID : process.env.CLIENT_ID;
+
 const REDIRECT_URI = isLocalHost
   ? "http://localhost:8080/"
   : "https://gomeschian.github.io/spotify-random-playlist-maker/";
