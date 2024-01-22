@@ -7,13 +7,19 @@ import {
 
 import { fetchScrobbles } from "./lastfm.js";
 
-import { LOCAL_CLIENT_ID } from "./keys.js";
+let CLIENT_ID;
+
+import("./keys.js")
+  .then((module) => {
+    CLIENT_ID = module.CLIENT_ID;
+  })
+  .catch((error) => {
+    CLIENT_ID = process.env.CLIENT_ID;
+  });
 
 let pastAddedSongs = JSON.parse(localStorage.getItem("pastAddedSongs")) || [];
 
 const isLocalHost = window.location.hostname === "localhost";
-
-const CLIENT_ID = isLocalHost ? LOCAL_CLIENT_ID : process.env.CLIENT_ID;
 
 const REDIRECT_URI = isLocalHost
   ? "http://localhost:8080/"
