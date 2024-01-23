@@ -31,28 +31,30 @@ const base64encode = (input) => {
     .replace(/\//g, "_");
 };
 
-const hashed = await sha256(codeVerifier);
-const codeChallenge = base64encode(hashed);
+ export const requestUserAuthorization = async () => {
+  const hashed = await sha256(codeVerifier);
+  const codeChallenge = base64encode(hashed);
 
-window.localStorage.setItem("code_verifier", codeVerifier);
+  window.localStorage.setItem("code_verifier", codeVerifier);
 
-const params = {
-  response_type: "code",
-  client_id: clientId,
-  scope,
-  code_challenge_method: "S256",
-  code_challenge: codeChallenge,
-  redirect_uri: redirectUri,
+  const params = {
+    response_type: "code",
+    client_id: clientId,
+    scope,
+    code_challenge_method: "S256",
+    code_challenge: codeChallenge,
+    redirect_uri: redirectUri,
+  };
+
+  authUrl.search = new URLSearchParams(params).toString();
+  window.location.href = authUrl.toString();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  console.log("Code:", urlParams.get("code"));
+  return urlParams.get("code");
 };
 
-authUrl.search = new URLSearchParams(params).toString();
-window.location.href = authUrl.toString();
-
-const urlParams = new URLSearchParams(window.location.search);
-let code = urlParams.get("code");
-
-const getToken = async (code) => {
-  // stored in the previous step
+ export const getToken = async (code) => {
   let codeVerifier = localStorage.getItem("code_verifier");
 
   const payload = {
@@ -73,6 +75,7 @@ const getToken = async (code) => {
   const response = await body.json();
 
   localStorage.setItem("access_token", response.access_token);
+  return localStorage.getItem("access_token");
 };
 
 const getRefreshToken = async () => {
@@ -97,3 +100,9 @@ const getRefreshToken = async () => {
   localStorage.setItem("access_token", response.accessToken);
   localStorage.setItem("refresh_token", response.refreshToken);
 };
+
+export const authorizeAndGetToken = async () => {
+  const code = await requestUserAuthorization();
+  const token = await getToken(code);
+  return token;
+}
