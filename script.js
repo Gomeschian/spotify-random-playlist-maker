@@ -1,3 +1,5 @@
+import { authorize } from "./authorization.js";
+
 import {
   ranges,
   bookTitles,
@@ -8,14 +10,6 @@ import {
 import { fetchScrobbles } from "./lastfm.js";
 
 let pastAddedSongs = JSON.parse(localStorage.getItem("pastAddedSongs")) || [];
-
-const CLIENT_ID = "a34e83c02f6e439a891f4c2f6ba197fe";
-const isLocalHost = window.location.hostname === "localhost";
-const REDIRECT_URI = isLocalHost
-  ? "http://localhost:8080/"
-  : "https://gomeschian.github.io/spotify-random-playlist-maker/";
-const SCOPES =
-  "playlist-read-private playlist-modify-public playlist-modify-private";
 
 const BATCH_SIZE = 100; // 100 is the max songs that can be added at once per Spotify's Web API
 let numberOfSongs;
@@ -49,15 +43,9 @@ const nineteenHundredsCheckbox = document.getElementById(
 );
 
 const isAuthenticated = () => {
-  const params = new URLSearchParams(window.location.hash.substring(1));
-  return params.has("access_token");
+  return localStorage.getItem("access_token");
 };
 
-const redirectToAuthorization = () => {
-  window.location.href = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
-    REDIRECT_URI
-  )}&scope=${encodeURIComponent(SCOPES)}&response_type=token`;
-};
 const getRandomYear = () => {
   const currentYear = new Date().getFullYear();
   return (
@@ -591,10 +579,8 @@ const createPlaylist = async (accessToken) => {
 
 //Main script
 const createPlaylistAndAddTracks = async () => {
-  if (!isAuthenticated()) {
-    redirectToAuthorization();
-    return;
-  }
+  getToken();
+  const accessToken = localStorage.getItem("access_token");
 
   //Set number of songs to get
   const numberOfSongsBox = document.getElementById("numberOfSongsBox");
@@ -612,9 +598,6 @@ const createPlaylistAndAddTracks = async () => {
     );
     return;
   }
-
-  const params = new URLSearchParams(window.location.hash.substring(1));
-  const accessToken = params.get("access_token");
 
   //clear existing track tracking arrays
   existingPlaylistTracks.splice(0, existingPlaylistTracks.length);
@@ -675,10 +658,12 @@ const createPlaylistAndAddTracks = async () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   const loginButton = document.getElementById("loginButton");
+  updateLoginStatus();
 
   if (loginButton) {
     loginButton.addEventListener("click", () => {
-      redirectToAuthorization();
+      authorize();
+      updateLoginStatus();
     });
   } else {
     console.error('Button with id "loginButton" not found.');
@@ -690,6 +675,7 @@ const updateLoginStatus = () => {
   const buttonsContainer = document.getElementById("buttons-container");
 
   if (loginButton && buttonsContainer) {
+    console.log(isAuthenticated());
     if (isAuthenticated()) {
       // User is logged in
       loginButton.innerText = "Logged In";
@@ -703,8 +689,6 @@ const updateLoginStatus = () => {
     }
   }
 };
-
-updateLoginStatus();
 
 const button = document.getElementById("createPlaylistAndAddTracksButton");
 if (button) {
