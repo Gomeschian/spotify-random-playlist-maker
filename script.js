@@ -9,14 +9,6 @@ import { fetchScrobbles } from "./lastfm.js";
 
 let pastAddedSongs = JSON.parse(localStorage.getItem("pastAddedSongs")) || [];
 
-const CLIENT_ID = "a34e83c02f6e439a891f4c2f6ba197fe";
-const isLocalHost = window.location.hostname === "localhost";
-const REDIRECT_URI = isLocalHost
-  ? "http://localhost:8080/"
-  : "https://gomeschian.github.io/spotify-random-playlist-maker/";
-const SCOPES =
-  "playlist-read-private playlist-modify-public playlist-modify-private";
-
 const BATCH_SIZE = 100; // 100 is the max songs that can be added at once per Spotify's Web API
 let numberOfSongs;
 let minimumSongs;
