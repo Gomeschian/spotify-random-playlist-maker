@@ -5,8 +5,6 @@ import {
   happyBirthdayTitles,
 } from "./lists.js";
 
-import { fetchScrobbles } from "./lastfm.js";
-
 let pastAddedSongs = JSON.parse(localStorage.getItem("pastAddedSongs")) || [];
 
 const CLIENT_ID = "a34e83c02f6e439a891f4c2f6ba197fe";
