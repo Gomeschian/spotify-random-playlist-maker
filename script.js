@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
   ranges,
   bookTitles,
@@ -45,6 +46,14 @@ const eighteenHundredsCheckbox = document.getElementById(
 const nineteenHundredsCheckbox = document.getElementById(
   "nineteenHundredsCheckbox"
 );
+
+const checkboxes = [
+  eighteenHundredsCheckbox,
+  nineteenHundredsCheckbox,
+  audiobooksCheckbox,
+  happyBirthdayCheckbox,
+  classicalCheckbox,
+];
 
 const isAuthenticated = () => {
   const params = new URLSearchParams(window.location.hash.substring(1));
@@ -619,15 +628,11 @@ const createPlaylistAndAddTracks = async () => {
   addedDuringRuntime.splice(0, addedDuringRuntime.length);
   addedSongs.splice(0, addedSongs.length);
 
-  document.getElementById("createPlaylistAndAddTracksButton").disabled = true;
 
-  // Disable the boxes
+  // Disable the button and boxes
+  document.getElementById("createPlaylistAndAddTracksButton").disabled = true;
+  setCheckboxState(checkboxes, true);
   numberOfSongsBox.disabled = true;
-  audiobooksCheckbox.disabled = true;
-  happyBirthdayCheckbox.disabled = true;
-  classicalCheckbox.disabled = true;
-  eighteenHundredsCheckbox.disabled = true;
-  nineteenHundredsCheckbox.disabled = true;
 
   await compileExclusions();
 
@@ -662,12 +667,8 @@ const createPlaylistAndAddTracks = async () => {
     document.getElementById(
       "createPlaylistAndAddTracksButton"
     ).disabled = false;
+    setCheckboxState(checkboxes, false);
     numberOfSongsBox.disabled = false;
-    audiobooksCheckbox.disabled = false;
-    happyBirthdayCheckbox.disabled = false;
-    classicalCheckbox.disabled = false;
-    eighteenHundredsCheckbox.disabled = false;
-    nineteenHundredsCheckbox.disabled = false;
   }
 };
 
@@ -736,6 +737,12 @@ const compileExclusions = () => {
     trackTitleStringsToExclude.push(...classicalPatterns);
   }
   return;
+};
+
+const setCheckboxState = (checkboxes, state) => {
+  checkboxes.forEach((checkbox) => {
+    checkbox.disabled = state;
+  });
 };
 
 const logToConsole = (message) => {
