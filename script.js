@@ -64,7 +64,6 @@ const checkboxes = [
 ];
 
 const buttons = [
-  loginButton,
   createPlaylistAndAddTracksButton,
   copyResultsButton,
 ];
