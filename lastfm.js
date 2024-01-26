@@ -8,7 +8,7 @@ export const fetchScrobbles = async (
 ) => {
   try {
     const fromDate = new Date();
-    fromDate.setMonth(fromDate.getMonth() - 1); // Last month
+    fromDate.setMonth(fromDate.getMonth() - 3); // Last 3 months
     const fromTimestamp = Math.floor(fromDate.getTime() / 1000);
 
     const response = await fetch(
@@ -25,9 +25,7 @@ export const fetchScrobbles = async (
       }));
       const totalScrobbles = parseInt(data.recenttracks["@attr"].total, 10);
 
-      console.log(
-        `Page ${page}: Fetched ${scrobbles.length} scrobbles. Total Scrobbles: ${totalScrobbles}: `
-      );
+      console.log(`Page ${page}: Fetched ${scrobbles.length} scrobbles. ${totalScrobbles} total scrobbles.`);
       allScrobbles.push(...scrobbles);
 
       if (scrobbles.length > 0 && scrobbles.length < totalScrobbles) {
