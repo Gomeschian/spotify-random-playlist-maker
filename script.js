@@ -47,12 +47,26 @@ const nineteenHundredsCheckbox = document.getElementById(
   "nineteenHundredsCheckbox"
 );
 
+const createPlaylistAndAddTracksButton = document.getElementById(
+  "createPlaylistAndAddTracksButton"
+);
+
+const loginButton = document.getElementById("loginButton");
+
+const copyResultsButton = document.getElementById("copyResultsButton");
+
 const checkboxes = [
   eighteenHundredsCheckbox,
   nineteenHundredsCheckbox,
   audiobooksCheckbox,
   happyBirthdayCheckbox,
   classicalCheckbox,
+];
+
+const buttons = [
+  loginButton,
+  createPlaylistAndAddTracksButton,
+  copyResultsButton,
 ];
 
 const isAuthenticated = () => {
@@ -628,9 +642,8 @@ const createPlaylistAndAddTracks = async () => {
   addedDuringRuntime.splice(0, addedDuringRuntime.length);
   addedSongs.splice(0, addedSongs.length);
 
-
   // Disable the button and boxes
-  document.getElementById("createPlaylistAndAddTracksButton").disabled = true;
+  setButtonsState(buttons, true);
   setCheckboxState(checkboxes, true);
   numberOfSongsBox.disabled = true;
 
@@ -663,10 +676,8 @@ const createPlaylistAndAddTracks = async () => {
       "Error occurred. Please try again.";
   } finally {
     updatePastAddedSongs();
-    // Enable the button and boxes
-    document.getElementById(
-      "createPlaylistAndAddTracksButton"
-    ).disabled = false;
+    // Enable the buttons and boxes
+    setButtonsState(buttons, false);
     setCheckboxState(checkboxes, false);
     numberOfSongsBox.disabled = false;
   }
@@ -692,7 +703,7 @@ const updateLoginStatus = () => {
     if (isAuthenticated()) {
       // User is logged in
       loginButton.innerText = "Logged In";
-      loginButton.disabled = true; // Optionally disable the button
+      loginButton.disabled = true;
       buttonsContainer.classList.remove("hidden");
     } else {
       // User is not logged in
@@ -745,6 +756,12 @@ const setCheckboxState = (checkboxes, state) => {
   });
 };
 
+const setButtonsState = (buttons, state) => {
+  buttons.forEach((button) => {
+    button.disabled = state;
+  });
+};
+
 const logToConsole = (message) => {
   console.log(message); // Log to the browser console
   consoleDiv.innerHTML += `<p>${message}</p>`;
@@ -771,7 +788,6 @@ const updatePastAddedSongs = () => {
 };
 
 // Copy results to clipboard when the button is clicked
-const copyResultsButton = document.getElementById("copyResultsButton");
 copyResultsButton.addEventListener("click", () => {
   const addedSongsDiv = document.getElementById("added-songs");
   const textToCopy = addedSongsDiv.innerText;
