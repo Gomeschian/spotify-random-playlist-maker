@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
   ranges,
   bookTitles,
@@ -45,6 +46,27 @@ const eighteenHundredsCheckbox = document.getElementById(
 const nineteenHundredsCheckbox = document.getElementById(
   "nineteenHundredsCheckbox"
 );
+
+const createPlaylistAndAddTracksButton = document.getElementById(
+  "createPlaylistAndAddTracksButton"
+);
+
+const loginButton = document.getElementById("loginButton");
+
+const copyResultsButton = document.getElementById("copyResultsButton");
+
+const checkboxes = [
+  eighteenHundredsCheckbox,
+  nineteenHundredsCheckbox,
+  audiobooksCheckbox,
+  happyBirthdayCheckbox,
+  classicalCheckbox,
+];
+
+const buttons = [
+  createPlaylistAndAddTracksButton,
+  copyResultsButton,
+];
 
 const isAuthenticated = () => {
   const params = new URLSearchParams(window.location.hash.substring(1));
@@ -613,15 +635,10 @@ const createPlaylistAndAddTracks = async () => {
   addedDuringRuntime.splice(0, addedDuringRuntime.length);
   addedSongs.splice(0, addedSongs.length);
 
-  document.getElementById("createPlaylistAndAddTracksButton").disabled = true;
-
-  // Disable the boxes
+  // Disable the button and boxes
+  setButtonsState(buttons, true);
+  setCheckboxState(checkboxes, true);
   numberOfSongsBox.disabled = true;
-  audiobooksCheckbox.disabled = true;
-  happyBirthdayCheckbox.disabled = true;
-  classicalCheckbox.disabled = true;
-  eighteenHundredsCheckbox.disabled = true;
-  nineteenHundredsCheckbox.disabled = true;
 
   await compileExclusions();
 
@@ -651,16 +668,10 @@ const createPlaylistAndAddTracks = async () => {
       "Error occurred. Please try again.";
   } finally {
     updatePastAddedSongs();
-    // Enable the button and boxes
-    document.getElementById(
-      "createPlaylistAndAddTracksButton"
-    ).disabled = false;
+    // Enable the buttons and boxes
+    setButtonsState(buttons, false);
+    setCheckboxState(checkboxes, false);
     numberOfSongsBox.disabled = false;
-    audiobooksCheckbox.disabled = false;
-    happyBirthdayCheckbox.disabled = false;
-    classicalCheckbox.disabled = false;
-    eighteenHundredsCheckbox.disabled = false;
-    nineteenHundredsCheckbox.disabled = false;
   }
 };
 
@@ -705,6 +716,18 @@ const compileExclusions = () => {
   return;
 };
 
+const setCheckboxState = (checkboxes, state) => {
+  checkboxes.forEach((checkbox) => {
+    checkbox.disabled = state;
+  });
+};
+
+const setButtonsState = (buttons, state) => {
+  buttons.forEach((button) => {
+    button.disabled = state;
+  });
+};
+
 const logToConsole = (message) => {
   console.log(message); // Log to the browser console
   consoleDiv.innerHTML += `<p>${message}</p>`;
@@ -731,7 +754,6 @@ const updatePastAddedSongs = () => {
 };
 
 // Copy results to clipboard when the button is clicked
-const copyResultsButton = document.getElementById("copyResultsButton");
 copyResultsButton.addEventListener("click", () => {
   const addedSongsDiv = document.getElementById("added-songs");
   const textToCopy = addedSongsDiv.innerText;
