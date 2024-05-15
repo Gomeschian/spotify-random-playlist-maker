@@ -683,7 +683,6 @@ const createPlaylistAndAddTracks = async () => {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  const loginButton = document.getElementById("loginButton");
 
   if (loginButton) {
     loginButton.addEventListener("click", () => {
@@ -695,7 +694,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const updateLoginStatus = () => {
-  const loginButton = document.getElementById("loginButton");
   const buttonsContainer = document.getElementById("buttons-container");
 
   if (loginButton && buttonsContainer) {
